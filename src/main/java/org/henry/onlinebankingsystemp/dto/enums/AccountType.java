@@ -1,4 +1,4 @@
-package org.henry.onlinebankingsystemp.entity;
+package org.henry.onlinebankingsystemp.dto.enums;
 
 public enum AccountType {
     SAVINGS, CURRENT

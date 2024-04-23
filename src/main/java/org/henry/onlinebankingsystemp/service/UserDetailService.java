@@ -25,12 +25,12 @@ public class UserDetailService implements UserDetailsService {
             return userOptional.orElseThrow();
         }
 
-        // If not found in the user repository, check the admin repository
+        // If not found in the customer repository, check the admin repository
         var adminOptional = adminRepository.findByEmail(username);
         if (adminOptional.isPresent()) {
             return adminOptional.orElseThrow();
         }
 
-        throw new UsernameNotFoundException("User or admin not found with email: " + username);
+        throw new UsernameNotFoundException("Customer or admin not found with email: " + username);
     }
 }

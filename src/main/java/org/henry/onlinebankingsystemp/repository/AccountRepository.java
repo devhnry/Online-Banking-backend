@@ -11,6 +11,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Override
     Optional<Account> findById(Long account_id);
+    Optional<Account> findByAccountNumber(String accountNumber);
+    Optional<Account> findByCustomerId(Long userId);
 
-    Optional<Account> findByAccountNumber(Long account_number);
 }

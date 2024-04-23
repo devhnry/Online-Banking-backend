@@ -1,28 +1,34 @@
 package org.henry.onlinebankingsystemp.service;
 
-import org.apache.catalina.User;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.henry.onlinebankingsystemp.dto.*;
+import org.henry.onlinebankingsystemp.dto.enums.TransactionType;
 import org.henry.onlinebankingsystemp.entity.Account;
+import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.entity.Transaction;
-import org.henry.onlinebankingsystemp.entity.TransactionType;
-import org.henry.onlinebankingsystemp.entity.Users;
-import org.henry.onlinebankingsystemp.otp.OTP;
+import org.henry.onlinebankingsystemp.entity.OTP;
 import org.henry.onlinebankingsystemp.repository.AccountRepository;
 import org.henry.onlinebankingsystemp.repository.OTPRepository;
 import org.henry.onlinebankingsystemp.repository.TransactionRepo;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.mail.MessagingException;
+import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Supplier;
+
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class UserService {
+    @Autowired
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
     private final TransactionRepo transactionRepo;
@@ -30,228 +36,64 @@ public class UserService {
     private final OTPRepository otpRepository;
 
 
-    public UserService(UserRepository userRepository,
-                       AccountRepository accountRepository,
-                       TransactionRepo transactionRepo,
-                       PasswordEncoder passwordEncoder,
-                       OTPRepository otpRepository
-    ) {
-        this.passwordEncoder = passwordEncoder;
-        this.transactionRepo = transactionRepo;
-        this.userRepository = userRepository;
-        this.accountRepository = accountRepository;
-        this.otpRepository = otpRepository;
-    }
-
-    public List<Users> getUsers(){
-        return userRepository.findAll();
-    }
-
-    public Users getDetails(Long id){
-        return userRepository.findById(id).orElseThrow(() ->
-                new IllegalStateException("User with id " + id + " does not exist"));
-    }
-
-    public Long getUserId(){
+    private Long getUserId(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ((Users) authentication.getPrincipal()).getUserId();
+        return ((Customer) authentication.getPrincipal()).getCustomerId();
     }
 
-    public ResponseEntity<UserBalance> getBalance(){
-        UserBalance userBalance = new UserBalance();
+    private Customer getDetails(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new IllegalStateException("Customer with id " + id + "does not exist"));
+    }
+
+    Supplier<Customer> getCurrentUser = () -> { Long id = getUserId(); Customer customer = getDetails(id);
+        return customer;
+    };
+
+
+    public BalanceDTO getBalance(){
+        BalanceDTO userBalance = new BalanceDTO();
+
+        Customer customer = getCurrentUser.get();
+        Optional<Account> optAccount = accountRepository.findByCustomerId(customer.getCustomerId());
+        Account account = optAccount.orElseThrow();
+
+        userBalance.setUsername(customer.getUsername());
+        userBalance.setBalance(account.getBalance());
+
+        return userBalance;
+    }
+
+    public List<TransactionDTO> viewStatement(){
         Long id = getUserId();
-        Users user = getDetails(id);
-        userBalance.setUserId(user.getUserId());
-        userBalance.setUsername(user.getUsername());
-        userBalance.setBalance(user.getAccount_details().getBalance());
-
-        return ResponseEntity.ok(userBalance);
-    }
-
-    private double getDailyTransactionAmount(Long id) {
-        List<Transaction> transactions = transactionRepo.findTransactionByUsers(id);
-        double totalAmount = 0;
-        for(Transaction tran : transactions){
-            if(tran.getTransactionType().equals(TransactionType.DEPOSIT)){
-                continue;
-            }
-            totalAmount += tran.getAmount();
-        }
-        return totalAmount;
-    }
-    
-    public ResponseEntity<Object> updateBalance(TransactionReqRes reqRes, TransactionType transactionType, String operation){
-        TransactionReqRes userBalance = new TransactionReqRes();
-        RequestResponse res = new RequestResponse();
-        Long id = getUserId();
-        Users user = getDetails(id);
-        Transaction transaction = new Transaction();
-
-
-        getDailyTransactionAmount(id);
-        
-        if(!transactionType.equals(TransactionType.DEPOSIT)){
-            if(getDailyTransactionAmount(id) > user.getTransactionLimit()){
-                res.setStatusCode(500);
-                res.setMessage("You have exceeded your transaction limit for today");
-                res.setTransactionLimit(user.getTransactionLimit());
-
-                return ResponseEntity.ok(res);
-            }
-        }
-        
-
-        if(reqRes.getAmount() < 0){
-            res.setStatusCode(500);
-            res.setMessage("Invalid amount");
-            if(reqRes.getAmount() > user.getAccount_details().getBalance()){
-                res.setMessage("Insufficient Balance");
-                return ResponseEntity.ok(res);
-            }
-            return ResponseEntity.ok(res);
-        }
-
-        if(reqRes.getDescription() == null){
-            res.setStatusCode(500);
-            res.setMessage("Description cannot be empty");
-            return ResponseEntity.ok(res);
-        }
-
-        double newBalance;
-       if(operation.equals("addition")){
-           newBalance = user.getAccount_details().getBalance() + reqRes.getAmount();
-       }else
-           newBalance = user.getAccount_details().getBalance() - reqRes.getAmount();
-
-        Account userAccount = user.getAccount_details();
-        userAccount.setBalance(newBalance);
-
-        transaction.setAccount(userAccount);
-        transaction.setTransactionType(transactionType);
-        transaction.setDateTime(new Date(System.currentTimeMillis()));
-        transaction.setTargetAccountNumber(null);
-        transaction.setAmount(reqRes.getAmount());
-        transaction.setDescription(reqRes.getDescription());
-
-        accountRepository.save(userAccount);
-        userRepository.save(user);
-        transactionRepo.save(transaction);
-
-        //Response sent
-        userBalance.setUserId(user.getUserId());
-        userBalance.setUsername(user.getUsername());
-        userBalance.setAmount(reqRes.getAmount());
-        userBalance.setUpdated_balance(newBalance);
-
-        return ResponseEntity.ok(userBalance);
-    }
-
-    public ResponseEntity<Object> depositMoney(TransactionReqRes reqRes){
-        return updateBalance(reqRes, TransactionType.DEPOSIT, "addition");
-    }
-
-    public ResponseEntity<Object> withdrawMoney(TransactionReqRes reqRes){
-        return updateBalance(reqRes, TransactionType.WITHDRAWAL, "subtract");
-    }
-
-    public Account getTarget(Long account_number){
-        return accountRepository.findByAccountNumber(account_number)
-                .orElseThrow(() -> new IllegalStateException("User does not exist"));
-    }
-
-    public ResponseEntity<Object> transferMoney(TransactionReqRes reqRes) {
-        TransactionReqRes userBalance = new TransactionReqRes();
-        RequestResponse res = new RequestResponse();
-
-        Long id = getUserId();
-        Users user = getDetails(id);
-        Transaction transaction = new Transaction();
-
-        Account targetAccount = getTarget(reqRes.getAccount_number());
-        Users targetUser = getDetails(targetAccount.getUser_id());
-
-        if(reqRes.getAmount() < 0){
-            res.setStatusCode(500);
-            res.setMessage("Invalid amount");
-            return ResponseEntity.ok(res);
-        }
-
-        if(reqRes.getDescription() == null){
-            res.setStatusCode(500);
-            res.setMessage("Description cannot be empty");
-            return ResponseEntity.ok(res);
-        }
-
-        double newBalance = user.getAccount_details().getBalance() - reqRes.getAmount();
-        double targetBalance = targetUser.getAccount_details().getBalance() + reqRes.getAmount();
-
-        Account userAccount = user.getAccount_details();
-
-        userAccount.setBalance(newBalance);
-        targetAccount.setBalance(targetBalance);
-
-        transaction.setAccount(userAccount);
-        transaction.setTransactionType(TransactionType.TRANSFER);
-        transaction.setDateTime(new Date(System.currentTimeMillis()));
-        transaction.setTargetAccountNumber(String.valueOf(reqRes.getAccount_number()));
-        transaction.setAmount(reqRes.getAmount());
-        transaction.setDescription(reqRes.getDescription());
-
-        accountRepository.save(userAccount);
-        accountRepository.save(targetAccount);
-        userRepository.save(user);
-        userRepository.save(targetUser);
-        transactionRepo.save(transaction);
-
-        //Response sent
-        userBalance.setUserId(user.getUserId());
-        userBalance.setUsername(user.getUsername());
-        userBalance.setAmount(reqRes.getAmount());
-        userBalance.setUpdated_balance(newBalance);
-        userBalance.setAccount_number(reqRes.getAccount_number());
-
-        return ResponseEntity.ok(userBalance);
-    }
-
-    public List<TransactionDTO> getTransactions(){
-        Long id = getUserId();
-        List<TransactionDTO> dtos = mapTransactionsToDTOs(transactionRepo.findTransactionByUsers(id));
+        List<TransactionDTO> dtos = mapTransactionsToDTOs(transactionRepo.findTransactionByCustomer(id));
         return dtos;
     }
 
     public List<TransactionDTO> mapTransactionsToDTOs(List<Transaction> transactions) {
-        List<TransactionDTO> dtos = new ArrayList<>();
+        List<TransactionDTO> transactionList = new ArrayList<>();
         for (Transaction transaction : transactions) {
             TransactionDTO dto = new TransactionDTO();
-            dto.setTransactionType(transaction.getTransactionType());
             dto.setAmount(transaction.getAmount());
-            dto.setDateTime(transaction.getDateTime());
-            dto.setDescription(transaction.getDescription());
-            if (transaction.getTargetAccountNumber() != null) {
-                dto.setTargetAccountNumber(Long.valueOf(transaction.getTargetAccountNumber()));
-            } else {
-                dto.setTargetAccountNumber(null);
+            dto.setDateTime(transaction.getTransactionDate());
+            if (transaction.getTransactionType() == TransactionType.TRANSFER) {
+                dto.setTargetAccountNumber(transaction.getTargetAccountNumber());
             }
-            dtos.add(dto);
+            transactionList.add(dto);
         }
-        return dtos;
-    }
-
-    private Long generateRandomDigitNumber() {
-        return new Random().nextLong(100000L);
+        return transactionList;
     }
 
     public OTP generateOTP(){
-        var otp = new OTP();
+        OTP otp = new OTP();
+        Customer currentCustomer = getCurrentUser.get();
 
-        Long id = getUserId();
-        Users currentUser = getDetails(id);
-
-        otp.setOtpCode(generateRandomDigitNumber());
-        otp.setUsers(currentUser);
+        otp.setOtpCode(new Random().nextLong(100000L));
+        otp.setCustomer(currentCustomer);
         otp.setExpired(false);
+        otp.setExpiresIn("4 Minutes");
 
-        long expirationTime = 240_000L;
+        long expirationTime = 240000;
 
         long currentTime = System.currentTimeMillis();
         otp.setGeneratedTime(currentTime);
@@ -263,16 +105,19 @@ public class UserService {
         return otp;
     }
 
-    public String validateOTP(Long otpCode) {
-        String message;
-        Long userId = getUserId();
-        Users user = getDetails(userId);
 
-        Optional<OTP> otpOptional = otpRepository.findByUsersAndOtpCode(user, otpCode);
+    private String validateOTP(Long otpCode) {
+        String message;
+        Customer customer = getCurrentUser.get();
+
+        log.info("Finding Customer by OtpCode");
+        Optional<OTP> otpOptional = otpRepository.findByCustomerAndOtpCode(customer, otpCode);
         if (otpOptional.isPresent()) {
+            log.info("Customer was found with OTPCode");
             OTP otp = otpOptional.get();
             long currentTime = System.currentTimeMillis();
-            if (!otp.getExpired() && currentTime <= otp.getExpirationTime()) {
+            log.info("Checking OTP expiration time");
+            if (otp.getExpirationTime() - currentTime < 0 || otp.getExpired()) {
                 message = "valid";
             } else {
                 message = "expired";
@@ -285,12 +130,11 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<Object> updateDetails(UserInfo req){
-        RequestResponse response = new RequestResponse();
-        Long id = getUserId();
-        Users user = getDetails(id);
+    public DefaultResponse updateDetails(UpdateInfoDTO req){
+        DefaultResponse response = new DefaultResponse();
+        Customer customer = getCurrentUser.get();
 
-        Optional<OTP> otpOptional = otpRepository.findByUsersAndOtpCode(user, req.getOtpCode());
+        Optional<OTP> otpOptional = otpRepository.findByCustomerAndOtpCode(customer, req.getOtpCode());
         var otp = otpOptional.orElseThrow();
 
 
@@ -299,36 +143,35 @@ public class UserService {
             response.setStatusCode(500);
             response.setMessage("Invalid OTP Code");
 
-            return ResponseEntity.ok(response);
+            return response;
         }else if(otpMessage.equals("expired")){
             response.setMessage("Expired OTP Code");
             response.setStatusCode(500);
-            return  ResponseEntity.ok(response);
+            return response;
         }
 
-        Optional<Users> usersOptional =
+        Optional<Customer> usersOptional =
                 userRepository.findByEmail(req.getEmail());
 
         if (usersOptional.isPresent()){
             response.setStatusCode(500);
             response.setMessage("Email Already Taken");
-            return ResponseEntity.ok(response);
+            return response;
         }
 
-        user.setFirst_name(req.getFirstName() == null ? user.getFirst_name() : req.getFirstName());
-        user.setLast_name(req.getLastName() == null ? user.getLast_name() : req.getLastName());
-        user.setEmail(req.getEmail() == null ? user.getEmail() : req.getEmail());
-        user.setPhone_number(req.getPhoneNumber() == null ? user.getPhone_number() : req.getPhoneNumber());
+        customer.setFirstName(req.getFirstName() == null ? customer.getFirstName() : req.getFirstName());
+        customer.setLastName(req.getLastName() == null ? customer.getLastName() : req.getLastName());
+        customer.setEmail(req.getEmail() == null ? customer.getEmail() : req.getEmail());
+        customer.setPhone(req.getPhoneNumber() == null ? customer.getPhone() : req.getPhoneNumber());
 
         response.setStatusCode(200);
         response.setMessage("Successfully Updated");
         otp.setExpired(true);
 
-
-        return ResponseEntity.ok(response);
+        return response;
     }
 
-    private ResponseEntity<Object> validateOTP(String otpMessage, RequestResponse res) {
+    private DefaultResponse validateOTP(String otpMessage, DefaultResponse res) {
         if(otpMessage.equals("invalid")){
             res.setStatusCode(500);
             res.setMessage("Invalid OTP Credentials");
@@ -336,59 +179,61 @@ public class UserService {
             res.setStatusCode(500);
             res.setMessage("Expired OTP");
         }
-        return ResponseEntity.ok(res);
+        return res;
     }
 
     @Transactional
-    public ResponseEntity<Object> resetPassword(PasswordReset pass){
-        RequestResponse res = new RequestResponse();
-        Long id = getUserId();
-        Users user = getDetails(id);
+    public DefaultResponse resetPassword(PasswordResetDTO pass){
+        DefaultResponse res = new DefaultResponse();
+        Customer customer = getCurrentUser.get();
 
-        Optional<OTP> otpOptional = otpRepository.findByUsersAndOtpCode(user, pass.getOtp());
+        Optional<OTP> otpOptional = otpRepository.findByCustomerAndOtpCode(customer, pass.getOtp());
 
         var otp = otpOptional.orElseThrow();
+        log.info("Getting OTP Message");
         String otpMessage = validateOTP(pass.getOtp());
+
+        log.info("Validating OTP");
         validateOTP(otpMessage, res);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String password = ((Users) authentication.getPrincipal()).getPassword();
+        String password = ((Customer) authentication.getPrincipal()).getPassword();
 
         if(passwordEncoder.matches(pass.getCurrentPassword(), password)){
-            user.setPassword(passwordEncoder.encode(pass.getNewPassword()));
-            userRepository.save(user);
+            customer.setPassword(passwordEncoder.encode(pass.getNewPassword()));
+            userRepository.save(customer);
             res.setStatusCode(200);
             res.setMessage("Successfully updated Password");
             otp.setExpired(true);
         }else{
             res.setStatusCode(500);
             res.setMessage("The current password is invalid");
-            return ResponseEntity.ok(res);
+            return res;
         }
-        return ResponseEntity.ok(res);
+        return res;
     }
 
-    public ResponseEntity<Object> updateTransactionLimit(TransactionLimit transactionLimit){
-        RequestResponse res = new RequestResponse();
-        Long id = getUserId();
-        Users user = getDetails(id);
+    public DefaultResponse updateTransactionLimit(TransactionLimit transactionLimit){
+        DefaultResponse res = new DefaultResponse();
+        Customer customer = getCurrentUser.get();
 
-        Optional<OTP> otpOptional = otpRepository.findByUsersAndOtpCode(user, transactionLimit.getOtp());
+        Optional<OTP> otpOptional = otpRepository.findByCustomerAndOtpCode(customer, transactionLimit.getOtpCode());
 
         var otp = otpOptional.orElseThrow();
-        String otpMessage = validateOTP(transactionLimit.getOtp());
+        String otpMessage = validateOTP(transactionLimit.getOtpCode());
         validateOTP(otpMessage, res);
 
-        if(transactionLimit.getAmount() < 0){
+        if(transactionLimit.getAmount().compareTo(BigDecimal.ZERO) > 0){
+            log.error("Updating Transaction Limit");
             res.setStatusCode(500);
-            res.setMessage("Invalid Amount");
+            res.setMessage("Amount cannot be Invalid");
         }
-        user.setTransactionLimit(transactionLimit.getAmount());
-        res.setMessage("Successfully Updated Transaction Limit");
-        res.setStatusCode(200);
-        res.setTransactionLimit(transactionLimit.getAmount());
-        otp.setExpired(true);
 
-        return ResponseEntity.ok(res);
+        customer.getAccount().setTransactionLimit(transactionLimit.getAmount());
+
+        res.setStatusCode(200);
+        res.setMessage("Successfully Updated Transaction Limit");
+        otp.setExpired(true);
+        return res;
     }
 }

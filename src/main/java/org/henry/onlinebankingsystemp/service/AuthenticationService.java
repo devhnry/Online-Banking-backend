@@ -1,212 +1,109 @@
 package org.henry.onlinebankingsystemp.service;
 
-import org.henry.onlinebankingsystemp.dto.RequestResponse;
-import org.henry.onlinebankingsystemp.entity.Account;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.entity.Admin;
-import org.henry.onlinebankingsystemp.entity.Role;
-import org.henry.onlinebankingsystemp.entity.Users;
-import org.henry.onlinebankingsystemp.repository.AccountRepository;
+import org.henry.onlinebankingsystemp.entity.Customer;
+import org.henry.onlinebankingsystemp.factory.AccountFactory;
 import org.henry.onlinebankingsystemp.repository.AdminRepository;
 import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
-import org.henry.onlinebankingsystemp.token.Token;
-import org.henry.onlinebankingsystemp.token.TokenType;
-import org.springframework.http.ResponseEntity;
+import org.henry.onlinebankingsystemp.entity.Token;
+import org.henry.onlinebankingsystemp.dto.enums.TokenType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class AuthenticationService {
     private final UserRepository userRepository;
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final PasswordEncoder passwordEncoder;
-    private final AccountRepository accountRepository;
     private final TokenRepository tokenRepository;
     private final AdminRepository adminRepository;
+    private final AccountFactory accountFactory;
 
-    public AuthenticationService(
-            AccountRepository accountRepository,
-            UserRepository userRepository,
-            JWTService jwtService,
-            AuthenticationManager authenticationManager,
-            PasswordEncoder passwordEncoder,
-            TokenRepository tokenRepository,
-            AdminRepository adminRepository) {
-        this.userRepository = userRepository;
-        this.adminRepository = adminRepository;
-        this.jwtService = jwtService;
-        this.authenticationManager = authenticationManager;
-        this.passwordEncoder = passwordEncoder;
-        this.accountRepository = accountRepository;
-        this.tokenRepository = tokenRepository;
+    public DefaultResponse signUp(SignUpDTO request){
+        return accountFactory.createAccount(request);
     }
 
-    private Long generateRandom8DigitNumber() {
-        return new Random().nextLong(100000000L);
-    }
-
-    public RequestResponse signUp(RequestResponse registrationRequest){
-        RequestResponse resp = new RequestResponse();
-        try {
-            Users users = new Users();
-            Admin admin = new Admin();
-            Account userAccount = new Account();
-
-            if (registrationRequest.getRole().equals(Role.ADMIN.toString())) {
-                Optional<Admin> adminOptional = adminRepository.findByEmail(registrationRequest.getEmail());
-                if (adminOptional.isPresent()) {
-                    resp.setStatusCode(500);
-                    resp.setError("Email Already Taken");
-                    return resp;
-                }
-
-                admin.setFirstName(registrationRequest.getFirst_name());
-                admin.setLastName(registrationRequest.getLast_name());
-                admin.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-                admin.setEmail(registrationRequest.getEmail());
-                admin.setRole(Role.valueOf(registrationRequest.getRole()));
-                Admin adminResult = adminRepository.save(admin);
-
-                if (adminResult.getAdminId() > 0) {
-                    resp.setAdmin(adminResult);
-                    resp.setFull_name(adminResult.getFirstName() + " " + adminResult.getLastName());
-                    resp.setMessage("Successful Signup ... (Admin save to the db)");
-                    resp.setStatusCode(200);
-                }
-            }else{
-
-                Optional<Users> userOptional = userRepository.findByEmail(registrationRequest.getEmail());
-                if (userOptional.isPresent()) {
-                    resp.setStatusCode(500);
-                    resp.setError("Email Already Taken");
-                    return resp;
-                }
-
-                users.setEmail(registrationRequest.getEmail());
-                users.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-                users.setRole(Role.valueOf("USER"));
-                users.setFirst_name(registrationRequest.getFirst_name());
-                users.setLast_name(registrationRequest.getLast_name());
-                users.setPhone_number(registrationRequest.getPhone_number());
-                users.setAccount_type(registrationRequest.getAccount_type());
-                users.setTransactionLimit(200_000);
-                users.setIsSuspended(false);
-                Users usersResult = userRepository.save(users);
-
-                //For the account details
-                userAccount.setUser_id(users.getUserId());
-                userAccount.setBalance(0);
-                userAccount.setAccountNumber(generateRandom8DigitNumber());
-
-                //Saving into the database
-                accountRepository.save(userAccount);
-                users.setAccount_details(userAccount);
-                userAccount.setAccount_type(users.getAccount_type());
-                userRepository.save(users);
-
-                if(usersResult.getUserId() > 0){
-                    resp.setUsers(usersResult);
-                    resp.setFull_name(usersResult.getFirst_name() + " " + usersResult.getLast_name());
-                    resp.setMessage("Successful Signup ... (User save to the db)");
-                    resp.setStatusCode(200);
-                }
-            }
-        }catch (Exception e){
-            resp.setStatusCode(500);
-            resp.setError(e.getMessage());
-        }
-        return resp;
-    }
-
-    public RequestResponse signIn(RequestResponse signinRequest) {
-        RequestResponse response = new RequestResponse();
+    public LoginResponseDTO login(LoginRequestDTO request) {
+        LoginResponseDTO res = new LoginResponseDTO();
+        log.info("Performing Authentication");
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            signinRequest.getEmail(), signinRequest.getPassword()));
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-            Optional<Admin> optionalAdmin = adminRepository.findByEmail(signinRequest.getEmail());
+            Optional<Admin> optionalAdmin = adminRepository.findByEmail(request.getEmail());
             if (optionalAdmin.isPresent()) {
                 var admin = optionalAdmin.orElseThrow();
                 var jwtToken = jwtService.generateToken(admin);
                 jwtService.generateRefreshToken(new HashMap<>(), admin);
 
-                response.setStatusCode(200);
-                response.setEmail(signinRequest.getEmail());
-                response.setToken(jwtToken);
-                response.setRefreshToken(jwtToken);
-                response.setExpirationTime("24hr");
-                response.setMessage("Successfully Signed In");
+                res.setStatusCode(200);
+                res.setEmail(request.getEmail());
+                res.setToken(jwtToken);
+                res.setRefreshToken(jwtToken);
+                res.setExpirationTime("24hr");
+                res.setMessage("Successfully Logged In");
+                log.info("Logged In Successfully");
 
-                // Revoke tokens for admin
                 revokeAllAdminTokens(admin);
-
-                // Save active token for admin
                 saveAdminToken(admin, jwtToken);
             } else {
-                Optional<Users> optionalUser = userRepository.findByEmail(signinRequest.getEmail());
-                // Check if the admin exists
-                if (optionalUser.isPresent()) {
-                    var user = optionalUser.orElseThrow();
-
-                    if(user.getIsSuspended()){
-                        response.setMessage("Your account has been suspended");
-                        response.setStatusCode(500);
-                        return response;
-                    }
-
-                    var jwtToken = jwtService.generateToken(user);
-                    jwtService.generateRefreshToken(new HashMap<>(), user);
-
-                    response.setStatusCode(200);
-                    response.setEmail(signinRequest.getEmail());
-                    response.setToken(jwtToken);
-                    response.setRefreshToken(jwtToken);
-                    response.setExpirationTime("24hr");
-                    response.setMessage("Successfully Signed In");
-
-                    // Revoke tokens for admin (if needed)
-                    revokeAllUserTokens(user);
-
-                    // Save token for admin
-                    saveUserToken(user, jwtToken);
-
-
-                } else {
-                    // If neither user nor admin exists
-                    response.setStatusCode(404);
-                    response.setError("User or Admin not found");
-                    return response;
+                boolean optionalUser = userRepository.findByEmail(request.getEmail()).isPresent();
+                if(!optionalUser){
+                    res.setStatusCode(404);
+                    res.setMessage("Customer or Admin not found");
+                    return res;
                 }
+                var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+                if(user.getIsSuspended()){
+                    res.setMessage("Your account has been suspended");
+                    res.setStatusCode(500);
+                    return res;
+                }
+
+                var jwtToken = jwtService.generateToken(user);
+                jwtService.generateRefreshToken(new HashMap<>(), user);
+
+                res.setStatusCode(200);
+                res.setEmail(request.getEmail());
+                res.setToken(jwtToken);
+                res.setRefreshToken(jwtToken);
+                res.setExpirationTime("24hr");
+                res.setMessage("Successfully Signed In");
+                log.info("Logged In Successfully");
+
+                revokeAllUserTokens(user);
+                saveUserToken(user, jwtToken);
             }
         } catch (Exception e) {
-            response.setStatusCode(500);
-            response.setError(e.getMessage());
+            res.setStatusCode(500);
+            res.setMessage(e.getMessage());
         }
-
-        return response;
+        return res;
     }
 
-    public RequestResponse refreshToken(RequestResponse refreshTokenRequest){
-        RequestResponse res = new RequestResponse();
+    public LoginResponseDTO refreshToken(RefreshTokenDTO refreshTokenRequest){
+        LoginResponseDTO res = new LoginResponseDTO();
         String userEmail = jwtService.extractUsername(refreshTokenRequest.getToken());
-        Users user = userRepository.findByEmail(userEmail).orElseThrow();
+        Customer customer = userRepository.findByEmail(userEmail).orElseThrow();
 
         try {
-            Optional<Users> optionalUser = userRepository.findByEmail(userEmail);
+            Optional<Customer> optionalUser = userRepository.findByEmail(userEmail);
             if(optionalUser.isPresent()){
-                if(jwtService.isTokenValid(refreshTokenRequest.getToken(), user)){
-                    var newToken = jwtService.generateToken(user);
+                if(jwtService.isTokenValid(refreshTokenRequest.getToken(), customer)){
+                    var newToken = jwtService.generateToken(customer);
 
-                    revokeAllUserTokens(user);
-                    saveUserToken(user,newToken);
+                    revokeAllUserTokens(customer);
+                    saveUserToken(customer,newToken);
 
                     res.setStatusCode(200);
                     res.setToken(newToken);
@@ -222,8 +119,8 @@ public class AuthenticationService {
                     if(jwtService.isTokenValid(refreshTokenRequest.getToken(), admin)){
                         var newToken = jwtService.generateToken(admin);
 
-                        revokeAllUserTokens(user);
-                        saveUserToken(user,newToken);
+                        revokeAllUserTokens(customer);
+                        saveUserToken(customer,newToken);
 
                         res.setStatusCode(200);
                         res.setToken(newToken);
@@ -240,9 +137,9 @@ public class AuthenticationService {
         return res;
     }
 
-    public void saveUserToken(Users user, String newToken) {
+    public void saveUserToken(Customer customer, String newToken) {
         var token = Token.builder()
-                .users(user)
+                .users(customer)
                 .token(newToken)
                 .tokenType(TokenType.BEARER)
                 .expired(false)
@@ -264,8 +161,8 @@ public class AuthenticationService {
         tokenRepository.save(token);
     }
 
-    public void revokeAllUserTokens(Users user){
-        var validUserTokens = tokenRepository.findValidTokenByUsers(user.getUserId());
+    public void revokeAllUserTokens(Customer customer){
+        var validUserTokens = tokenRepository.findValidTokenByCustomer(customer.getCustomerId());
         if(validUserTokens.isEmpty())
             return;
         validUserTokens.forEach(t -> {

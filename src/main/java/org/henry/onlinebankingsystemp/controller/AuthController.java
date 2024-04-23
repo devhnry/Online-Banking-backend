@@ -1,34 +1,31 @@
 package org.henry.onlinebankingsystemp.controller;
 
-import org.henry.onlinebankingsystemp.dto.RequestResponse;
-import org.henry.onlinebankingsystemp.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.service.AuthenticationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/auth")
+@RequiredArgsConstructor
+@RequestMapping("api/v1/auth")
 public class AuthController {
 
     private final AuthenticationService authenticationService;
 
-    public AuthController(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
+    @PostMapping("/signup")
+    public DefaultResponse signup(@RequestBody SignUpDTO request){
+        return authenticationService.signUp(request);
     }
 
-    @PostMapping(path = "/signup")
-    public ResponseEntity<RequestResponse> signup(@RequestBody RequestResponse signUpRequest){
-        return ResponseEntity.ok(authenticationService.signUp(signUpRequest));
+    @PostMapping("/login")
+    public LoginResponseDTO login(@RequestBody LoginRequestDTO request){
+        return authenticationService.login(request);
     }
 
-    @PostMapping(path = "/signin")
-    public ResponseEntity<RequestResponse> signin(@RequestBody RequestResponse signInRequest){
-        return ResponseEntity.ok(authenticationService.signIn(signInRequest));
-    }
-
-    @PostMapping(path = "/refresh")
-    public ResponseEntity<RequestResponse> refreshToken(@RequestBody RequestResponse refreshRequest){
-        return ResponseEntity.ok(authenticationService.refreshToken(refreshRequest));
+    @PostMapping("/refreshToken")
+    public LoginResponseDTO refreshToken(@RequestBody RefreshTokenDTO request){
+        return authenticationService.refreshToken(request);
     }
 }
 

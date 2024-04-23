@@ -4,15 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 @JsonIgnoreProperties
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class TransactionReqRes {
-    private Long userId;
+public class BalanceDTO {
     private String username;
-    private String email;
-    private Double amount;
-    private String description;
-    private Double updated_balance;
-    private Long account_number;
+    private BigDecimal balance;
 }
+

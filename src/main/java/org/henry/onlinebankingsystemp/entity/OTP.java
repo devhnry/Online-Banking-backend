@@ -1,4 +1,4 @@
-package org.henry.onlinebankingsystemp.otp;
+package org.henry.onlinebankingsystemp.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -6,10 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.henry.onlinebankingsystemp.entity.Admin;
-import org.henry.onlinebankingsystemp.entity.Users;
-
-import java.util.Date;
 
 @Data
 @Entity
@@ -26,11 +22,12 @@ public class OTP {
 
     private Long generatedTime;
     private Long expirationTime;
+    private String expiresIn;
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Users users;
+    @JoinColumn(name = "userId")
+    private Customer customer;
 
     @Override
     public String toString(){

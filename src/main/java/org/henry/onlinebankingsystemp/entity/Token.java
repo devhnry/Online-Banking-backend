@@ -1,10 +1,9 @@
-package org.henry.onlinebankingsystemp.token;
+package org.henry.onlinebankingsystemp.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.henry.onlinebankingsystemp.entity.Admin;
-import org.henry.onlinebankingsystemp.entity.Users;
+import org.henry.onlinebankingsystemp.dto.enums.TokenType;
 
 @Data
 @Entity
@@ -24,12 +23,12 @@ public class Token {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Users users;
+    @JoinColumn(name = "userId")
+    private Customer users;
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "admin_id")
+    @JoinColumn(name = "adminId")
     private Admin admin;
 
     @Override

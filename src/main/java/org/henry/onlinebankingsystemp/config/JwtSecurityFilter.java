@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.service.JWTService;
 import org.henry.onlinebankingsystemp.service.UserDetailService;
+import org.henry.onlinebankingsystemp.entity.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -17,16 +18,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 @Component
-public class JWTAuthFilter extends OncePerRequestFilter {
+public class JwtSecurityFilter extends OncePerRequestFilter {
 
     private final JWTService jwtService;
     private final UserDetailService userDetailService;
     private final TokenRepository tokenRepository;
 
     @Autowired
-    public JWTAuthFilter(JWTService jwtService, UserDetailService userDetailService, TokenRepository tokenRepository) {
+    public JwtSecurityFilter(JWTService jwtService, UserDetailService userDetailService, TokenRepository tokenRepository) {
         this.jwtService = jwtService;
         this.userDetailService = userDetailService;
         this.tokenRepository = tokenRepository;
@@ -48,8 +50,10 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = userDetailService.loadUserByUsername(userEmail);
 
+            Function<Token, Boolean> validateToken = t -> !t.getExpired().equals(true) && !t.getRevoked().equals(true);
+
             var isTokenValid = tokenRepository.findByToken(jwtToken).map(
-                    t -> !t.getExpired().equals(true) && !t.getRevoked().equals(true)
+                    validateToken
             ).orElse(false);
 
 

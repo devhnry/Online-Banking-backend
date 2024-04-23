@@ -7,10 +7,9 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserBalance {
-    private Long userId;
-    private String username;
-    private String email;
-    private Double balance;
+public class IdentityDTO {
+    private String type;
+    private String number;
+    private String image;
+    private String country;
 }
-

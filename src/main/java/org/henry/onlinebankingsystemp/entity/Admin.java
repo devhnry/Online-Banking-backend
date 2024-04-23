@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.henry.onlinebankingsystemp.token.Token;
+import lombok.ToString;
+import org.henry.onlinebankingsystemp.dto.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +15,9 @@ import java.util.List;
 
 @Data
 @Entity
+@Getter
+@Setter
+@ToString
 @Table(name = "admins")
 public class Admin implements UserDetails {
 
@@ -21,8 +25,8 @@ public class Admin implements UserDetails {
     @Getter
     @Id
     @SequenceGenerator(
-            name = "user_seq",
-            sequenceName = "user_seq",
+            name = "adminSeq",
+            sequenceName = "adminSeq",
             allocationSize = 1
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

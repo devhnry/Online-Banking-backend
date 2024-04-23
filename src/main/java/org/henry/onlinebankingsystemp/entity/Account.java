@@ -2,27 +2,36 @@ package org.henry.onlinebankingsystemp.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.henry.onlinebankingsystemp.dto.enums.AccountType;
+
+import java.math.BigDecimal;
 
 @Data
 @Entity
+@Getter
+@Setter
+@ToString
 @Table(name = "accounts")
 public class Account {
     @Id
     @SequenceGenerator(
-            name = "user_seq",
-            sequenceName = "user_seq",
-            allocationSize = 2
+            name = "accountSeq",
+            sequenceName = "accountSeq",
+            allocationSize = 1
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long account_id;
+    private Long accountId;
 
-    // One Account belongs to One User
-    @JoinColumn(name = "user_id", nullable = false)
-    private Long user_id;
+    @JoinColumn(name = "customerId", nullable = false)
+    private Long customerId;
 
-    private double balance;
-    private Long accountNumber;
-
+    private BigDecimal balance;
+    @Column(unique = true)
+    private String accountNumber;
     @Enumerated(EnumType.STRING)
     private AccountType account_type;
+    private BigDecimal transactionLimit;
 }

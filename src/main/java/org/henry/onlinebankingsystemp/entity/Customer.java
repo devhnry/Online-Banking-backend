@@ -4,8 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.henry.onlinebankingsystemp.otp.OTP;
-import org.henry.onlinebankingsystemp.token.Token;
+import lombok.ToString;
+import org.henry.onlinebankingsystemp.dto.AddressDTO;
+import org.henry.onlinebankingsystemp.dto.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,48 +16,50 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "users")
-public class Users implements UserDetails {
+@Setter
+@Getter
+@ToString
+@Table(name = "customers")
+public class Customer implements UserDetails {
 
     @Setter
     @Getter
     @Id
     @SequenceGenerator(
-            name = "user_seq",
-            sequenceName = "user_seq",
+            name = "userSeq",
+            sequenceName = "userSeq",
             allocationSize = 1
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long userId;
-    private String first_name;
-    private String last_name;
+    private Long customerId;
+    private String firstName;
+    private String lastName;
+    private String username;
 
     @Column(nullable = false, unique = true)
     private String email;
-
     @Column(nullable = false, length = 60)
     private String password;
+    private String dateOfBirth;
 
-    private Long phone_number;
+    @OneToOne
+    private Address address;
+    @OneToOne
+    private Country country;
+    @OneToOne
+    private Identity identity;
 
-    @Enumerated(EnumType.STRING)
-    private AccountType account_type;
-
+    private String phone;
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "users")
-    private List<Token> token;
-
-    @OneToMany(mappedBy = "users")
-    private List<OTP> otpCodes;
-
     @OneToOne
-    private Account account_details;
+    private Account account;
 
     private Boolean isSuspended;
 
-    private double transactionLimit;
+    @OneToMany
+    private List<VirtualAccount> virtualAccounts;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -89,6 +92,6 @@ public class Users implements UserDetails {
 
     @Override
     public String toString(){
-        return first_name + last_name;
+        return firstName + lastName;
     }
 }
