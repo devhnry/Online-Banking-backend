@@ -43,7 +43,7 @@ public class AccountService {
         return userRepository.findById(id).orElseThrow(
                 () -> new IllegalStateException("Customer with id " + id + " does not exist"));
     }
-    private Supplier<Customer> getCurrentUser = () -> { Long id = getUserId(); Customer customer = getDetails(id);
+    private final Supplier<Customer> getCurrentUser = () -> { Long id = getUserId(); Customer customer = getDetails(id);
         return customer;
     };
 
@@ -119,7 +119,7 @@ public class AccountService {
             if(tran.getTransactionType().equals(TransactionType.DEPOSIT)){
                 continue;
             }
-            totalAmount.add(tran.getAmount());
+            totalAmount = totalAmount.add(tran.getAmount());
         }
         return totalAmount;
     }
