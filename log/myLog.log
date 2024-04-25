@@ -1,133 +1,20 @@
-2024-04-23T11:17:32.030+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] o.h.o.OnlineBankingSystemPApplication    : Starting OnlineBankingSystemPApplication using Java 17.0.10 with PID 28747 (/Users/henry/Developer/SystemSpecs/OnlineBankSystem/target/classes started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
-2024-04-23T11:17:32.034+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] o.h.o.OnlineBankingSystemPApplication    : No active profile set, falling back to 1 default profile: "default"
-2024-04-23T11:17:32.803+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2024-04-23T11:17:32.891+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 79 ms. Found 8 JPA repository interfaces.
-2024-04-23T11:17:33.475+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 6100 (http)
-2024-04-23T11:17:33.486+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2024-04-23T11:17:33.487+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
-2024-04-23T11:17:33.532+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2024-04-23T11:17:33.533+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1443 ms
-2024-04-23T11:17:33.665+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2024-04-23T11:17:33.739+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
-2024-04-23T11:17:33.781+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2024-04-23T11:17:34.069+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2024-04-23T11:17:34.094+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2024-04-23T11:17:34.475+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@73da7f08
-2024-04-23T11:17:34.478+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2024-04-23T11:17:35.721+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2024-04-23T11:17:36.382+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2024-04-23T11:17:36.763+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2024-04-23T11:17:37.534+01:00  WARN 28747 --- [OnlineBankingSystemP] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2024-04-23T11:17:37.768+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5c8d22de, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@71ef3f0c, org.springframework.security.web.context.SecurityContextHolderFilter@2659225a, org.springframework.security.web.header.HeaderWriterFilter@541c7857, org.springframework.web.filter.CorsFilter@471021f8, org.springframework.security.web.authentication.logout.LogoutFilter@23195ebe, org.henry.onlinebankingsystemp.config.JwtSecurityFilter@4ce2f4d6, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@71b253b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@765cb6c1, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@3bbd9232, org.springframework.security.web.session.SessionManagementFilter@3fe8c952, org.springframework.security.web.access.ExceptionTranslationFilter@7375e6c1, org.springframework.security.web.access.intercept.AuthorizationFilter@1885d990]
-2024-04-23T11:17:38.004+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 6100 (http) with context path ''
-2024-04-23T11:17:38.016+01:00  INFO 28747 --- [OnlineBankingSystemP] [main] o.h.o.OnlineBankingSystemPApplication    : Started OnlineBankingSystemPApplication in 6.519 seconds (process running for 7.461)
-2024-04-23T11:17:47.290+01:00  INFO 28747 --- [OnlineBankingSystemP] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2024-04-23T11:17:47.295+01:00  INFO 28747 --- [OnlineBankingSystemP] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2024-04-23T11:17:47.308+01:00  INFO 28747 --- [OnlineBankingSystemP] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-2024-04-23T11:17:50.631+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] o.h.o.OnlineBankingSystemPApplication    : Starting OnlineBankingSystemPApplication using Java 17.0.10 with PID 28766 (/Users/henry/Developer/SystemSpecs/OnlineBankSystem/target/classes started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
-2024-04-23T11:17:50.632+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] o.h.o.OnlineBankingSystemPApplication    : No active profile set, falling back to 1 default profile: "default"
-2024-04-23T11:17:51.474+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2024-04-23T11:17:51.542+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 60 ms. Found 8 JPA repository interfaces.
-2024-04-23T11:17:52.064+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 6100 (http)
-2024-04-23T11:17:52.074+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2024-04-23T11:17:52.074+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
-2024-04-23T11:17:52.118+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2024-04-23T11:17:52.119+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1453 ms
-2024-04-23T11:17:52.237+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2024-04-23T11:17:52.293+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
-2024-04-23T11:17:52.333+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2024-04-23T11:17:52.650+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2024-04-23T11:17:52.687+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2024-04-23T11:17:53.207+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2c2aab92
-2024-04-23T11:17:53.210+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2024-04-23T11:17:55.434+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2024-04-23T11:17:55.656+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2024-04-23T11:17:56.251+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2024-04-23T11:17:57.063+01:00  WARN 28766 --- [OnlineBankingSystemP] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'accountController': Lookup method resolution failed
-2024-04-23T11:17:57.064+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2024-04-23T11:17:57.067+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2024-04-23T11:17:57.082+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-2024-04-23T11:17:57.084+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
-2024-04-23T11:17:57.104+01:00  INFO 28766 --- [OnlineBankingSystemP] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
-
-Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2024-04-23T11:17:57.140+01:00 ERROR 28766 --- [OnlineBankingSystemP] [main] o.s.boot.SpringApplication               : Application run failed
-
-org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'accountController': Lookup method resolution failed
-	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.checkLookupMethods(AutowiredAnnotationBeanPostProcessor.java:497) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:367) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1294) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1189) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:562) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:975) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:962) ~[spring-context-6.1.5.jar:6.1.5]
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:624) ~[spring-context-6.1.5.jar:6.1.5]
-	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:334) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1343) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.henry.onlinebankingsystemp.OnlineBankingSystemPApplication.main(OnlineBankingSystemPApplication.java:13) ~[classes/:na]
-Caused by: java.lang.IllegalStateException: Failed to introspect Class [org.henry.onlinebankingsystemp.controller.AccountController] from ClassLoader [jdk.internal.loader.ClassLoaders$AppClassLoader@14899482]
-	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:483) ~[spring-core-6.1.5.jar:6.1.5]
-	at org.springframework.util.ReflectionUtils.doWithLocalMethods(ReflectionUtils.java:320) ~[spring-core-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.checkLookupMethods(AutowiredAnnotationBeanPostProcessor.java:475) ~[spring-beans-6.1.5.jar:6.1.5]
-	... 19 common frames omitted
-Caused by: java.lang.NoClassDefFoundError: org/henry/onlinebankingsystemp/dto/BalanceDTO
-	at java.base/java.lang.Class.getDeclaredMethods0(Native Method) ~[na:na]
-	at java.base/java.lang.Class.privateGetDeclaredMethods(Class.java:3402) ~[na:na]
-	at java.base/java.lang.Class.getDeclaredMethods(Class.java:2504) ~[na:na]
-	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:465) ~[spring-core-6.1.5.jar:6.1.5]
-	... 21 common frames omitted
-Caused by: java.lang.ClassNotFoundException: org.henry.onlinebankingsystemp.dto.BalanceDTO
-	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641) ~[na:na]
-	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188) ~[na:na]
-	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:525) ~[na:na]
-	... 25 common frames omitted
-
-2024-04-23T11:18:05.711+01:00  INFO 28783 --- [OnlineBankingSystemP] [main] h.o.OnlineBankingSystemPApplicationTests : Starting OnlineBankingSystemPApplicationTests using Java 21.0.2 with PID 28783 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
-2024-04-23T11:18:05.713+01:00  INFO 28783 --- [OnlineBankingSystemP] [main] h.o.OnlineBankingSystemPApplicationTests : No active profile set, falling back to 1 default profile: "default"
-2024-04-23T11:18:06.577+01:00  INFO 28783 --- [OnlineBankingSystemP] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2024-04-23T11:18:06.679+01:00  INFO 28783 --- [OnlineBankingSystemP] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 93 ms. Found 8 JPA repository interfaces.
-2024-04-23T11:18:07.281+01:00  INFO 28783 --- [OnlineBankingSystemP] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2024-04-23T11:18:07.340+01:00  INFO 28783 --- [OnlineBankingSystemP] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
-2024-04-23T11:18:07.378+01:00  INFO 28783 --- [OnlineBankingSystemP] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2024-04-23T11:18:07.665+01:00  INFO 28783 --- [OnlineBankingSystemP] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2024-04-23T11:18:07.700+01:00  INFO 28783 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2024-04-23T11:18:08.336+01:00  INFO 28783 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@cd5ff55
-2024-04-23T11:18:08.338+01:00  INFO 28783 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2024-04-23T11:18:10.016+01:00  INFO 28783 --- [OnlineBankingSystemP] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2024-04-23T11:18:10.321+01:00  INFO 28783 --- [OnlineBankingSystemP] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2024-04-23T11:18:11.824+01:00  INFO 28783 --- [OnlineBankingSystemP] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2024-04-23T11:18:12.943+01:00  WARN 28783 --- [OnlineBankingSystemP] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2024-04-23T11:18:13.213+01:00  INFO 28783 --- [OnlineBankingSystemP] [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@49ffd0cb, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1254e9a7, org.springframework.security.web.context.SecurityContextHolderFilter@2e8ff687, org.springframework.security.web.header.HeaderWriterFilter@31e90355, org.springframework.web.filter.CorsFilter@262c75a3, org.springframework.security.web.authentication.logout.LogoutFilter@5c936b5f, org.henry.onlinebankingsystemp.config.JwtSecurityFilter@59960ae9, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@3268f664, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@51be4bf5, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@1881ef74, org.springframework.security.web.session.SessionManagementFilter@26a5775f, org.springframework.security.web.access.ExceptionTranslationFilter@5afaa87a, org.springframework.security.web.access.intercept.AuthorizationFilter@7158a28c]
-2024-04-23T11:18:13.567+01:00  INFO 28783 --- [OnlineBankingSystemP] [main] h.o.OnlineBankingSystemPApplicationTests : Started OnlineBankingSystemPApplicationTests in 8.176 seconds (process running for 9.465)
-2024-04-23T11:18:14.301+01:00  INFO 28783 --- [OnlineBankingSystemP] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2024-04-23T11:18:14.305+01:00  INFO 28783 --- [OnlineBankingSystemP] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2024-04-23T11:18:14.319+01:00  INFO 28783 --- [OnlineBankingSystemP] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-2024-04-23T11:36:52.896+01:00  INFO 29692 --- [OnlineBankingSystemP] [main] h.o.OnlineBankingSystemPApplicationTests : Starting OnlineBankingSystemPApplicationTests using Java 21.0.2 with PID 29692 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
-2024-04-23T11:36:52.898+01:00  INFO 29692 --- [OnlineBankingSystemP] [main] h.o.OnlineBankingSystemPApplicationTests : No active profile set, falling back to 1 default profile: "default"
-2024-04-23T11:36:53.818+01:00  INFO 29692 --- [OnlineBankingSystemP] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2024-04-23T11:36:53.916+01:00  INFO 29692 --- [OnlineBankingSystemP] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 88 ms. Found 8 JPA repository interfaces.
-2024-04-23T11:36:54.550+01:00  INFO 29692 --- [OnlineBankingSystemP] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2024-04-23T11:36:54.625+01:00  INFO 29692 --- [OnlineBankingSystemP] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
-2024-04-23T11:36:54.669+01:00  INFO 29692 --- [OnlineBankingSystemP] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2024-04-23T11:36:54.958+01:00  INFO 29692 --- [OnlineBankingSystemP] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2024-04-23T11:36:54.990+01:00  INFO 29692 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2024-04-23T11:36:55.451+01:00  INFO 29692 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3973b6d4
-2024-04-23T11:36:55.453+01:00  INFO 29692 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2024-04-23T11:36:56.823+01:00  INFO 29692 --- [OnlineBankingSystemP] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2024-04-23T11:36:56.977+01:00  INFO 29692 --- [OnlineBankingSystemP] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2024-04-23T11:36:57.512+01:00  INFO 29692 --- [OnlineBankingSystemP] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2024-04-23T11:36:58.479+01:00  WARN 29692 --- [OnlineBankingSystemP] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2024-04-23T11:36:58.753+01:00  INFO 29692 --- [OnlineBankingSystemP] [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@334c80be, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@3c1fe350, org.springframework.security.web.context.SecurityContextHolderFilter@7431f4b8, org.springframework.security.web.header.HeaderWriterFilter@26a5775f, org.springframework.web.filter.CorsFilter@2bb7229e, org.springframework.security.web.authentication.logout.LogoutFilter@1254e9a7, org.henry.onlinebankingsystemp.config.JwtSecurityFilter@2b2f8cf, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5c2fc86, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@2baf9cd4, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@52baaf87, org.springframework.security.web.session.SessionManagementFilter@2554bfa, org.springframework.security.web.access.ExceptionTranslationFilter@738ce295, org.springframework.security.web.access.intercept.AuthorizationFilter@2176d934]
-2024-04-23T11:36:59.076+01:00  INFO 29692 --- [OnlineBankingSystemP] [main] h.o.OnlineBankingSystemPApplicationTests : Started OnlineBankingSystemPApplicationTests in 6.538 seconds (process running for 7.81)
-2024-04-23T11:36:59.754+01:00  INFO 29692 --- [OnlineBankingSystemP] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2024-04-23T11:36:59.757+01:00  INFO 29692 --- [OnlineBankingSystemP] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2024-04-23T11:36:59.764+01:00  INFO 29692 --- [OnlineBankingSystemP] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-04-24T11:31:05.465+01:00  INFO 41428 --- [OnlineBankingSystemP] [main] h.o.OnlineBankingSystemPApplicationTests : Starting OnlineBankingSystemPApplicationTests using Java 21.0.2 with PID 41428 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-04-24T11:31:05.476+01:00  INFO 41428 --- [OnlineBankingSystemP] [main] h.o.OnlineBankingSystemPApplicationTests : No active profile set, falling back to 1 default profile: "default"
+2024-04-24T11:31:06.209+01:00  INFO 41428 --- [OnlineBankingSystemP] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-04-24T11:31:06.294+01:00  INFO 41428 --- [OnlineBankingSystemP] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 76 ms. Found 8 JPA repository interfaces.
+2024-04-24T11:31:06.794+01:00  INFO 41428 --- [OnlineBankingSystemP] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-04-24T11:31:06.858+01:00  INFO 41428 --- [OnlineBankingSystemP] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-04-24T11:31:06.889+01:00  INFO 41428 --- [OnlineBankingSystemP] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-04-24T11:31:07.156+01:00  INFO 41428 --- [OnlineBankingSystemP] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-04-24T11:31:07.192+01:00  INFO 41428 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-04-24T11:31:07.891+01:00  INFO 41428 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@191f4d65
+2024-04-24T11:31:07.893+01:00  INFO 41428 --- [OnlineBankingSystemP] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-04-24T11:31:09.151+01:00  INFO 41428 --- [OnlineBankingSystemP] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-04-24T11:31:09.396+01:00  INFO 41428 --- [OnlineBankingSystemP] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-04-24T11:31:09.888+01:00  INFO 41428 --- [OnlineBankingSystemP] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-04-24T11:31:10.776+01:00  WARN 41428 --- [OnlineBankingSystemP] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-04-24T11:31:11.097+01:00  INFO 41428 --- [OnlineBankingSystemP] [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@2094a7be, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@57f2a68c, org.springframework.security.web.context.SecurityContextHolderFilter@229f3c5d, org.springframework.security.web.header.HeaderWriterFilter@67d99612, org.springframework.web.filter.CorsFilter@2c63f1fe, org.springframework.security.web.authentication.logout.LogoutFilter@435d648d, org.henry.onlinebankingsystemp.config.JwtSecurityFilter@304f4888, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@111c9be, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@2176d934, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7c4c091a, org.springframework.security.web.session.SessionManagementFilter@1b596e21, org.springframework.security.web.access.ExceptionTranslationFilter@5264e41d, org.springframework.security.web.access.intercept.AuthorizationFilter@40977fab]
+2024-04-24T11:31:11.409+01:00  INFO 41428 --- [OnlineBankingSystemP] [main] h.o.OnlineBankingSystemPApplicationTests : Started OnlineBankingSystemPApplicationTests in 6.224 seconds (process running for 7.298)
+2024-04-24T11:31:12.224+01:00  INFO 41428 --- [OnlineBankingSystemP] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-04-24T11:31:12.226+01:00  INFO 41428 --- [OnlineBankingSystemP] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-04-24T11:31:12.237+01:00  INFO 41428 --- [OnlineBankingSystemP] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

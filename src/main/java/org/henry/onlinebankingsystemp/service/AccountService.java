@@ -39,9 +39,9 @@ public class AccountService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return ((Customer) authentication.getPrincipal()).getCustomerId();
     }
-    private Customer getDetails(Long id) {
+    public Customer getDetails(Long id) {
         return userRepository.findById(id).orElseThrow(
-                () -> new IllegalStateException("Customer with id " + id + "does not exist"));
+                () -> new IllegalStateException("Customer with id " + id + " does not exist"));
     }
     private Supplier<Customer> getCurrentUser = () -> { Long id = getUserId(); Customer customer = getDetails(id);
         return customer;
