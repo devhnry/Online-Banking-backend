@@ -38,9 +38,9 @@ class AccountServiceTest {
     @Captor private ArgumentCaptor argumentCaptor;
 
     private static final String TARGET_ACCOUNT_NUMBER = "234323452";
-    private static  TransferDTO request = new TransferDTO();
-    private static  Customer currentUser = new Customer();
-    private static Account account = new Account();
+    private static final TransferDTO request = new TransferDTO();
+    private static final Customer currentUser = new Customer();
+    private static final Account account = new Account();
 
     void initiateCustomerAndAccount(){
         request.setTargetAccountNumber(TARGET_ACCOUNT_NUMBER);
