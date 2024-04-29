@@ -129,27 +129,29 @@ public class AccountService {
         try {
             BalanceDTO userBalance = new BalanceDTO();
             Customer customer = getCurrentUser.get();
-            Transaction transaction = new Transaction();
 
-            getDailyTransactionAmount(customer.getCustomerId());
+//            getDailyTransactionAmount(customer.getCustomerId());
+
+            log.info("Comparing Balance and amount returned");
+            if(request.getAmount().compareTo(BigDecimal.ZERO) < 0){
+                res.setStatusCode(500);
+                res.setMessage("Invalid amount");
+            }
+
+            log.info("Checking for adequate balance");
+            if(request.getAmount().compareTo(customer.getAccount().getBalance()) > 0){
+                res.setStatusCode(500);
+                res.setMessage("Insufficient Balance");
+                return res;
+            }
 
             log.info("Performing Transaction Limit Check");
-            if(!transactionType.equals(TransactionType.DEPOSIT)){
-                if(getDailyTransactionAmount(customer.getCustomerId()).compareTo(customer.getAccount().getTransactionLimit()) < 0){
+            if(transactionType != TransactionType.DEPOSIT){
+                if(getDailyTransactionAmount(customer.getCustomerId()).add(request.getAmount()).compareTo(customer.getAccount().getTransactionLimit()) > 0){
                     res.setStatusCode(500);
                     res.setMessage("You have exceeded your transaction limit for today");
                     return res;
                 }
-            }
-
-            log.info("Comparing Balance and amount returned");
-            if(request.getAmount().compareTo(BigDecimal.valueOf(0)) < 0){
-                res.setStatusCode(500);
-                res.setMessage("Invalid amount");
-                if(request.getAmount().compareTo(customer.getAccount().getBalance()) > 0){
-                    res.setMessage("Insufficient Balance");
-                }
-                return res;
             }
 
             BigDecimal newBalance;
@@ -162,6 +164,7 @@ public class AccountService {
             Account userAccount = customer.getAccount();
             userAccount.setBalance(newBalance);
 
+            Transaction transaction = new Transaction();
             transaction.setCustomer(customer);
             transaction.setAccount(userAccount);
             transaction.setTransactionType(transactionType);

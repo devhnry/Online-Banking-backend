@@ -1,7 +1,6 @@
 package org.henry.onlinebankingsystemp.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.henry.onlinebankingsystemp.dto.BalanceDTO;
 import org.henry.onlinebankingsystemp.dto.DefaultResponse;
 import org.henry.onlinebankingsystemp.dto.TransactionDTO;
 import org.henry.onlinebankingsystemp.dto.TransferDTO;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,31 +45,27 @@ class AccountServiceTest {
     private static final String TARGET_ACCOUNT_NUMBER = "234323452";
     private static final TransferDTO request = new TransferDTO();
     private static final Customer currentUser = new Customer();
-    private static final Account account = new Account();
+    private static Account account = new Account();
+    private static Transaction transaction = new Transaction();
 
-    void initiateCustomerAndAccount(){
+    void initiateCustomerAndAccount() {
         request.setTargetAccountNumber(TARGET_ACCOUNT_NUMBER);
         currentUser.setCustomerId(1L);
+        account.setTransactionLimit(BigDecimal.valueOf(200000.00));
         account.setBalance(BigDecimal.valueOf(3000L));
         account.setCustomerId(currentUser.getCustomerId());
         currentUser.setAccount(account);
 
-        // Mocking authentication
         Authentication authentication = mock(Authentication.class);
         when(authentication.getPrincipal()).thenReturn(currentUser);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        log.info("Getting User");
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(currentUser));
-
-//        log.info("Retrieving account from User");
-//        given(accountRepository.findByAccountNumber(TARGET_ACCOUNT_NUMBER)).willReturn(Optional.of(account));
     }
 
     @Test
     public void transferMoney() {
         initiateCustomerAndAccount();
-        log.info("Retrieving account from User");
         given(accountRepository.findByAccountNumber(TARGET_ACCOUNT_NUMBER)).willReturn(Optional.of(account));
 
         request.setAmount(BigDecimal.valueOf(500)); // Assuming transfer amount is valid
@@ -93,7 +87,7 @@ class AccountServiceTest {
     @Test
     @DisplayName("Cannot Transfer less than 200 NGN")
     void invalidAmount(){
-        log.info("Retrieving account from User");
+        initiateCustomerAndAccount();
         given(accountRepository.findByAccountNumber(TARGET_ACCOUNT_NUMBER)).willReturn(Optional.of(account));
 
         request.setAmount(BigDecimal.valueOf(3000)); // Assuming transfer amount is valid
@@ -154,54 +148,66 @@ class AccountServiceTest {
     void updateBalanceForTransactionTypeDeposit() {
         initiateCustomerAndAccount();
         TransactionDTO request = new TransactionDTO();
-
         request.setAmount(BigDecimal.valueOf(200.00));
-        request.setTargetAccountNumber(TARGET_ACCOUNT_NUMBER);
-
         DefaultResponse response = underTest.updateBalance(request, TransactionType.DEPOSIT, "addition");
         assertEquals(200, response.getStatusCode());
         assertEquals("Deposit Successful", response.getMessage());
     }
 
     @Test
-    void updateBalanceForTransactionTypeTransfer() {
+    void updateBalanceForTransactionTypeWithdraw() {
         initiateCustomerAndAccount();
-        account.setTransactionLimit(BigDecimal.valueOf(200000.00));
         TransactionDTO request = new TransactionDTO();
-
-        request.setAmount(BigDecimal.valueOf(200.00));
-        request.setTargetAccountNumber(TARGET_ACCOUNT_NUMBER);
-
+        request.setAmount(BigDecimal.valueOf(600.00));
         DefaultResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
+        log.info(response.getMessage());
         assertEquals(200, response.getStatusCode());
         assertEquals("Withdrawal Successful", response.getMessage());
-
     }
 
     @Test
     void willReturnTransactionLimitMessage(){
         initiateCustomerAndAccount();
-        account.setTransactionLimit(BigDecimal.valueOf(200000.00));
         Transaction transaction = new Transaction();
-        transaction.setCustomer(currentUser);
-        transaction.setAccount(account);
-        transaction.setAmount(new BigDecimal("200000.00"));
-        currentUser.setAccount(account);
-
         TransactionDTO request = new TransactionDTO();
 
-        request.setAmount(BigDecimal.valueOf(200001.00));
+        transaction.setAmount(new BigDecimal("200000.00"));
+        transaction.setAccount(account);
+        transaction.setCustomer(currentUser);
+        transaction.setTransactionType(TransactionType.WITHDRAWAL);
+        currentUser.setAccount(account);
+        request.setAmount(BigDecimal.valueOf(2500.00));
         request.setTargetAccountNumber(TARGET_ACCOUNT_NUMBER);
 
+        currentUser.getAccount().getTransactionLimit();
+
+        transaction.getCustomer().getAccount();
+
+        given(transactionRepo.findTransactionByCustomer(currentUser.getCustomerId())).willReturn(List.of(transaction));
+
         DefaultResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
+        log.info(response.getMessage());
         assertEquals(500, response.getStatusCode());
         assertEquals("You have exceeded your transaction limit for today", response.getMessage());
     }
 
-    @Test
-    void willReturnInvalidAmountIfGivenNegativeAmount(){
-
-    }
+//    @Test
+//    void willReturnInvalidAmountIfGivenNegativeAmount(){
+//        initiateCustomerAndAccount();
+//        account.setTransactionLimit(BigDecimal.valueOf(200000.00));
+//        TransactionDTO request = new TransactionDTO();
+//        Transaction transaction = new Transaction();
+//        transaction.setCustomer(currentUser);
+//        transaction.setAccount(account);
+//        transaction.setAmount(new BigDecimal("20000.00"));
+//        request.setAmount(BigDecimal.valueOf(-300.00));
+//        request.setTargetAccountNumber(TARGET_ACCOUNT_NUMBER);
+//
+//
+//        DefaultResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
+//        assertEquals(500, response.getStatusCode());
+//        assertEquals("Invalid amount", response.getMessage());
+//    }
 
 
     @Test
