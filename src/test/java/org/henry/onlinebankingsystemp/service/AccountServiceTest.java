@@ -3,8 +3,10 @@ package org.henry.onlinebankingsystemp.service;
 import lombok.extern.slf4j.Slf4j;
 import org.henry.onlinebankingsystemp.dto.DefaultResponse;
 import org.henry.onlinebankingsystemp.dto.TransferDTO;
+import org.henry.onlinebankingsystemp.dto.enums.TransactionType;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Customer;
+import org.henry.onlinebankingsystemp.entity.Transaction;
 import org.henry.onlinebankingsystemp.repository.AccountRepository;
 import org.henry.onlinebankingsystemp.repository.TransactionRepo;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
@@ -19,6 +21,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -41,7 +45,6 @@ class AccountServiceTest {
     private static final TransferDTO request = new TransferDTO();
     private static final Customer currentUser = new Customer();
     private static final Account account = new Account();
-
     void initiateCustomerAndAccount(){
         request.setTargetAccountNumber(TARGET_ACCOUNT_NUMBER);
         currentUser.setCustomerId(1L);
@@ -111,6 +114,37 @@ class AccountServiceTest {
         DefaultResponse response = underTest.transferMoney(request);
         assertEquals(500, response.getStatusCode());
         assertEquals("Can't transfer less than 200 NGN", response.getMessage());
+    }
+
+    @Test
+    void willReturnZeroForDailyTransactionAmountIfEmptyList(){
+        List<Transaction> transactions = new ArrayList<>();
+
+        given(transactionRepo.findTransactionByCustomer(currentUser.getCustomerId())).willReturn(transactions);
+        BigDecimal result = underTest.getDailyTransactionAmount(currentUser.getCustomerId());
+
+        assertEquals(BigDecimal.valueOf(0.0), result);
+    }
+
+    @Test
+    void willReturnDailyTransactionAmount(){
+        Transaction transaction = new Transaction();
+        transaction.setAmount(BigDecimal.valueOf(300.0));
+        transaction.setTransactionType(TransactionType.TRANSFER);
+
+        Transaction transaction2 = new Transaction();
+        transaction2.setAmount(BigDecimal.valueOf(300.0));
+        transaction2.setTransactionType(TransactionType.WITHDRAWAL);
+
+        Transaction transaction3 = new Transaction();
+        transaction3.setAmount(BigDecimal.valueOf(300.0));
+        transaction3.setTransactionType(TransactionType.DEPOSIT);
+
+        List<Transaction> transactions = List.of(transaction, transaction2, transaction3);
+
+        given(transactionRepo.findTransactionByCustomer(currentUser.getCustomerId())).willReturn(transactions);
+        BigDecimal result = underTest.getDailyTransactionAmount(currentUser.getCustomerId());
+        assertEquals(BigDecimal.valueOf(600.0), result);
     }
 
     @Test

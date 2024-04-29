@@ -112,7 +112,7 @@ public class AccountService {
         return res;
     }
 
-    private BigDecimal getDailyTransactionAmount(Long id) {
+    public BigDecimal getDailyTransactionAmount(Long id) {
         List<Transaction> transactions = transactionRepo.findTransactionByCustomer(id);
         BigDecimal totalAmount = BigDecimal.valueOf(0.0);
         for(Transaction tran : transactions){
