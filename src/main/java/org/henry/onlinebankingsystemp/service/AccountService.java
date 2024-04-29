@@ -130,12 +130,11 @@ public class AccountService {
             BalanceDTO userBalance = new BalanceDTO();
             Customer customer = getCurrentUser.get();
 
-//            getDailyTransactionAmount(customer.getCustomerId());
-
             log.info("Comparing Balance and amount returned");
             if(request.getAmount().compareTo(BigDecimal.ZERO) < 0){
                 res.setStatusCode(500);
                 res.setMessage("Invalid amount");
+                return res;
             }
 
             log.info("Checking for adequate balance");
@@ -180,7 +179,7 @@ public class AccountService {
             transaction.setRunningBalance(request.getAmount());
             transaction.setTransactionRef(generator.generateReference());
 
-            //Response sent
+
             userBalance.setUsername(customer.getUsername());
             userBalance.setBalance(newBalance);
 

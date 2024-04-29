@@ -12,7 +12,6 @@ import org.henry.onlinebankingsystemp.repository.AccountRepository;
 import org.henry.onlinebankingsystemp.repository.TransactionRepo;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.henry.onlinebankingsystemp.service.utils.AccountNumberGenerator;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -178,11 +177,6 @@ class AccountServiceTest {
         currentUser.setAccount(account);
         request.setAmount(BigDecimal.valueOf(2500.00));
         request.setTargetAccountNumber(TARGET_ACCOUNT_NUMBER);
-
-        currentUser.getAccount().getTransactionLimit();
-
-        transaction.getCustomer().getAccount();
-
         given(transactionRepo.findTransactionByCustomer(currentUser.getCustomerId())).willReturn(List.of(transaction));
 
         DefaultResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
@@ -191,32 +185,28 @@ class AccountServiceTest {
         assertEquals("You have exceeded your transaction limit for today", response.getMessage());
     }
 
-//    @Test
-//    void willReturnInvalidAmountIfGivenNegativeAmount(){
-//        initiateCustomerAndAccount();
-//        account.setTransactionLimit(BigDecimal.valueOf(200000.00));
-//        TransactionDTO request = new TransactionDTO();
-//        Transaction transaction = new Transaction();
-//        transaction.setCustomer(currentUser);
-//        transaction.setAccount(account);
-//        transaction.setAmount(new BigDecimal("20000.00"));
-//        request.setAmount(BigDecimal.valueOf(-300.00));
-//        request.setTargetAccountNumber(TARGET_ACCOUNT_NUMBER);
-//
-//
-//        DefaultResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
-//        assertEquals(500, response.getStatusCode());
-//        assertEquals("Invalid amount", response.getMessage());
-//    }
-
-
     @Test
-    @Disabled
-    void depositMoney() {
+    void willReturnInvalidAmountIfGivenNegativeAmount(){
+        initiateCustomerAndAccount();
+        account.setTransactionLimit(BigDecimal.valueOf(200000.00));
+        TransactionDTO request = new TransactionDTO();
+        request.setAmount(BigDecimal.valueOf(-300.00));
+
+        DefaultResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
+        assertEquals(500, response.getStatusCode());
+        assertEquals("Invalid amount", response.getMessage());
     }
 
+
     @Test
-    @Disabled
-    void withdrawMoney() {
+    void willReturnInsufficientBalanceIfGivenMoreThanBalance(){
+        initiateCustomerAndAccount();
+        account.setTransactionLimit(BigDecimal.valueOf(200000.00));
+        TransactionDTO request = new TransactionDTO();
+        request.setAmount(BigDecimal.valueOf(3500.00));
+
+        DefaultResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
+        assertEquals(500, response.getStatusCode());
+        assertEquals("Insufficient Balance", response.getMessage());
     }
 }
