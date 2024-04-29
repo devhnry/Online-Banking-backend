@@ -135,7 +135,7 @@ public class AccountService {
 
             log.info("Performing Transaction Limit Check");
             if(!transactionType.equals(TransactionType.DEPOSIT)){
-                if(getDailyTransactionAmount(customer.getCustomerId()).compareTo(customer.getAccount().getTransactionLimit()) > 0){
+                if(getDailyTransactionAmount(customer.getCustomerId()).compareTo(customer.getAccount().getTransactionLimit()) < 0){
                     res.setStatusCode(500);
                     res.setMessage("You have exceeded your transaction limit for today");
                     return res;

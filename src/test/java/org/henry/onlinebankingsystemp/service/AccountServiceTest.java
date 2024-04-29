@@ -182,10 +182,17 @@ class AccountServiceTest {
     void willReturnTransactionLimitMessage(){
         initiateCustomerAndAccount();
         account.setTransactionLimit(BigDecimal.valueOf(200000.00));
+        Transaction transaction = new Transaction();
+        transaction.setCustomer(currentUser);
+        transaction.setAccount(account);
+        transaction.setAmount(new BigDecimal("200000.00"));
+        currentUser.setAccount(account);
+
         TransactionDTO request = new TransactionDTO();
 
         request.setAmount(BigDecimal.valueOf(200001.00));
         request.setTargetAccountNumber(TARGET_ACCOUNT_NUMBER);
+
         DefaultResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
         assertEquals(500, response.getStatusCode());
         assertEquals("You have exceeded your transaction limit for today", response.getMessage());
