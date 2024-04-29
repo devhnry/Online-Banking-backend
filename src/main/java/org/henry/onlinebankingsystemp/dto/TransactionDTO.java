@@ -3,11 +3,9 @@ package org.henry.onlinebankingsystemp.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import org.henry.onlinebankingsystemp.dto.enums.TransactionType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Data
 @JsonIgnoreProperties
