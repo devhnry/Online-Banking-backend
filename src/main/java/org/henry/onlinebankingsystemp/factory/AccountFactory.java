@@ -14,6 +14,7 @@ import org.henry.onlinebankingsystemp.repository.AdminRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.henry.onlinebankingsystemp.service.utils.AccountNumberGenerator;
 import org.henry.onlinebankingsystemp.service.utils.PasswordValidation;
+import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class AccountFactory {
     private DefaultResponse signUp(SignUpDTO signUpRequest){
         try {
             if (signUpRequest.getRole() == Role.ADMIN){
-                adminSignUp(signUpRequest);
+                return adminSignUp(signUpRequest);
             }
 
             Customer customer = new Customer();
@@ -81,10 +82,14 @@ public class AccountFactory {
             res.setStatusCode(200);
             res.setMessage("Successful Signup...");
             res.setData(customer);
-        }catch (Exception e){
+        }catch (ConstraintViolationException e) {
             res.setStatusCode(500);
-            res.setMessage(e.getMessage());
+            res.setMessage("Email Already In Use");
         }
+//        }catch (Exception e){
+//            res.setStatusCode(500);
+//            res.setMessage(e.getMessage());
+//        }
         return res;
     }
 
