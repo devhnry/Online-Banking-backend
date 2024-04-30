@@ -40,14 +40,6 @@ public class Customer implements UserDetails {
     private String email;
     @Column(nullable = false, length = 60)
     private String password;
-    private String dateOfBirth;
-
-    @OneToOne
-    private Address address;
-    @OneToOne
-    private Country country;
-    @OneToOne
-    private Identity identity;
 
     private String phone;
     @Enumerated(EnumType.STRING)

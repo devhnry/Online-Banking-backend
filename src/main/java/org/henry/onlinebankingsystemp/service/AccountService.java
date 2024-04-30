@@ -138,7 +138,7 @@ public class AccountService {
             }
 
             log.info("Checking for adequate balance");
-            if(request.getAmount().compareTo(customer.getAccount().getBalance()) > 0){
+            if(request.getAmount().compareTo(customer.getAccount().getBalance()) < 0){
                 res.setStatusCode(500);
                 res.setMessage("Insufficient Balance");
                 return res;

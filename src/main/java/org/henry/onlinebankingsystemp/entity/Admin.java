@@ -34,6 +34,7 @@ public class Admin implements UserDetails {
 
     private String firstName;
     private String lastName;
+    private String username;
 
     @Column(unique = true, nullable = false)
     private String email;

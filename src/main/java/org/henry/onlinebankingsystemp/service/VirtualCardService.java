@@ -39,51 +39,51 @@ public class VirtualCardService {
     private Supplier<Customer> getCurrentUser = () -> { Long id = getUserId(); Customer customer = getDetails(id);
         return customer;
     };
+//
+//    private CardHolderDTO createCardHolder(CardHolderDTO cardHolder){
+//        try {
+//            CardHolderDTO holder = createCardHolderFromCustomer(cardHolder);
+//            log.info("Creating cardHolder Account for Customer");
+//            new CardHolderDTO();
+//            HttpEntity<CardHolderDTO> httpEntity = new HttpEntity<>(holder,getHttpHeader());
+//            String url = baseUrl + "cardholders";
+//            var response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, CardHolderDTO.class);
+//            CardHolderDTO cardholder = response.getBody();
+//            return cardholder;
+//        } catch (RestClientException e) {
+//            log.error(e.getMessage());
+//            throw new RuntimeException(e);
+//        }
+//    }
 
-    private CardHolderDTO createCardHolder(CardHolderDTO cardHolder){
-        try {
-            CardHolderDTO holder = createCardHolderFromCustomer(cardHolder);
-            log.info("Creating cardHolder Account for Customer");
-            new CardHolderDTO();
-            HttpEntity<CardHolderDTO> httpEntity = new HttpEntity<>(holder,getHttpHeader());
-            String url = baseUrl + "cardholders";
-            var response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, CardHolderDTO.class);
-            CardHolderDTO cardholder = response.getBody();
-            return cardholder;
-        } catch (RestClientException e) {
-            log.error(e.getMessage());
-            throw new RuntimeException(e);
-        }
-    }
-
-    private CardHolderDTO createCardHolderFromCustomer(CardHolderDTO cardHolder) {
-        Customer customer = getCurrentUser.get();
-        var customerAddress = customer.getAddress();
-        var address = new AddressDTO();
-
-        address.setCity(customerAddress.getCity());
-        address.setCountry(customerAddress.getCountry());
-        address.setState(customerAddress.getState());
-        address.setZip_code(customerAddress.getZipCode());
-        address.setStreet(customerAddress.getStreet());
-
-        cardHolder.setFirst_name(customer.getFirstName());
-        cardHolder.setLast_name(customer.getLastName());
-        cardHolder.setEmail(customer.getEmail());
-        cardHolder.setPhone(customer.getPhone());
-        cardHolder.setDate_of_birth(customer.getDateOfBirth());
-        cardHolder.setAddress(address);
-
-        cardHolder.getCountry_identity().setType(customer.getCountry().getType());
-        cardHolder.getCountry_identity().setNumber(customer.getCountry().getNumber());
-
-        cardHolder.getIdentity().setCountry(customer.getIdentity().getCountry());
-        cardHolder.getIdentity().setType(customer.getIdentity().getType());
-        cardHolder.getIdentity().setImage(customer.getIdentity().getImage());
-        cardHolder.getIdentity().setNumber(customer.getIdentity().getNumber());
-
-        return cardHolder;
-    }
+//    private CardHolderDTO createCardHolderFromCustomer(CardHolderDTO cardHolder) {
+//        Customer customer = getCurrentUser.get();
+//        var customerAddress = customer.getAddress();
+//        var address = new AddressDTO();
+//
+//        address.setCity(customerAddress.getCity());
+//        address.setCountry(customerAddress.getCountry());
+//        address.setState(customerAddress.getState());
+//        address.setZip_code(customerAddress.getZipCode());
+//        address.setStreet(customerAddress.getStreet());
+//
+//        cardHolder.setFirst_name(customer.getFirstName());
+//        cardHolder.setLast_name(customer.getLastName());
+//        cardHolder.setEmail(customer.getEmail());
+//        cardHolder.setPhone(customer.getPhone());
+//        cardHolder.setDate_of_birth(customer.getDateOfBirth());
+//        cardHolder.setAddress(address);
+//
+//        cardHolder.getCountry_identity().setType(customer.getCountry().getType());
+//        cardHolder.getCountry_identity().setNumber(customer.getCountry().getNumber());
+//
+//        cardHolder.getIdentity().setCountry(customer.getIdentity().getCountry());
+//        cardHolder.getIdentity().setType(customer.getIdentity().getType());
+//        cardHolder.getIdentity().setImage(customer.getIdentity().getImage());
+//        cardHolder.getIdentity().setNumber(customer.getIdentity().getNumber());
+//
+//        return cardHolder;
+//    }
 
     private HttpHeaders getHttpHeader(){
         HttpHeaders headers = new HttpHeaders();

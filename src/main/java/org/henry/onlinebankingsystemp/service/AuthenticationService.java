@@ -52,7 +52,7 @@ public class AuthenticationService {
                 res.setRefreshToken(jwtToken);
                 res.setExpirationTime("24hr");
                 res.setMessage("Successfully Logged In");
-                log.info("Logged In Successfully");
+                log.info(res.getMessage());
 
                 revokeAllAdminTokens(admin);
                 saveAdminToken(admin, jwtToken);
