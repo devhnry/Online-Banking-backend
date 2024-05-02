@@ -5,6 +5,7 @@ import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.entity.OTP;
 import org.henry.onlinebankingsystemp.service.AccountService;
 import org.henry.onlinebankingsystemp.service.UserService;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

@@ -4,11 +4,13 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.service.JWTService;
 import org.henry.onlinebankingsystemp.service.UserDetailService;
 import org.henry.onlinebankingsystemp.entity.Token;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,18 +23,13 @@ import java.io.IOException;
 import java.util.function.Function;
 
 @Component
+@AutoConfiguration
+@RequiredArgsConstructor
 public class JwtSecurityFilter extends OncePerRequestFilter {
 
     private final JWTService jwtService;
     private final UserDetailService userDetailService;
     private final TokenRepository tokenRepository;
-
-    @Autowired
-    public JwtSecurityFilter(JWTService jwtService, UserDetailService userDetailService, TokenRepository tokenRepository) {
-        this.jwtService = jwtService;
-        this.userDetailService = userDetailService;
-        this.tokenRepository = tokenRepository;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
