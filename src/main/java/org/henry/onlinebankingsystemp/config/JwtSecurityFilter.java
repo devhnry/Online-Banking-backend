@@ -11,6 +11,9 @@ import org.henry.onlinebankingsystemp.service.UserDetailService;
 import org.henry.onlinebankingsystemp.entity.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,7 +26,7 @@ import java.io.IOException;
 import java.util.function.Function;
 
 @Component
-@AutoConfiguration
+@EnableAutoConfiguration
 @RequiredArgsConstructor
 public class JwtSecurityFilter extends OncePerRequestFilter {
 

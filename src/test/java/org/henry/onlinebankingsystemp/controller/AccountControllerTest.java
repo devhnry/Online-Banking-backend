@@ -4,9 +4,11 @@ import org.hamcrest.Matchers;
 import org.henry.onlinebankingsystemp.dto.BalanceDTO;
 import org.henry.onlinebankingsystemp.dto.enums.Role;
 import org.henry.onlinebankingsystemp.entity.Customer;
+import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.henry.onlinebankingsystemp.service.AccountService;
 import org.henry.onlinebankingsystemp.service.JWTService;
+import org.henry.onlinebankingsystemp.service.UserDetailService;
 import org.henry.onlinebankingsystemp.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,6 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.client.RestTemplate;
 
 @WebMvcTest(AccountController.class)
 @Import(WebSecurity.class)
@@ -55,6 +58,10 @@ class AccountControllerTest {
     @MockBean private AccountService accountService;
     @Mock private UserRepository userRepository;
     @MockBean private UserService userService;
+    @MockBean private JWTService jwtService;
+    @MockBean private UserDetailService userDetailService;
+    @MockBean private TokenRepository tokenRepository;
+    @MockBean private RestTemplate restTemplate;
     @Autowired private MockMvc mockMvc;
     @InjectMocks private AccountController accountController;
 
