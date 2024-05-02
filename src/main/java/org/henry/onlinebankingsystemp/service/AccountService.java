@@ -137,8 +137,14 @@ public class AccountService {
                 return res;
             }
 
+            int b1 = request.getAmount().compareTo(customer.getAccount().getBalance());
+            boolean b2 = request.getAmount().compareTo(customer.getAccount().getBalance()) == -1;
+            boolean b3 = request.getAmount().compareTo(customer.getAccount().getBalance()) < 0;
+            boolean b4 = request.getAmount().compareTo(customer.getAccount().getBalance()) > 0;
+            boolean b5 = request.getAmount().compareTo(customer.getAccount().getBalance()) == 1;
+
             log.info("Checking for adequate balance");
-            if(request.getAmount().compareTo(customer.getAccount().getBalance()) < 0){
+            if(request.getAmount().compareTo(customer.getAccount().getBalance()) != -1 && transactionType == TransactionType.WITHDRAWAL){
                 res.setStatusCode(500);
                 res.setMessage("Insufficient Balance");
                 return res;

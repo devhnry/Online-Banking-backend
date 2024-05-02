@@ -147,7 +147,7 @@ class AccountServiceTest {
     void updateBalanceForTransactionTypeDeposit() {
         initiateCustomerAndAccount();
         TransactionDTO request = new TransactionDTO();
-        request.setAmount(BigDecimal.valueOf(200.00));
+        request.setAmount(BigDecimal.valueOf(200));
         DefaultResponse response = underTest.updateBalance(request, TransactionType.DEPOSIT, "addition");
         assertEquals(200, response.getStatusCode());
         assertEquals("Deposit Successful", response.getMessage());
