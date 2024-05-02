@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.function.Function;
 
 @Component
-@EnableAutoConfiguration
 @RequiredArgsConstructor
 public class JwtSecurityFilter extends OncePerRequestFilter {
 
