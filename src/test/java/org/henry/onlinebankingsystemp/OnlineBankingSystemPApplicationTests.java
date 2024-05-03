@@ -16,22 +16,4 @@ class OnlineBankingSystemPApplicationTests {
     @Test
     void contextLoads() {
     }
-
-    @TestConfiguration(proxyBeanMethods = false)
-    static class RestTemplateBuilderConfiguration {
-
-        @Bean
-        RestTemplateBuilder restTemplateBuilder() {
-            return new RestTemplateBuilder().setConnectTimeout(Duration.ofSeconds(1))
-                    .setReadTimeout(Duration.ofSeconds(1));
-        }
-
-        @Bean
-        JWTService jwtService(){
-            return new JWTService();
-        }
-
-    }
-
-
 }
