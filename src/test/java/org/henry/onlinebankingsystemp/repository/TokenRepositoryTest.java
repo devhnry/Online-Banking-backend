@@ -24,11 +24,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
 import org.testcontainers.containers.MySQLContainer;
 
 import javax.sql.DataSource;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -92,7 +96,23 @@ class TokenRepositoryTest {
     }
 
     @Test
+    @Sql(scripts = "/scripts/FIND_TOKEN_BY_CUSTOMER.sql")
     void findValidTokenByCustomer() {
+        List<Token> tokens = underTest.findValidTokenByCustomer(1L);
+
+        assertEquals(3, underTest.count());
+        assertEquals(2, tokens.size());
+
+        underTest.findValidTokenByCustomer(1L).forEach(token -> {
+                    System.out.println(token.getId());
+                    System.out.println(token.getToken());
+                    System.out.println(token.getExpired());
+                    System.out.println(token.getUsers());
+                }
+        );
+        assertEquals("LSVMSLMDZCKLMCS", tokens.get(0).getToken());
+        assertEquals("LSVMSLMDZCKLMDS", tokens.get(1).getToken());
+        assertEquals(1L, tokens.get(1).getUsers().getCustomerId());
     }
 
     @Test
