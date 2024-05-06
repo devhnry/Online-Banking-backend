@@ -1,6 +1,3 @@
--- select t from Token t inner join Customer u on t.users.customerId = u.customerId
--- where u.customerId = :userId and (t.expired = false or t.revoked = false)
-
 INSERT INTO customers (customer_id, email, first_name, is_suspended, last_name, password, phone, role, username, account_account_id) VALUES (1, 'taiwoh782@gmai.com', 'Henry', FALSE, 'Taiwo', 'test4005$', '08159602684', 'USER' , 'taiwoh782@gmail.com', null);
 
 INSERT INTO customers (customer_id, email, first_name, is_suspended, last_name, password, phone, role, username, account_account_id) VALUES (2, 'pat782@gmai.com', 'Pat', FALSE, 'Taiwo', 'test4005$', '08159602685', 'USER' , 'pat782@gmail.com', null);

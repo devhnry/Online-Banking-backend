@@ -8945,3 +8945,43 @@ Caused by: java.sql.SQLIntegrityConstraintViolationException: Cannot add or upda
 2024-05-06T11:34:09.578+01:00  INFO 46322 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2024-05-06T11:34:09.580+01:00  INFO 46322 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2024-05-06T11:34:09.587+01:00  INFO 46322 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-05-06T12:05:14.161+01:00  INFO 46873 --- [main] o.h.o.repository.TokenRepositoryTest     : Starting TokenRepositoryTest using Java 21.0.2 with PID 46873 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T12:05:14.164+01:00  INFO 46873 --- [main] o.h.o.repository.TokenRepositoryTest     : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T12:05:14.639+01:00  INFO 46873 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-05-06T12:05:14.720+01:00  INFO 46873 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 73 ms. Found 8 JPA repository interfaces.
+2024-05-06T12:05:16.211+01:00  INFO 46873 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-05-06T12:05:16.356+01:00  INFO 46873 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-05-06T12:05:16.399+01:00  INFO 46873 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-05-06T12:05:16.533+01:00  INFO 46873 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-05-06T12:05:16.568+01:00  INFO 46873 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-05-06T12:05:16.578+01:00  WARN 46873 --- [main] c.zaxxer.hikari.util.DriverDataSource    : Registered driver with driverClassName=com.mysql.jdbc.Driver was not found, trying direct instantiation.
+2024-05-06T12:05:16.919+01:00  INFO 46873 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3450bd13
+2024-05-06T12:05:16.921+01:00  INFO 46873 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-05-06T12:05:16.988+01:00  WARN 46873 --- [main] org.hibernate.dialect.Dialect            : HHH000511: The 5.7.34 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2024-05-06T12:05:19.616+01:00  INFO 46873 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-05-06T12:05:20.795+01:00  INFO 46873 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-05-06T12:05:21.337+01:00  INFO 46873 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-05-06T12:05:22.059+01:00  INFO 46873 --- [main] o.h.o.repository.TokenRepositoryTest     : Started TokenRepositoryTest in 8.249 seconds (process running for 28.027)
+2024-05-06T12:05:22.326+01:00  INFO 46873 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-05-06T12:05:22.329+01:00  INFO 46873 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-05-06T12:05:22.335+01:00  INFO 46873 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-05-06T12:08:30.219+01:00  INFO 46950 --- [main] o.h.o.repository.TokenRepositoryTest     : Starting TokenRepositoryTest using Java 21.0.2 with PID 46950 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T12:08:30.221+01:00  INFO 46950 --- [main] o.h.o.repository.TokenRepositoryTest     : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T12:08:30.610+01:00  INFO 46950 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-05-06T12:08:30.672+01:00  INFO 46950 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 55 ms. Found 8 JPA repository interfaces.
+2024-05-06T12:08:31.886+01:00  INFO 46950 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-05-06T12:08:31.939+01:00  INFO 46950 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-05-06T12:08:31.971+01:00  INFO 46950 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-05-06T12:08:32.097+01:00  INFO 46950 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-05-06T12:08:32.127+01:00  INFO 46950 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-05-06T12:08:32.131+01:00  WARN 46950 --- [main] c.zaxxer.hikari.util.DriverDataSource    : Registered driver with driverClassName=com.mysql.jdbc.Driver was not found, trying direct instantiation.
+2024-05-06T12:08:32.369+01:00  INFO 46950 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@220f6a3c
+2024-05-06T12:08:32.370+01:00  INFO 46950 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-05-06T12:08:32.412+01:00  WARN 46950 --- [main] org.hibernate.dialect.Dialect            : HHH000511: The 5.7.34 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2024-05-06T12:08:33.275+01:00  INFO 46950 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-05-06T12:08:33.862+01:00  INFO 46950 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-05-06T12:08:34.260+01:00  INFO 46950 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-05-06T12:08:34.791+01:00  INFO 46950 --- [main] o.h.o.repository.TokenRepositoryTest     : Started TokenRepositoryTest in 4.904 seconds (process running for 16.768)
+2024-05-06T12:08:35.089+01:00  INFO 46950 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-05-06T12:08:35.091+01:00  INFO 46950 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-05-06T12:08:35.096+01:00  INFO 46950 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

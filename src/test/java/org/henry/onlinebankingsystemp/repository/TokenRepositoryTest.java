@@ -116,6 +116,22 @@ class TokenRepositoryTest {
     }
 
     @Test
+    @Sql(scripts = "/scripts/FIND_TOKEN_BY_ADMIN.sql")
     void findValidTokenByAdmin() {
+        List<Token> tokens = underTest.findValidTokenByAdmin(1L);
+
+        assertEquals(3, underTest.count());
+        assertEquals(2, tokens.size());
+
+        underTest.findValidTokenByCustomer(1L).forEach(token -> {
+                    System.out.println(token.getId());
+                    System.out.println(token.getToken());
+                    System.out.println(token.getExpired());
+                    System.out.println(token.getUsers());
+                }
+        );
+        assertEquals("LSVMSLMDZCKLMCS", tokens.get(0).getToken());
+        assertEquals("LSVMSLMDZCKLMDS", tokens.get(1).getToken());
+        assertEquals(1L, tokens.get(1).getAdmin().getAdminId());
     }
 }
