@@ -1,424 +1,280 @@
-2024-05-04T00:01:19.339+01:00  INFO 25758 --- [main] h.o.OnlineBankingSystemPApplicationTests : Starting OnlineBankingSystemPApplicationTests using Java 21.0.2 with PID 25758 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
-2024-05-04T00:01:19.354+01:00  INFO 25758 --- [main] h.o.OnlineBankingSystemPApplicationTests : No active profile set, falling back to 1 default profile: "default"
-2024-05-04T00:01:20.432+01:00  INFO 25758 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2024-05-04T00:01:20.561+01:00  INFO 25758 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 116 ms. Found 8 JPA repository interfaces.
-2024-05-04T00:01:21.382+01:00  INFO 25758 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2024-05-04T00:01:21.475+01:00  INFO 25758 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
-2024-05-04T00:01:21.539+01:00  INFO 25758 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2024-05-04T00:01:21.899+01:00  INFO 25758 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2024-05-04T00:01:21.955+01:00  INFO 25758 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2024-05-04T00:01:23.336+01:00 ERROR 25758 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
-
-org.h2.jdbc.JdbcSQLNonTransientException: IO Exception: "/mem:db.mv.db" [90028-224]
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:566) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.message.DbException.get(DbException.java:212) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.mvstore.db.Store.convertMVStoreException(Store.java:168) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.mvstore.db.Store.<init>(Store.java:142) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.engine.Database.<init>(Database.java:326) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.engine.Engine.openSession(Engine.java:92) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.engine.Engine.openSession(Engine.java:222) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.engine.Engine.createSession(Engine.java:201) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.engine.SessionRemote.connectEmbeddedOrServer(SessionRemote.java:343) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:125) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.Driver.connect(Driver.java:59) ~[h2-2.2.224.jar:2.2.224]
-	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138) ~[HikariCP-5.0.1.jar:na]
-	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:359) ~[HikariCP-5.0.1.jar:na]
-	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:201) ~[HikariCP-5.0.1.jar:na]
-	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:470) ~[HikariCP-5.0.1.jar:na]
-	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561) ~[HikariCP-5.0.1.jar:na]
-	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:100) ~[HikariCP-5.0.1.jar:na]
-	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112) ~[HikariCP-5.0.1.jar:na]
-	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:122) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:428) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:61) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:276) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:107) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:223) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:191) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:170) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1432) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1503) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1833) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1782) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1234) ~[spring-context-6.1.5.jar:6.1.5]
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:952) ~[spring-context-6.1.5.jar:6.1.5]
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:624) ~[spring-context-6.1.5.jar:6.1.5]
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:334) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.test.context.SpringBootContextLoader.lambda$loadContext$3(SpringBootContextLoader.java:137) ~[spring-boot-test-3.2.4.jar:3.2.4]
-	at org.springframework.util.function.ThrowingSupplier.get(ThrowingSupplier.java:58) ~[spring-core-6.1.5.jar:6.1.5]
-	at org.springframework.util.function.ThrowingSupplier.get(ThrowingSupplier.java:46) ~[spring-core-6.1.5.jar:6.1.5]
-	at org.springframework.boot.SpringApplication.withHook(SpringApplication.java:1454) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.test.context.SpringBootContextLoader$ContextLoaderHook.run(SpringBootContextLoader.java:553) ~[spring-boot-test-3.2.4.jar:3.2.4]
-	at org.springframework.boot.test.context.SpringBootContextLoader.loadContext(SpringBootContextLoader.java:137) ~[spring-boot-test-3.2.4.jar:3.2.4]
-	at org.springframework.boot.test.context.SpringBootContextLoader.loadContext(SpringBootContextLoader.java:108) ~[spring-boot-test-3.2.4.jar:3.2.4]
-	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContextInternal(DefaultCacheAwareContextLoaderDelegate.java:225) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:152) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:130) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.web.ServletTestExecutionListener.setUpRequestContextIfNecessary(ServletTestExecutionListener.java:191) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.web.ServletTestExecutionListener.prepareTestInstance(ServletTestExecutionListener.java:130) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.TestContextManager.prepareTestInstance(TestContextManager.java:260) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.junit.jupiter.SpringExtension.postProcessTestInstance(SpringExtension.java:163) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$10(ClassBasedTestDescriptor.java:378) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.executeAndMaskThrowable(ClassBasedTestDescriptor.java:383) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$11(ClassBasedTestDescriptor.java:378) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197) ~[na:na]
-	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179) ~[na:na]
-	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708) ~[na:na]
-	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509) ~[na:na]
-	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[na:na]
-	at java.base/java.util.stream.StreamSpliterators$WrappingSpliterator.forEachRemaining(StreamSpliterators.java:310) ~[na:na]
-	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:735) ~[na:na]
-	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:734) ~[na:na]
-	at java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:762) ~[na:na]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.invokeTestInstancePostProcessors(ClassBasedTestDescriptor.java:377) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$instantiateAndPostProcessTestInstance$6(ClassBasedTestDescriptor.java:290) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.instantiateAndPostProcessTestInstance(ClassBasedTestDescriptor.java:289) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$4(ClassBasedTestDescriptor.java:279) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at java.base/java.util.Optional.orElseGet(Optional.java:364) ~[na:na]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$5(ClassBasedTestDescriptor.java:278) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.execution.TestInstancesProvider.getTestInstances(TestInstancesProvider.java:31) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$prepare$0(TestMethodTestDescriptor.java:106) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:105) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:69) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$prepare$2(NodeTestTask.java:123) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.prepare(NodeTestTask.java:123) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:90) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596) ~[na:na]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596) ~[na:na]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:198) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:169) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:93) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:58) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:141) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:57) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.SessionPerRequestLauncher.execute(SessionPerRequestLauncher.java:63) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at com.intellij.junit5.JUnit5IdeaTestRunner.startRunnerWithArgs(JUnit5IdeaTestRunner.java:57) ~[junit5-rt.jar:na]
-	at com.intellij.rt.junit.IdeaTestRunner$Repeater$1.execute(IdeaTestRunner.java:38) ~[junit-rt.jar:na]
-	at com.intellij.rt.execution.junit.TestsRepeater.repeat(TestsRepeater.java:11) ~[idea_rt.jar:na]
-	at com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:35) ~[junit-rt.jar:na]
-	at com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:232) ~[junit-rt.jar:na]
-	at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:55) ~[junit-rt.jar:na]
-Caused by: org.h2.mvstore.MVStoreException: Could not open file /mem:db.mv.db [2.2.224/1]
-	at org.h2.mvstore.DataUtils.newMVStoreException(DataUtils.java:996) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:126) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.mvstore.MVStore.<init>(MVStore.java:286) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.mvstore.MVStore$Builder.open(MVStore.java:2035) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.mvstore.db.Store.<init>(Store.java:133) ~[h2-2.2.224.jar:2.2.224]
-	... 130 common frames omitted
-Caused by: java.nio.file.FileSystemException: /mem:db.mv.db: Read-only file system
-	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:100) ~[na:na]
-	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106) ~[na:na]
-	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111) ~[na:na]
-	at java.base/sun.nio.fs.UnixFileSystemProvider.newFileChannel(UnixFileSystemProvider.java:224) ~[na:na]
-	at java.base/java.nio.channels.FileChannel.open(FileChannel.java:309) ~[na:na]
-	at org.h2.store.fs.disk.FilePathDisk.open(FilePathDisk.java:468) ~[h2-2.2.224.jar:2.2.224]
-	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:112) ~[h2-2.2.224.jar:2.2.224]
-	... 134 common frames omitted
-
-2024-05-04T00:01:23.350+01:00  WARN 25758 --- [main] o.h.e.j.e.i.JdbcEnvironmentInitiator     : HHH000342: Could not obtain connection to query metadata
-
-java.lang.NullPointerException: Cannot invoke "org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(java.sql.SQLException, String)" because the return value of "org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.sqlExceptionHelper()" is null
-	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:116) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:276) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:107) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:223) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:191) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:170) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1432) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1503) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1833) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1782) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1234) ~[spring-context-6.1.5.jar:6.1.5]
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:952) ~[spring-context-6.1.5.jar:6.1.5]
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:624) ~[spring-context-6.1.5.jar:6.1.5]
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:334) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.test.context.SpringBootContextLoader.lambda$loadContext$3(SpringBootContextLoader.java:137) ~[spring-boot-test-3.2.4.jar:3.2.4]
-	at org.springframework.util.function.ThrowingSupplier.get(ThrowingSupplier.java:58) ~[spring-core-6.1.5.jar:6.1.5]
-	at org.springframework.util.function.ThrowingSupplier.get(ThrowingSupplier.java:46) ~[spring-core-6.1.5.jar:6.1.5]
-	at org.springframework.boot.SpringApplication.withHook(SpringApplication.java:1454) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.test.context.SpringBootContextLoader$ContextLoaderHook.run(SpringBootContextLoader.java:553) ~[spring-boot-test-3.2.4.jar:3.2.4]
-	at org.springframework.boot.test.context.SpringBootContextLoader.loadContext(SpringBootContextLoader.java:137) ~[spring-boot-test-3.2.4.jar:3.2.4]
-	at org.springframework.boot.test.context.SpringBootContextLoader.loadContext(SpringBootContextLoader.java:108) ~[spring-boot-test-3.2.4.jar:3.2.4]
-	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContextInternal(DefaultCacheAwareContextLoaderDelegate.java:225) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:152) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:130) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.web.ServletTestExecutionListener.setUpRequestContextIfNecessary(ServletTestExecutionListener.java:191) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.web.ServletTestExecutionListener.prepareTestInstance(ServletTestExecutionListener.java:130) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.TestContextManager.prepareTestInstance(TestContextManager.java:260) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.junit.jupiter.SpringExtension.postProcessTestInstance(SpringExtension.java:163) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$10(ClassBasedTestDescriptor.java:378) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.executeAndMaskThrowable(ClassBasedTestDescriptor.java:383) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$11(ClassBasedTestDescriptor.java:378) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197) ~[na:na]
-	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179) ~[na:na]
-	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708) ~[na:na]
-	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509) ~[na:na]
-	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[na:na]
-	at java.base/java.util.stream.StreamSpliterators$WrappingSpliterator.forEachRemaining(StreamSpliterators.java:310) ~[na:na]
-	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:735) ~[na:na]
-	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:734) ~[na:na]
-	at java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:762) ~[na:na]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.invokeTestInstancePostProcessors(ClassBasedTestDescriptor.java:377) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$instantiateAndPostProcessTestInstance$6(ClassBasedTestDescriptor.java:290) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.instantiateAndPostProcessTestInstance(ClassBasedTestDescriptor.java:289) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$4(ClassBasedTestDescriptor.java:279) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at java.base/java.util.Optional.orElseGet(Optional.java:364) ~[na:na]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$5(ClassBasedTestDescriptor.java:278) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.execution.TestInstancesProvider.getTestInstances(TestInstancesProvider.java:31) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$prepare$0(TestMethodTestDescriptor.java:106) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:105) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:69) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$prepare$2(NodeTestTask.java:123) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.prepare(NodeTestTask.java:123) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:90) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596) ~[na:na]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596) ~[na:na]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:198) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:169) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:93) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:58) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:141) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:57) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.SessionPerRequestLauncher.execute(SessionPerRequestLauncher.java:63) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at com.intellij.junit5.JUnit5IdeaTestRunner.startRunnerWithArgs(JUnit5IdeaTestRunner.java:57) ~[junit5-rt.jar:na]
-	at com.intellij.rt.junit.IdeaTestRunner$Repeater$1.execute(IdeaTestRunner.java:38) ~[junit-rt.jar:na]
-	at com.intellij.rt.execution.junit.TestsRepeater.repeat(TestsRepeater.java:11) ~[idea_rt.jar:na]
-	at com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:35) ~[junit-rt.jar:na]
-	at com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:232) ~[junit-rt.jar:na]
-	at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:55) ~[junit-rt.jar:na]
-
-2024-05-04T00:01:23.352+01:00 ERROR 25758 --- [main] j.LocalContainerEntityManagerFactoryBean : Failed to initialize JPA EntityManagerFactory: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
-2024-05-04T00:01:23.353+01:00  WARN 25758 --- [main] o.s.w.c.s.GenericWebApplicationContext   : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
-2024-05-04T00:01:23.364+01:00  INFO 25758 --- [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+2024-05-06T08:55:22.998+01:00  INFO 42671 --- [main] o.h.o.controller.AccountControllerTest   : Starting AccountControllerTest using Java 21.0.2 with PID 42671 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T08:55:23.015+01:00  INFO 42671 --- [main] o.h.o.controller.AccountControllerTest   : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T08:55:25.317+01:00  INFO 42671 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@f237ae7, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@42edde25, org.springframework.security.web.context.SecurityContextHolderFilter@62360a68, org.springframework.security.web.header.HeaderWriterFilter@2cdb5974, org.springframework.web.filter.CorsFilter@6fe5da76, org.springframework.security.web.csrf.CsrfFilter@18a0721b, org.springframework.security.web.authentication.logout.LogoutFilter@445b85d7, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@5e95b0ab, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@772cf46b, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@77d95e5a, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@7037a680, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@4e756867, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@38ebc866, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@6339e604, org.springframework.security.web.access.ExceptionTranslationFilter@6b6fd0, org.springframework.security.web.access.intercept.AuthorizationFilter@6c1f15df]
+2024-05-06T08:55:25.409+01:00  INFO 42671 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2024-05-06T08:55:25.409+01:00  INFO 42671 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2024-05-06T08:55:25.411+01:00  INFO 42671 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2024-05-06T08:55:25.473+01:00  INFO 42671 --- [main] o.h.o.controller.AccountControllerTest   : Started AccountControllerTest in 3.077 seconds (process running for 6.248)
+2024-05-06T08:55:25.592+01:00 DEBUG 42671 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T08:55:25.593+01:00 DEBUG 42671 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=email@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[ROLE_USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@11c999da]
+2024-05-06T08:55:25.609+01:00 DEBUG 42671 --- [main] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/account/deposit
+2024-05-06T08:55:25.617+01:00 DEBUG 42671 --- [main] o.s.security.web.csrf.CsrfFilter         : Invalid CSRF token found for http://localhost/api/v1/account/deposit
+2024-05-06T08:55:25.618+01:00 DEBUG 42671 --- [main] o.s.s.w.access.AccessDeniedHandlerImpl   : Responding with 403 status code
+2024-05-06T08:57:55.125+01:00  INFO 42704 --- [main] o.h.o.controller.AccountControllerTest   : Starting AccountControllerTest using Java 21.0.2 with PID 42704 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T08:57:55.127+01:00  INFO 42704 --- [main] o.h.o.controller.AccountControllerTest   : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T08:57:57.405+01:00  INFO 42704 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@6bdedbbd, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@47b961e2, org.springframework.security.web.context.SecurityContextHolderFilter@6aaa678d, org.springframework.security.web.header.HeaderWriterFilter@35af52dc, org.springframework.web.filter.CorsFilter@d2cb2d0, org.springframework.security.web.csrf.CsrfFilter@26495639, org.springframework.security.web.authentication.logout.LogoutFilter@1e4d8770, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@38ebc866, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@97beeaf, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@2d230cff, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@45ad3cd8, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@113d0f75, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@4e10a320, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@30bd39d5, org.springframework.security.web.access.ExceptionTranslationFilter@35f760a4, org.springframework.security.web.access.intercept.AuthorizationFilter@4e756867]
+2024-05-06T08:57:57.476+01:00  INFO 42704 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2024-05-06T08:57:57.477+01:00  INFO 42704 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2024-05-06T08:57:57.479+01:00  INFO 42704 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2024-05-06T08:57:57.518+01:00  INFO 42704 --- [main] o.h.o.controller.AccountControllerTest   : Started AccountControllerTest in 2.969 seconds (process running for 6.096)
+2024-05-06T08:58:35.305+01:00  INFO 42715 --- [main] o.h.o.controller.AccountControllerTest   : Starting AccountControllerTest using Java 21.0.2 with PID 42715 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T08:58:35.307+01:00  INFO 42715 --- [main] o.h.o.controller.AccountControllerTest   : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T08:58:37.772+01:00  INFO 42715 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@6bdedbbd, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@47b961e2, org.springframework.security.web.context.SecurityContextHolderFilter@6aaa678d, org.springframework.security.web.header.HeaderWriterFilter@35af52dc, org.springframework.web.filter.CorsFilter@d2cb2d0, org.springframework.security.web.csrf.CsrfFilter@26495639, org.springframework.security.web.authentication.logout.LogoutFilter@1e4d8770, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@38ebc866, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@97beeaf, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@2d230cff, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@45ad3cd8, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@113d0f75, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@4e10a320, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@30bd39d5, org.springframework.security.web.access.ExceptionTranslationFilter@35f760a4, org.springframework.security.web.access.intercept.AuthorizationFilter@4e756867]
+2024-05-06T08:58:37.852+01:00  INFO 42715 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2024-05-06T08:58:37.853+01:00  INFO 42715 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2024-05-06T08:58:37.855+01:00  INFO 42715 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2024-05-06T08:58:37.906+01:00  INFO 42715 --- [main] o.h.o.controller.AccountControllerTest   : Started AccountControllerTest in 3.163 seconds (process running for 6.23)
+2024-05-06T08:58:38.073+01:00 DEBUG 42715 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T08:58:38.076+01:00 DEBUG 42715 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=Mock for Authentication, hashCode: 2063161693] to HttpSession [org.springframework.mock.web.MockHttpSession@52d59507]
+2024-05-06T08:58:38.077+01:00 DEBUG 42715 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=Mock for Authentication, hashCode: 2063161693]
+2024-05-06T08:58:38.078+01:00 DEBUG 42715 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=nullnull, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@52d59507]
+2024-05-06T08:58:38.099+01:00 DEBUG 42715 --- [main] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/account/deposit
+2024-05-06T08:58:38.108+01:00 DEBUG 42715 --- [main] o.s.security.web.csrf.CsrfFilter         : Invalid CSRF token found for http://localhost/api/v1/account/deposit
+2024-05-06T08:58:38.108+01:00 DEBUG 42715 --- [main] o.s.s.w.access.AccessDeniedHandlerImpl   : Responding with 403 status code
+2024-05-06T09:00:54.841+01:00  INFO 42751 --- [main] o.h.o.controller.AccountControllerTest   : Starting AccountControllerTest using Java 21.0.2 with PID 42751 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T09:00:54.843+01:00  INFO 42751 --- [main] o.h.o.controller.AccountControllerTest   : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T09:00:57.054+01:00  INFO 42751 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@2b90cc1, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@5a2f401a, org.springframework.security.web.context.SecurityContextHolderFilter@4cef0747, org.springframework.security.web.header.HeaderWriterFilter@35f760a4, org.springframework.web.filter.CorsFilter@6bdedbbd, org.springframework.security.web.csrf.CsrfFilter@3ea9a091, org.springframework.security.web.authentication.logout.LogoutFilter@ab2009f, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@1450ffa3, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@4c13ca07, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@47b961e2, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@f5ae29e, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@6aaa678d, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@25dcf1b6, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@d2cb2d0, org.springframework.security.web.access.ExceptionTranslationFilter@4e1a3d5a, org.springframework.security.web.access.intercept.AuthorizationFilter@62360a68]
+2024-05-06T09:00:57.124+01:00  INFO 42751 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2024-05-06T09:00:57.124+01:00  INFO 42751 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2024-05-06T09:00:57.126+01:00  INFO 42751 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2024-05-06T09:00:57.164+01:00  INFO 42751 --- [main] o.h.o.controller.AccountControllerTest   : Started AccountControllerTest in 2.874 seconds (process running for 5.769)
+2024-05-06T09:00:57.291+01:00 DEBUG 42751 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:00:57.294+01:00 DEBUG 42751 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=Mock for Authentication, hashCode: 1127932080] to HttpSession [org.springframework.mock.web.MockHttpSession@55e5415d]
+2024-05-06T09:00:57.295+01:00 DEBUG 42751 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=Mock for Authentication, hashCode: 1127932080]
+2024-05-06T09:00:57.295+01:00 DEBUG 42751 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@55e5415d]
+2024-05-06T09:00:57.310+01:00 DEBUG 42751 --- [main] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/account/deposit
+2024-05-06T09:00:57.318+01:00 DEBUG 42751 --- [main] o.s.security.web.csrf.CsrfFilter         : Invalid CSRF token found for http://localhost/api/v1/account/deposit
+2024-05-06T09:00:57.319+01:00 DEBUG 42751 --- [main] o.s.s.w.access.AccessDeniedHandlerImpl   : Responding with 403 status code
+2024-05-06T09:16:41.497+01:00  INFO 42959 --- [main] o.h.o.controller.AccountControllerTest   : Starting AccountControllerTest using Java 21.0.2 with PID 42959 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T09:16:41.500+01:00  INFO 42959 --- [main] o.h.o.controller.AccountControllerTest   : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T09:16:43.931+01:00  INFO 42959 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@25e95af1, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@4fa8297b, org.springframework.security.web.context.SecurityContextHolderFilter@54556723, org.springframework.security.web.header.HeaderWriterFilter@2d230cff, org.springframework.web.filter.CorsFilter@6644bdf5, org.springframework.security.web.csrf.CsrfFilter@62360a68, org.springframework.security.web.authentication.logout.LogoutFilter@47ffdbba, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@18463720, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@2d593b56, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@13cf5f8a, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@e8c84eb, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@380e33c2, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@3bc891f2, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7c9ea1d0, org.springframework.security.web.access.ExceptionTranslationFilter@47b961e2, org.springframework.security.web.access.intercept.AuthorizationFilter@1f4d38f9]
+2024-05-06T09:16:44.017+01:00  INFO 42959 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2024-05-06T09:16:44.018+01:00  INFO 42959 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2024-05-06T09:16:44.020+01:00  INFO 42959 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2024-05-06T09:16:44.065+01:00  INFO 42959 --- [main] o.h.o.controller.AccountControllerTest   : Started AccountControllerTest in 3.227 seconds (process running for 7.186)
+2024-05-06T09:16:44.228+01:00 DEBUG 42959 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:16:44.231+01:00 DEBUG 42959 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=Mock for Authentication, hashCode: 1751574336] to HttpSession [org.springframework.mock.web.MockHttpSession@4c4215d7]
+2024-05-06T09:16:44.232+01:00 DEBUG 42959 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=Mock for Authentication, hashCode: 1751574336]
+2024-05-06T09:16:44.233+01:00 DEBUG 42959 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@4c4215d7]
+2024-05-06T09:16:44.251+01:00 DEBUG 42959 --- [main] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/account/deposit
+2024-05-06T09:16:44.260+01:00 DEBUG 42959 --- [main] o.s.security.web.csrf.CsrfFilter         : Invalid CSRF token found for http://localhost/api/v1/account/deposit
+2024-05-06T09:16:44.261+01:00 DEBUG 42959 --- [main] o.s.s.w.access.AccessDeniedHandlerImpl   : Responding with 403 status code
+2024-05-06T09:19:35.920+01:00  INFO 42989 --- [main] o.h.o.controller.AccountControllerTest   : Starting AccountControllerTest using Java 21.0.2 with PID 42989 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T09:19:35.923+01:00  INFO 42989 --- [main] o.h.o.controller.AccountControllerTest   : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T09:19:38.409+01:00  INFO 42989 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@283bb8b7, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@25e95af1, org.springframework.security.web.context.SecurityContextHolderFilter@3c87e851, org.springframework.security.web.header.HeaderWriterFilter@d2cb2d0, org.springframework.web.filter.CorsFilter@4fa8297b, org.springframework.security.web.csrf.CsrfFilter@53e4a19e, org.springframework.security.web.authentication.logout.LogoutFilter@670a4738, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@1f4d38f9, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@3534651a, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@6644bdf5, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@4a58e0e9, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@6124dda2, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@380e33c2, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@13cf5f8a, org.springframework.security.web.access.ExceptionTranslationFilter@6bdedbbd, org.springframework.security.web.access.intercept.AuthorizationFilter@33e8e146]
+2024-05-06T09:19:38.491+01:00  INFO 42989 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2024-05-06T09:19:38.492+01:00  INFO 42989 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2024-05-06T09:19:38.495+01:00  INFO 42989 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 3 ms
+2024-05-06T09:19:38.543+01:00  INFO 42989 --- [main] o.h.o.controller.AccountControllerTest   : Started AccountControllerTest in 3.305 seconds (process running for 7.04)
+2024-05-06T09:19:38.704+01:00 DEBUG 42989 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:19:38.707+01:00 DEBUG 42989 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=Mock for Authentication, hashCode: 1940816602] to HttpSession [org.springframework.mock.web.MockHttpSession@227b9277]
+2024-05-06T09:19:38.708+01:00 DEBUG 42989 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=Mock for Authentication, hashCode: 1940816602]
+2024-05-06T09:19:38.709+01:00 DEBUG 42989 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@227b9277]
+2024-05-06T09:19:38.727+01:00 DEBUG 42989 --- [main] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/account/deposit
+2024-05-06T09:19:38.737+01:00 DEBUG 42989 --- [main] o.s.security.web.csrf.CsrfFilter         : Invalid CSRF token found for http://localhost/api/v1/account/deposit
+2024-05-06T09:19:38.737+01:00 DEBUG 42989 --- [main] o.s.s.w.access.AccessDeniedHandlerImpl   : Responding with 403 status code
+2024-05-06T09:21:50.661+01:00  INFO 43035 --- [main] o.h.o.controller.AccountControllerTest   : Starting AccountControllerTest using Java 21.0.2 with PID 43035 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T09:21:50.663+01:00  INFO 43035 --- [main] o.h.o.controller.AccountControllerTest   : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T09:21:52.987+01:00  INFO 43035 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@2b90cc1, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@5a2f401a, org.springframework.security.web.context.SecurityContextHolderFilter@4cef0747, org.springframework.security.web.header.HeaderWriterFilter@35f760a4, org.springframework.web.filter.CorsFilter@6bdedbbd, org.springframework.security.web.csrf.CsrfFilter@3ea9a091, org.springframework.security.web.authentication.logout.LogoutFilter@ab2009f, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@1450ffa3, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@4c13ca07, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@47b961e2, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@f5ae29e, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@6aaa678d, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@25dcf1b6, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@d2cb2d0, org.springframework.security.web.access.ExceptionTranslationFilter@4e1a3d5a, org.springframework.security.web.access.intercept.AuthorizationFilter@62360a68]
+2024-05-06T09:21:53.056+01:00  INFO 43035 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2024-05-06T09:21:53.056+01:00  INFO 43035 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2024-05-06T09:21:53.058+01:00  INFO 43035 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2024-05-06T09:21:53.100+01:00  INFO 43035 --- [main] o.h.o.controller.AccountControllerTest   : Started AccountControllerTest in 3.066 seconds (process running for 6.347)
+2024-05-06T09:21:53.231+01:00 DEBUG 43035 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:21:53.234+01:00 DEBUG 43035 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=Mock for Authentication, hashCode: 1127932080] to HttpSession [org.springframework.mock.web.MockHttpSession@4d75c604]
+2024-05-06T09:21:53.238+01:00 DEBUG 43035 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=Mock for Authentication, hashCode: 1127932080]
+2024-05-06T09:21:53.238+01:00 DEBUG 43035 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@4d75c604]
+2024-05-06T09:21:53.254+01:00 DEBUG 43035 --- [main] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/account/deposit
+2024-05-06T09:21:53.262+01:00 DEBUG 43035 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]]
+2024-05-06T09:21:53.263+01:00 DEBUG 43035 --- [main] o.s.security.web.FilterChainProxy        : Secured POST /api/v1/account/deposit
+2024-05-06T09:21:53.361+01:00  WARN 43035 --- [main] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.http.converter.HttpMessageNotReadableException: JSON parse error: Unexpected character ('a' (code 97)): was expecting double-quote to start field name]
+2024-05-06T09:26:24.402+01:00  INFO 43095 --- [main] o.h.o.controller.AccountControllerTest   : Starting AccountControllerTest using Java 21.0.2 with PID 43095 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T09:26:24.405+01:00  INFO 43095 --- [main] o.h.o.controller.AccountControllerTest   : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T09:26:27.155+01:00  INFO 43095 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@47b961e2, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@d2cb2d0, org.springframework.security.web.context.SecurityContextHolderFilter@25dcf1b6, org.springframework.security.web.header.HeaderWriterFilter@4cef0747, org.springframework.web.filter.CorsFilter@2d230cff, org.springframework.security.web.csrf.CsrfFilter@45c408a4, org.springframework.security.web.authentication.logout.LogoutFilter@5b5b9521, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@6adcf059, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@5d68954d, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@30bd39d5, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@2b90cc1, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@4e10a320, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@773f3360, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@3c87e851, org.springframework.security.web.access.ExceptionTranslationFilter@2ac05a33, org.springframework.security.web.access.intercept.AuthorizationFilter@38ebc866]
+2024-05-06T09:26:27.244+01:00  INFO 43095 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2024-05-06T09:26:27.245+01:00  INFO 43095 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2024-05-06T09:26:27.247+01:00  INFO 43095 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2024-05-06T09:26:27.301+01:00  INFO 43095 --- [main] o.h.o.controller.AccountControllerTest   : Started AccountControllerTest in 3.572 seconds (process running for 6.604)
+2024-05-06T09:26:27.482+01:00 DEBUG 43095 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:26:27.486+01:00 DEBUG 43095 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=Mock for Authentication, hashCode: 2050277878] to HttpSession [org.springframework.mock.web.MockHttpSession@4df13dd0]
+2024-05-06T09:26:27.491+01:00 DEBUG 43095 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=Mock for Authentication, hashCode: 2050277878]
+2024-05-06T09:26:27.492+01:00 DEBUG 43095 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@4df13dd0]
+2024-05-06T09:26:27.512+01:00 DEBUG 43095 --- [main] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/account/deposit
+2024-05-06T09:26:27.524+01:00 DEBUG 43095 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]]
+2024-05-06T09:26:27.525+01:00 DEBUG 43095 --- [main] o.s.security.web.FilterChainProxy        : Secured POST /api/v1/account/deposit
+2024-05-06T09:26:27.670+01:00  WARN 43095 --- [main] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.http.converter.HttpMessageNotReadableException: JSON parse error: Unexpected character ('m' (code 109)): was expecting double-quote to start field name]
+2024-05-06T09:27:15.647+01:00  INFO 43118 --- [main] o.h.o.controller.AccountControllerTest   : Starting AccountControllerTest using Java 21.0.2 with PID 43118 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T09:27:15.649+01:00  INFO 43118 --- [main] o.h.o.controller.AccountControllerTest   : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T09:27:17.845+01:00  INFO 43118 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5a2f401a, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@6bdedbbd, org.springframework.security.web.context.SecurityContextHolderFilter@4213bc3e, org.springframework.security.web.header.HeaderWriterFilter@2ac05a33, org.springframework.web.filter.CorsFilter@47b961e2, org.springframework.security.web.csrf.CsrfFilter@16f4a3c0, org.springframework.security.web.authentication.logout.LogoutFilter@2a11ae0b, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@4e756867, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@7d17906, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@d2cb2d0, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@1fc5c0b2, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@25dcf1b6, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@113d0f75, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2d230cff, org.springframework.security.web.access.ExceptionTranslationFilter@236b4a44, org.springframework.security.web.access.intercept.AuthorizationFilter@1450ffa3]
+2024-05-06T09:27:17.922+01:00  INFO 43118 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2024-05-06T09:27:17.922+01:00  INFO 43118 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2024-05-06T09:27:17.924+01:00  INFO 43118 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2024-05-06T09:27:17.968+01:00  INFO 43118 --- [main] o.h.o.controller.AccountControllerTest   : Started AccountControllerTest in 2.89 seconds (process running for 5.964)
+2024-05-06T09:27:18.121+01:00 DEBUG 43118 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:27:18.124+01:00 DEBUG 43118 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=Mock for Authentication, hashCode: 1887701594] to HttpSession [org.springframework.mock.web.MockHttpSession@3265995e]
+2024-05-06T09:27:18.129+01:00 DEBUG 43118 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=Mock for Authentication, hashCode: 1887701594]
+2024-05-06T09:27:18.129+01:00 DEBUG 43118 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@3265995e]
+2024-05-06T09:27:18.149+01:00 DEBUG 43118 --- [main] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/account/deposit
+2024-05-06T09:27:18.158+01:00 DEBUG 43118 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]]
+2024-05-06T09:27:18.159+01:00 DEBUG 43118 --- [main] o.s.security.web.FilterChainProxy        : Secured POST /api/v1/account/deposit
+2024-05-06T09:27:18.261+01:00  WARN 43118 --- [main] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.http.converter.HttpMessageNotReadableException: JSON parse error: Unrecognized token 'TransactionDTO': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')]
+2024-05-06T09:29:22.532+01:00  INFO 43140 --- [main] o.h.o.controller.AccountControllerTest   : Starting AccountControllerTest using Java 21.0.2 with PID 43140 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T09:29:22.535+01:00  INFO 43140 --- [main] o.h.o.controller.AccountControllerTest   : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T09:29:25.128+01:00  INFO 43140 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5a2f401a, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@6bdedbbd, org.springframework.security.web.context.SecurityContextHolderFilter@4213bc3e, org.springframework.security.web.header.HeaderWriterFilter@2ac05a33, org.springframework.web.filter.CorsFilter@47b961e2, org.springframework.security.web.csrf.CsrfFilter@16f4a3c0, org.springframework.security.web.authentication.logout.LogoutFilter@2a11ae0b, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@4e756867, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@7d17906, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@d2cb2d0, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@1fc5c0b2, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@25dcf1b6, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@113d0f75, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2d230cff, org.springframework.security.web.access.ExceptionTranslationFilter@236b4a44, org.springframework.security.web.access.intercept.AuthorizationFilter@1450ffa3]
+2024-05-06T09:29:25.217+01:00  INFO 43140 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2024-05-06T09:29:25.217+01:00  INFO 43140 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2024-05-06T09:29:25.220+01:00  INFO 43140 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 3 ms
+2024-05-06T09:29:25.275+01:00  INFO 43140 --- [main] o.h.o.controller.AccountControllerTest   : Started AccountControllerTest in 3.324 seconds (process running for 6.664)
+2024-05-06T09:29:25.451+01:00 DEBUG 43140 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:29:25.454+01:00 DEBUG 43140 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=Mock for Authentication, hashCode: 1887701594] to HttpSession [org.springframework.mock.web.MockHttpSession@3265995e]
+2024-05-06T09:29:25.459+01:00 DEBUG 43140 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=Mock for Authentication, hashCode: 1887701594]
+2024-05-06T09:29:25.460+01:00 DEBUG 43140 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@3265995e]
+2024-05-06T09:29:25.480+01:00 DEBUG 43140 --- [main] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/account/deposit
+2024-05-06T09:29:25.490+01:00 DEBUG 43140 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]]
+2024-05-06T09:29:25.491+01:00 DEBUG 43140 --- [main] o.s.security.web.FilterChainProxy        : Secured POST /api/v1/account/deposit
+2024-05-06T09:30:13.325+01:00  INFO 43160 --- [main] o.h.o.controller.AccountControllerTest   : Starting AccountControllerTest using Java 21.0.2 with PID 43160 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T09:30:13.327+01:00  INFO 43160 --- [main] o.h.o.controller.AccountControllerTest   : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T09:30:15.562+01:00  INFO 43160 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5a2f401a, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@6bdedbbd, org.springframework.security.web.context.SecurityContextHolderFilter@4213bc3e, org.springframework.security.web.header.HeaderWriterFilter@2ac05a33, org.springframework.web.filter.CorsFilter@47b961e2, org.springframework.security.web.csrf.CsrfFilter@16f4a3c0, org.springframework.security.web.authentication.logout.LogoutFilter@2a11ae0b, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@4e756867, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@7d17906, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@d2cb2d0, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@1fc5c0b2, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@25dcf1b6, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@113d0f75, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2d230cff, org.springframework.security.web.access.ExceptionTranslationFilter@236b4a44, org.springframework.security.web.access.intercept.AuthorizationFilter@1450ffa3]
+2024-05-06T09:30:15.630+01:00  INFO 43160 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2024-05-06T09:30:15.630+01:00  INFO 43160 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2024-05-06T09:30:15.632+01:00  INFO 43160 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2024-05-06T09:30:15.672+01:00  INFO 43160 --- [main] o.h.o.controller.AccountControllerTest   : Started AccountControllerTest in 2.889 seconds (process running for 5.971)
+2024-05-06T09:30:15.767+01:00 DEBUG 43160 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:30:15.768+01:00 DEBUG 43160 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@76ed7573]
+2024-05-06T09:30:15.783+01:00 DEBUG 43160 --- [main] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/account/deposit
+2024-05-06T09:30:15.790+01:00 DEBUG 43160 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]]
+2024-05-06T09:30:15.791+01:00 DEBUG 43160 --- [main] o.s.security.web.FilterChainProxy        : Secured POST /api/v1/account/deposit
+2024-05-06T09:53:16.322+01:00  INFO 43468 --- [main] o.h.o.controller.AccountControllerTest   : Starting AccountControllerTest using Java 21.0.2 with PID 43468 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T09:53:16.324+01:00  INFO 43468 --- [main] o.h.o.controller.AccountControllerTest   : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T09:53:18.502+01:00  INFO 43468 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@647ff23e, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@6a04d2a4, org.springframework.security.web.context.SecurityContextHolderFilter@1a06602f, org.springframework.security.web.header.HeaderWriterFilter@65b73689, org.springframework.web.filter.CorsFilter@35a9e665, org.springframework.security.web.csrf.CsrfFilter@47e60b71, org.springframework.security.web.authentication.logout.LogoutFilter@43d6262c, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@1ae9d0e4, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@62794582, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@362be0cd, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@733fa95c, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5b6cc344, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@2110684a, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2dde0a34, org.springframework.security.web.access.ExceptionTranslationFilter@3ff26c9, org.springframework.security.web.access.intercept.AuthorizationFilter@41bd6a0f]
+2024-05-06T09:53:18.572+01:00  INFO 43468 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2024-05-06T09:53:18.572+01:00  INFO 43468 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2024-05-06T09:53:18.574+01:00  INFO 43468 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2024-05-06T09:53:18.616+01:00  INFO 43468 --- [main] o.h.o.controller.AccountControllerTest   : Started AccountControllerTest in 2.773 seconds (process running for 5.81)
+2024-05-06T09:53:18.730+01:00 DEBUG 43468 --- [main] o.s.security.web.FilterChainProxy        : Securing GET /api/v1/account/balance
+2024-05-06T09:53:18.740+01:00 DEBUG 43468 --- [main] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2024-05-06T09:53:18.748+01:00 DEBUG 43468 --- [main] o.s.s.w.s.HttpSessionRequestCache        : Saved request http://localhost/api/v1/account/balance?continue to session
+2024-05-06T09:53:18.753+01:00 DEBUG 43468 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : Trying to match using And [Not [RequestHeaderRequestMatcher [expectedHeaderName=X-Requested-With, expectedHeaderValue=XMLHttpRequest]], MediaTypeRequestMatcher [contentNegotiationStrategy=org.springframework.web.accept.ContentNegotiationManager@2e7bb00e, matchingMediaTypes=[application/xhtml+xml, image/*, text/html, text/plain], useEquals=false, ignoredMediaTypes=[*/*]]]
+2024-05-06T09:53:18.754+01:00 DEBUG 43468 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : Trying to match using Or [RequestHeaderRequestMatcher [expectedHeaderName=X-Requested-With, expectedHeaderValue=XMLHttpRequest], And [Not [MediaTypeRequestMatcher [contentNegotiationStrategy=org.springframework.web.accept.ContentNegotiationManager@2e7bb00e, matchingMediaTypes=[text/html], useEquals=false, ignoredMediaTypes=[]]], MediaTypeRequestMatcher [contentNegotiationStrategy=org.springframework.web.accept.ContentNegotiationManager@2e7bb00e, matchingMediaTypes=[application/atom+xml, application/x-www-form-urlencoded, application/json, application/octet-stream, application/xml, multipart/form-data, text/xml], useEquals=false, ignoredMediaTypes=[*/*]]], MediaTypeRequestMatcher [contentNegotiationStrategy=org.springframework.web.accept.ContentNegotiationManager@2e7bb00e, matchingMediaTypes=[*/*], useEquals=true, ignoredMediaTypes=[]]]
+2024-05-06T09:53:18.754+01:00 DEBUG 43468 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : Match found! Executing org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint@4a58e0e9
+2024-05-06T09:53:18.754+01:00 DEBUG 43468 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : Trying to match using RequestHeaderRequestMatcher [expectedHeaderName=X-Requested-With, expectedHeaderValue=XMLHttpRequest]
+2024-05-06T09:53:18.754+01:00 DEBUG 43468 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : No match found. Using default entry point org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint@301d84f6
+2024-05-06T09:53:18.825+01:00 DEBUG 43468 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:53:18.825+01:00 DEBUG 43468 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@626df173]
+2024-05-06T09:53:18.826+01:00 DEBUG 43468 --- [main] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/account/deposit
+2024-05-06T09:53:18.828+01:00 DEBUG 43468 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]]
+2024-05-06T09:53:18.828+01:00 DEBUG 43468 --- [main] o.s.security.web.FilterChainProxy        : Secured POST /api/v1/account/deposit
+2024-05-06T09:53:18.982+01:00 DEBUG 43468 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:53:18.982+01:00 DEBUG 43468 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@11a67420]
+2024-05-06T09:53:18.983+01:00 DEBUG 43468 --- [main] o.s.security.web.FilterChainProxy        : Securing PATCH /api/v1/account/updateProfile
+2024-05-06T09:53:18.984+01:00 DEBUG 43468 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]]
+2024-05-06T09:53:18.984+01:00 DEBUG 43468 --- [main] o.s.security.web.FilterChainProxy        : Secured PATCH /api/v1/account/updateProfile
+2024-05-06T09:53:18.993+01:00  WARN 43468 --- [main] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.http.converter.HttpMessageNotReadableException: JSON parse error: Unexpected character ('"' (code 34)): was expecting comma to separate Object entries]
+2024-05-06T09:53:19.021+01:00 DEBUG 43468 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:53:19.021+01:00 DEBUG 43468 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@118e2487]
+2024-05-06T09:53:19.022+01:00 DEBUG 43468 --- [main] o.s.security.web.FilterChainProxy        : Securing GET /api/v1/account/balance
+2024-05-06T09:53:19.022+01:00 DEBUG 43468 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]]
+2024-05-06T09:53:19.023+01:00 DEBUG 43468 --- [main] o.s.security.web.FilterChainProxy        : Secured GET /api/v1/account/balance
+2024-05-06T09:54:16.026+01:00  INFO 43482 --- [main] o.h.o.controller.AccountControllerTest   : Starting AccountControllerTest using Java 21.0.2 with PID 43482 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T09:54:16.029+01:00  INFO 43482 --- [main] o.h.o.controller.AccountControllerTest   : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T09:54:18.181+01:00  INFO 43482 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@61836cd9, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1b632442, org.springframework.security.web.context.SecurityContextHolderFilter@61d011e, org.springframework.security.web.header.HeaderWriterFilter@5b6cc344, org.springframework.web.filter.CorsFilter@7227926b, org.springframework.security.web.csrf.CsrfFilter@36511772, org.springframework.security.web.authentication.logout.LogoutFilter@1c411474, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@67e4928c, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@1cb44a2f, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@2f75a9b1, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@35a9e665, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1926f962, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@62794582, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@556aed22, org.springframework.security.web.access.ExceptionTranslationFilter@1a06602f, org.springframework.security.web.access.intercept.AuthorizationFilter@57b130f6]
+2024-05-06T09:54:18.249+01:00  INFO 43482 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2024-05-06T09:54:18.249+01:00  INFO 43482 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2024-05-06T09:54:18.251+01:00  INFO 43482 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2024-05-06T09:54:18.294+01:00  INFO 43482 --- [main] o.h.o.controller.AccountControllerTest   : Started AccountControllerTest in 2.752 seconds (process running for 5.598)
+2024-05-06T09:54:18.392+01:00 DEBUG 43482 --- [main] o.s.security.web.FilterChainProxy        : Securing GET /api/v1/account/balance
+2024-05-06T09:54:18.406+01:00 DEBUG 43482 --- [main] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2024-05-06T09:54:18.414+01:00 DEBUG 43482 --- [main] o.s.s.w.s.HttpSessionRequestCache        : Saved request http://localhost/api/v1/account/balance?continue to session
+2024-05-06T09:54:18.419+01:00 DEBUG 43482 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : Trying to match using And [Not [RequestHeaderRequestMatcher [expectedHeaderName=X-Requested-With, expectedHeaderValue=XMLHttpRequest]], MediaTypeRequestMatcher [contentNegotiationStrategy=org.springframework.web.accept.ContentNegotiationManager@74d22ddd, matchingMediaTypes=[application/xhtml+xml, image/*, text/html, text/plain], useEquals=false, ignoredMediaTypes=[*/*]]]
+2024-05-06T09:54:18.420+01:00 DEBUG 43482 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : Trying to match using Or [RequestHeaderRequestMatcher [expectedHeaderName=X-Requested-With, expectedHeaderValue=XMLHttpRequest], And [Not [MediaTypeRequestMatcher [contentNegotiationStrategy=org.springframework.web.accept.ContentNegotiationManager@74d22ddd, matchingMediaTypes=[text/html], useEquals=false, ignoredMediaTypes=[]]], MediaTypeRequestMatcher [contentNegotiationStrategy=org.springframework.web.accept.ContentNegotiationManager@74d22ddd, matchingMediaTypes=[application/atom+xml, application/x-www-form-urlencoded, application/json, application/octet-stream, application/xml, multipart/form-data, text/xml], useEquals=false, ignoredMediaTypes=[*/*]]], MediaTypeRequestMatcher [contentNegotiationStrategy=org.springframework.web.accept.ContentNegotiationManager@74d22ddd, matchingMediaTypes=[*/*], useEquals=true, ignoredMediaTypes=[]]]
+2024-05-06T09:54:18.420+01:00 DEBUG 43482 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : Match found! Executing org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint@4fa8297b
+2024-05-06T09:54:18.421+01:00 DEBUG 43482 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : Trying to match using RequestHeaderRequestMatcher [expectedHeaderName=X-Requested-With, expectedHeaderValue=XMLHttpRequest]
+2024-05-06T09:54:18.421+01:00 DEBUG 43482 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : No match found. Using default entry point org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint@57920d6c
+2024-05-06T09:54:18.488+01:00 DEBUG 43482 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:54:18.488+01:00 DEBUG 43482 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@4fe4503a]
+2024-05-06T09:54:18.489+01:00 DEBUG 43482 --- [main] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/account/deposit
+2024-05-06T09:54:18.491+01:00 DEBUG 43482 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]]
+2024-05-06T09:54:18.491+01:00 DEBUG 43482 --- [main] o.s.security.web.FilterChainProxy        : Secured POST /api/v1/account/deposit
+2024-05-06T09:54:18.638+01:00 DEBUG 43482 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:54:18.657+01:00 DEBUG 43482 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@8585cdd]
+2024-05-06T09:54:18.658+01:00 DEBUG 43482 --- [main] o.s.security.web.FilterChainProxy        : Securing PATCH /api/v1/account/updateProfile
+2024-05-06T09:54:18.659+01:00 DEBUG 43482 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]]
+2024-05-06T09:54:18.659+01:00 DEBUG 43482 --- [main] o.s.security.web.FilterChainProxy        : Secured PATCH /api/v1/account/updateProfile
+2024-05-06T09:54:18.712+01:00 DEBUG 43482 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:54:18.713+01:00 DEBUG 43482 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@3cfab340]
+2024-05-06T09:54:18.714+01:00 DEBUG 43482 --- [main] o.s.security.web.FilterChainProxy        : Securing GET /api/v1/account/balance
+2024-05-06T09:54:18.714+01:00 DEBUG 43482 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]]
+2024-05-06T09:54:18.715+01:00 DEBUG 43482 --- [main] o.s.security.web.FilterChainProxy        : Secured GET /api/v1/account/balance
+2024-05-06T09:55:23.511+01:00  INFO 43504 --- [main] o.h.o.controller.AccountControllerTest   : Starting AccountControllerTest using Java 21.0.2 with PID 43504 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T09:55:23.514+01:00  INFO 43504 --- [main] o.h.o.controller.AccountControllerTest   : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T09:55:25.759+01:00  INFO 43504 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@3b2c8bda, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@688d619c, org.springframework.security.web.context.SecurityContextHolderFilter@2047adea, org.springframework.security.web.header.HeaderWriterFilter@3ff26c9, org.springframework.web.filter.CorsFilter@647ff23e, org.springframework.security.web.csrf.CsrfFilter@78bd02c8, org.springframework.security.web.authentication.logout.LogoutFilter@4f552aa2, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@7c47e077, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@3b56947a, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@6a04d2a4, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@2c0fefac, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1a06602f, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@46591e98, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@35a9e665, org.springframework.security.web.access.ExceptionTranslationFilter@3e5ebdfe, org.springframework.security.web.access.intercept.AuthorizationFilter@4df7b4ac]
+2024-05-06T09:55:25.832+01:00  INFO 43504 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2024-05-06T09:55:25.833+01:00  INFO 43504 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2024-05-06T09:55:25.835+01:00  INFO 43504 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2024-05-06T09:55:25.880+01:00  INFO 43504 --- [main] o.h.o.controller.AccountControllerTest   : Started AccountControllerTest in 2.854 seconds (process running for 5.842)
+2024-05-06T09:55:25.982+01:00 DEBUG 43504 --- [main] o.s.security.web.FilterChainProxy        : Securing GET /api/v1/account/balance
+2024-05-06T09:55:25.995+01:00 DEBUG 43504 --- [main] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2024-05-06T09:55:26.003+01:00 DEBUG 43504 --- [main] o.s.s.w.s.HttpSessionRequestCache        : Saved request http://localhost/api/v1/account/balance?continue to session
+2024-05-06T09:55:26.008+01:00 DEBUG 43504 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : Trying to match using And [Not [RequestHeaderRequestMatcher [expectedHeaderName=X-Requested-With, expectedHeaderValue=XMLHttpRequest]], MediaTypeRequestMatcher [contentNegotiationStrategy=org.springframework.web.accept.ContentNegotiationManager@2e7bb00e, matchingMediaTypes=[application/xhtml+xml, image/*, text/html, text/plain], useEquals=false, ignoredMediaTypes=[*/*]]]
+2024-05-06T09:55:26.009+01:00 DEBUG 43504 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : Trying to match using Or [RequestHeaderRequestMatcher [expectedHeaderName=X-Requested-With, expectedHeaderValue=XMLHttpRequest], And [Not [MediaTypeRequestMatcher [contentNegotiationStrategy=org.springframework.web.accept.ContentNegotiationManager@2e7bb00e, matchingMediaTypes=[text/html], useEquals=false, ignoredMediaTypes=[]]], MediaTypeRequestMatcher [contentNegotiationStrategy=org.springframework.web.accept.ContentNegotiationManager@2e7bb00e, matchingMediaTypes=[application/atom+xml, application/x-www-form-urlencoded, application/json, application/octet-stream, application/xml, multipart/form-data, text/xml], useEquals=false, ignoredMediaTypes=[*/*]]], MediaTypeRequestMatcher [contentNegotiationStrategy=org.springframework.web.accept.ContentNegotiationManager@2e7bb00e, matchingMediaTypes=[*/*], useEquals=true, ignoredMediaTypes=[]]]
+2024-05-06T09:55:26.009+01:00 DEBUG 43504 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : Match found! Executing org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint@48692405
+2024-05-06T09:55:26.010+01:00 DEBUG 43504 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : Trying to match using RequestHeaderRequestMatcher [expectedHeaderName=X-Requested-With, expectedHeaderValue=XMLHttpRequest]
+2024-05-06T09:55:26.010+01:00 DEBUG 43504 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : No match found. Using default entry point org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint@311a09b2
+2024-05-06T09:55:26.076+01:00 DEBUG 43504 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:55:26.077+01:00 DEBUG 43504 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@7a021f49]
+2024-05-06T09:55:26.078+01:00 DEBUG 43504 --- [main] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/account/deposit
+2024-05-06T09:55:26.080+01:00 DEBUG 43504 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]]
+2024-05-06T09:55:26.081+01:00 DEBUG 43504 --- [main] o.s.security.web.FilterChainProxy        : Secured POST /api/v1/account/deposit
+2024-05-06T09:55:26.240+01:00 DEBUG 43504 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:55:26.242+01:00 DEBUG 43504 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@6b33892a]
+2024-05-06T09:55:26.243+01:00 DEBUG 43504 --- [main] o.s.security.web.FilterChainProxy        : Securing PATCH /api/v1/account/updateProfile
+2024-05-06T09:55:26.244+01:00 DEBUG 43504 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]]
+2024-05-06T09:55:26.244+01:00 DEBUG 43504 --- [main] o.s.security.web.FilterChainProxy        : Secured PATCH /api/v1/account/updateProfile
+2024-05-06T09:55:26.267+01:00 DEBUG 43504 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
+2024-05-06T09:55:26.267+01:00 DEBUG 43504 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@4247093b]
+2024-05-06T09:55:26.268+01:00 DEBUG 43504 --- [main] o.s.security.web.FilterChainProxy        : Securing GET /api/v1/account/balance
+2024-05-06T09:55:26.268+01:00 DEBUG 43504 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=HenryTaiwo, Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]]
+2024-05-06T09:55:26.268+01:00 DEBUG 43504 --- [main] o.s.security.web.FilterChainProxy        : Secured GET /api/v1/account/balance
+2024-05-06T10:24:40.354+01:00  INFO 44442 --- [main] o.h.o.repository.TokenRepositoryTest     : Starting TokenRepositoryTest using Java 21.0.2 with PID 44442 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T10:24:40.356+01:00  INFO 44442 --- [main] o.h.o.repository.TokenRepositoryTest     : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T10:24:40.831+01:00  INFO 44442 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-05-06T10:24:40.925+01:00  INFO 44442 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 87 ms. Found 8 JPA repository interfaces.
+2024-05-06T10:24:41.000+01:00  INFO 44442 --- [main] beddedDataSourceBeanFactoryPostProcessor : Replacing 'dataSource' DataSource bean with embedded version
+2024-05-06T10:24:41.192+01:00  INFO 44442 --- [main] o.s.j.d.e.EmbeddedDatabaseFactory        : Starting embedded database: url='jdbc:h2:mem:18cfe581-2e1c-450c-b37d-630515f51e20;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false', username='sa'
+2024-05-06T10:24:41.522+01:00  INFO 44442 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-05-06T10:24:41.592+01:00  INFO 44442 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-05-06T10:24:41.626+01:00  INFO 44442 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-05-06T10:24:41.873+01:00  INFO 44442 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-05-06T10:24:41.924+01:00  WARN 44442 --- [main] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2024-05-06T10:24:43.008+01:00  INFO 44442 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-05-06T10:24:43.069+01:00  INFO 44442 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-05-06T10:24:43.076+01:00  WARN 44442 --- [main] s.c.a.AnnotationConfigApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'restTemplate' defined in org.henry.onlinebankingsystemp.OnlineBankingSystemPApplication: Unsatisfied dependency expressed through method 'restTemplate' parameter 0: No qualifying bean of type 'org.springframework.boot.web.client.RestTemplateBuilder' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2024-05-06T10:24:43.077+01:00  INFO 44442 --- [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-05-06T10:24:43.091+01:00  INFO 44442 --- [main] .s.b.a.l.ConditionEvaluationReportLogger : 
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2024-05-04T00:01:23.392+01:00 ERROR 25758 --- [main] o.s.boot.SpringApplication               : Application run failed
+2024-05-06T10:24:43.117+01:00 ERROR 44442 --- [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
 
-org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1786) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1234) ~[spring-context-6.1.5.jar:6.1.5]
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:952) ~[spring-context-6.1.5.jar:6.1.5]
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:624) ~[spring-context-6.1.5.jar:6.1.5]
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:334) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.test.context.SpringBootContextLoader.lambda$loadContext$3(SpringBootContextLoader.java:137) ~[spring-boot-test-3.2.4.jar:3.2.4]
-	at org.springframework.util.function.ThrowingSupplier.get(ThrowingSupplier.java:58) ~[spring-core-6.1.5.jar:6.1.5]
-	at org.springframework.util.function.ThrowingSupplier.get(ThrowingSupplier.java:46) ~[spring-core-6.1.5.jar:6.1.5]
-	at org.springframework.boot.SpringApplication.withHook(SpringApplication.java:1454) ~[spring-boot-3.2.4.jar:3.2.4]
-	at org.springframework.boot.test.context.SpringBootContextLoader$ContextLoaderHook.run(SpringBootContextLoader.java:553) ~[spring-boot-test-3.2.4.jar:3.2.4]
-	at org.springframework.boot.test.context.SpringBootContextLoader.loadContext(SpringBootContextLoader.java:137) ~[spring-boot-test-3.2.4.jar:3.2.4]
-	at org.springframework.boot.test.context.SpringBootContextLoader.loadContext(SpringBootContextLoader.java:108) ~[spring-boot-test-3.2.4.jar:3.2.4]
-	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContextInternal(DefaultCacheAwareContextLoaderDelegate.java:225) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:152) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:130) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.web.ServletTestExecutionListener.setUpRequestContextIfNecessary(ServletTestExecutionListener.java:191) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.web.ServletTestExecutionListener.prepareTestInstance(ServletTestExecutionListener.java:130) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.TestContextManager.prepareTestInstance(TestContextManager.java:260) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.junit.jupiter.SpringExtension.postProcessTestInstance(SpringExtension.java:163) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$10(ClassBasedTestDescriptor.java:378) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.executeAndMaskThrowable(ClassBasedTestDescriptor.java:383) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$11(ClassBasedTestDescriptor.java:378) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197) ~[na:na]
-	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179) ~[na:na]
-	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708) ~[na:na]
-	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509) ~[na:na]
-	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[na:na]
-	at java.base/java.util.stream.StreamSpliterators$WrappingSpliterator.forEachRemaining(StreamSpliterators.java:310) ~[na:na]
-	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:735) ~[na:na]
-	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:734) ~[na:na]
-	at java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:762) ~[na:na]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.invokeTestInstancePostProcessors(ClassBasedTestDescriptor.java:377) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$instantiateAndPostProcessTestInstance$6(ClassBasedTestDescriptor.java:290) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.instantiateAndPostProcessTestInstance(ClassBasedTestDescriptor.java:289) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$4(ClassBasedTestDescriptor.java:279) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at java.base/java.util.Optional.orElseGet(Optional.java:364) ~[na:na]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$5(ClassBasedTestDescriptor.java:278) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.execution.TestInstancesProvider.getTestInstances(TestInstancesProvider.java:31) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$prepare$0(TestMethodTestDescriptor.java:106) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:105) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:69) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$prepare$2(NodeTestTask.java:123) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.prepare(NodeTestTask.java:123) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:90) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596) ~[na:na]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596) ~[na:na]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54) ~[junit-platform-engine-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:198) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:169) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:93) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:58) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:141) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:57) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at org.junit.platform.launcher.core.SessionPerRequestLauncher.execute(SessionPerRequestLauncher.java:63) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
-	at com.intellij.junit5.JUnit5IdeaTestRunner.startRunnerWithArgs(JUnit5IdeaTestRunner.java:57) ~[junit5-rt.jar:na]
-	at com.intellij.rt.junit.IdeaTestRunner$Repeater$1.execute(IdeaTestRunner.java:38) ~[junit-rt.jar:na]
-	at com.intellij.rt.execution.junit.TestsRepeater.repeat(TestsRepeater.java:11) ~[idea_rt.jar:na]
-	at com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:35) ~[junit-rt.jar:na]
-	at com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:232) ~[junit-rt.jar:na]
-	at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:55) ~[junit-rt.jar:na]
-Caused by: org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:276) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:223) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:191) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:170) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1432) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1503) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1833) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1782) ~[spring-beans-6.1.5.jar:6.1.5]
-	... 93 common frames omitted
-Caused by: org.hibernate.HibernateException: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
-	at org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl.determineDialect(DialectFactoryImpl.java:191) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl.buildDialect(DialectFactoryImpl.java:87) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentWithDefaults(JdbcEnvironmentInitiator.java:143) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:348) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:107) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	... 108 common frames omitted
+***************************
+APPLICATION FAILED TO START
+***************************
 
-2024-05-04T00:01:23.400+01:00  WARN 25758 --- [main] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener] to prepare test instance [org.henry.onlinebankingsystemp.OnlineBankingSystemPApplicationTests@634aa81e]
+Description:
 
-java.lang.IllegalStateException: Failed to load ApplicationContext for [WebMergedContextConfiguration@70f4f89e testClass = org.henry.onlinebankingsystemp.OnlineBankingSystemPApplicationTests, locations = [], classes = [org.henry.onlinebankingsystemp.OnlineBankingSystemPApplication], contextInitializerClasses = [], activeProfiles = [], propertySourceDescriptors = [], propertySourceProperties = ["org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true"], contextCustomizers = [org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@434a63ab, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@3a44431a, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@67f639d3, org.springframework.boot.test.autoconfigure.actuate.observability.ObservabilityContextCustomizerFactory$DisableObservabilityContextCustomizer@1f, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizer@5a45133e, org.springframework.boot.test.context.SpringBootTestAnnotation@181cab3b], resourceBasePath = "src/main/webapp", contextLoader = org.springframework.boot.test.context.SpringBootContextLoader, parent = null]
+Parameter 0 of method restTemplate in org.henry.onlinebankingsystemp.OnlineBankingSystemPApplication required a bean of type 'org.springframework.boot.web.client.RestTemplateBuilder' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.boot.web.client.RestTemplateBuilder' in your configuration.
+
+2024-05-06T10:24:43.123+01:00  WARN 44442 --- [main] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.support.DependencyInjectionTestExecutionListener] to prepare test instance [org.henry.onlinebankingsystemp.repository.TokenRepositoryTest@4088702d]
+
+java.lang.IllegalStateException: Failed to load ApplicationContext for [MergedContextConfiguration@22b10124 testClass = org.henry.onlinebankingsystemp.repository.TokenRepositoryTest, locations = [], classes = [org.henry.onlinebankingsystemp.OnlineBankingSystemPApplication], contextInitializerClasses = [], activeProfiles = [], propertySourceDescriptors = [], propertySourceProperties = ["org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTestContextBootstrapper=true"], contextCustomizers = [[ImportsContextCustomizer@6f36e806 key = [org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManagerAutoConfiguration, org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration, org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration, org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcClientAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@4007f65e, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@5965d37, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@1807e3f6, org.springframework.boot.test.autoconfigure.actuate.observability.ObservabilityContextCustomizerFactory$DisableObservabilityContextCustomizer@1f, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@34be3d80, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@1824156e, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizer@1500b2f3, org.springframework.boot.test.context.SpringBootTestAnnotation@ee21a6f3], contextLoader = org.springframework.boot.test.context.SpringBootContextLoader, parent = null]
 	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:180) ~[spring-test-6.1.5.jar:6.1.5]
 	at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:130) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.web.ServletTestExecutionListener.setUpRequestContextIfNecessary(ServletTestExecutionListener.java:191) ~[spring-test-6.1.5.jar:6.1.5]
-	at org.springframework.test.context.web.ServletTestExecutionListener.prepareTestInstance(ServletTestExecutionListener.java:130) ~[spring-test-6.1.5.jar:6.1.5]
+	at org.springframework.test.context.support.DependencyInjectionTestExecutionListener.injectDependencies(DependencyInjectionTestExecutionListener.java:142) ~[spring-test-6.1.5.jar:6.1.5]
+	at org.springframework.test.context.support.DependencyInjectionTestExecutionListener.prepareTestInstance(DependencyInjectionTestExecutionListener.java:98) ~[spring-test-6.1.5.jar:6.1.5]
 	at org.springframework.test.context.TestContextManager.prepareTestInstance(TestContextManager.java:260) ~[spring-test-6.1.5.jar:6.1.5]
 	at org.springframework.test.context.junit.jupiter.SpringExtension.postProcessTestInstance(SpringExtension.java:163) ~[spring-test-6.1.5.jar:6.1.5]
 	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$10(ClassBasedTestDescriptor.java:378) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
@@ -488,16 +344,19 @@ java.lang.IllegalStateException: Failed to load ApplicationContext for [WebMerge
 	at com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:35) ~[junit-rt.jar:na]
 	at com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:232) ~[junit-rt.jar:na]
 	at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:55) ~[junit-rt.jar:na]
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1786) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.5.jar:6.1.5]
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'restTemplate' defined in org.henry.onlinebankingsystemp.OnlineBankingSystemPApplication: Unsatisfied dependency expressed through method 'restTemplate' parameter 0: No qualifying bean of type 'org.springframework.boot.web.client.RestTemplateBuilder' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:795) ~[spring-beans-6.1.5.jar:6.1.5]
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:542) ~[spring-beans-6.1.5.jar:6.1.5]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1335) ~[spring-beans-6.1.5.jar:6.1.5]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1165) ~[spring-beans-6.1.5.jar:6.1.5]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:562) ~[spring-beans-6.1.5.jar:6.1.5]
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.5.jar:6.1.5]
 	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326) ~[spring-beans-6.1.5.jar:6.1.5]
 	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.5.jar:6.1.5]
 	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324) ~[spring-beans-6.1.5.jar:6.1.5]
 	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1234) ~[spring-context-6.1.5.jar:6.1.5]
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:952) ~[spring-context-6.1.5.jar:6.1.5]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:975) ~[spring-beans-6.1.5.jar:6.1.5]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:962) ~[spring-context-6.1.5.jar:6.1.5]
 	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:624) ~[spring-context-6.1.5.jar:6.1.5]
 	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754) ~[spring-boot-3.2.4.jar:3.2.4]
 	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) ~[spring-boot-3.2.4.jar:3.2.4]
@@ -512,52 +371,138 @@ Caused by: org.springframework.beans.factory.BeanCreationException: Error creati
 	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContextInternal(DefaultCacheAwareContextLoaderDelegate.java:225) ~[spring-test-6.1.5.jar:6.1.5]
 	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:152) ~[spring-test-6.1.5.jar:6.1.5]
 	... 72 common frames omitted
-Caused by: org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:276) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:223) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:191) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:170) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1432) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1503) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366) ~[spring-orm-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1833) ~[spring-beans-6.1.5.jar:6.1.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1782) ~[spring-beans-6.1.5.jar:6.1.5]
-	... 93 common frames omitted
-Caused by: org.hibernate.HibernateException: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
-	at org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl.determineDialect(DialectFactoryImpl.java:191) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl.buildDialect(DialectFactoryImpl.java:87) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentWithDefaults(JdbcEnvironmentInitiator.java:143) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:348) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:107) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263) ~[hibernate-core-6.4.4.Final.jar:6.4.4.Final]
-	... 108 common frames omitted
+Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'org.springframework.boot.web.client.RestTemplateBuilder' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.raiseNoMatchingBeanFound(DefaultListableBeanFactory.java:1880) ~[spring-beans-6.1.5.jar:6.1.5]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1406) ~[spring-beans-6.1.5.jar:6.1.5]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1353) ~[spring-beans-6.1.5.jar:6.1.5]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:904) ~[spring-beans-6.1.5.jar:6.1.5]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:782) ~[spring-beans-6.1.5.jar:6.1.5]
+	... 96 common frames omitted
 
-2024-05-04T00:30:51.930+01:00  INFO 26802 --- [main] o.h.o.controller.AccountControllerTest   : Starting AccountControllerTest using Java 21.0.2 with PID 26802 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
-2024-05-04T00:30:51.932+01:00  INFO 26802 --- [main] o.h.o.controller.AccountControllerTest   : No active profile set, falling back to 1 default profile: "default"
-2024-05-04T00:30:53.928+01:00  INFO 26802 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@6acb45c1, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@294c44b7, org.springframework.security.web.context.SecurityContextHolderFilter@2c15034f, org.springframework.security.web.header.HeaderWriterFilter@27a90ce5, org.springframework.web.filter.CorsFilter@30bbe83, org.springframework.security.web.csrf.CsrfFilter@615ef20, org.springframework.security.web.authentication.logout.LogoutFilter@5fe3b058, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@7b4619a3, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@2ecdcfe3, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@57b130f6, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@7c47e077, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@148b6f95, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5ee581db, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@67e4928c, org.springframework.security.web.access.ExceptionTranslationFilter@36511772, org.springframework.security.web.access.intercept.AuthorizationFilter@38cf4497]
-2024-05-04T00:30:53.989+01:00  INFO 26802 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
-2024-05-04T00:30:53.990+01:00  INFO 26802 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2024-05-04T00:30:53.991+01:00  INFO 26802 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
-2024-05-04T00:30:54.031+01:00  INFO 26802 --- [main] o.h.o.controller.AccountControllerTest   : Started AccountControllerTest in 2.543 seconds (process running for 5.513)
-2024-05-04T00:30:54.133+01:00 DEBUG 26802 --- [main] o.s.security.web.FilterChainProxy        : Securing GET /api/v1/account/balance
-2024-05-04T00:30:54.146+01:00 DEBUG 26802 --- [main] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
-2024-05-04T00:30:54.154+01:00 DEBUG 26802 --- [main] o.s.s.w.s.HttpSessionRequestCache        : Saved request http://localhost/api/v1/account/balance?continue to session
-2024-05-04T00:30:54.160+01:00 DEBUG 26802 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : Trying to match using And [Not [RequestHeaderRequestMatcher [expectedHeaderName=X-Requested-With, expectedHeaderValue=XMLHttpRequest]], MediaTypeRequestMatcher [contentNegotiationStrategy=org.springframework.web.accept.ContentNegotiationManager@45e11627, matchingMediaTypes=[application/xhtml+xml, image/*, text/html, text/plain], useEquals=false, ignoredMediaTypes=[*/*]]]
-2024-05-04T00:30:54.161+01:00 DEBUG 26802 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : Trying to match using Or [RequestHeaderRequestMatcher [expectedHeaderName=X-Requested-With, expectedHeaderValue=XMLHttpRequest], And [Not [MediaTypeRequestMatcher [contentNegotiationStrategy=org.springframework.web.accept.ContentNegotiationManager@45e11627, matchingMediaTypes=[text/html], useEquals=false, ignoredMediaTypes=[]]], MediaTypeRequestMatcher [contentNegotiationStrategy=org.springframework.web.accept.ContentNegotiationManager@45e11627, matchingMediaTypes=[application/atom+xml, application/x-www-form-urlencoded, application/json, application/octet-stream, application/xml, multipart/form-data, text/xml], useEquals=false, ignoredMediaTypes=[*/*]]], MediaTypeRequestMatcher [contentNegotiationStrategy=org.springframework.web.accept.ContentNegotiationManager@45e11627, matchingMediaTypes=[*/*], useEquals=true, ignoredMediaTypes=[]]]
-2024-05-04T00:30:54.161+01:00 DEBUG 26802 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : Match found! Executing org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint@e7e455d
-2024-05-04T00:30:54.162+01:00 DEBUG 26802 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : Trying to match using RequestHeaderRequestMatcher [expectedHeaderName=X-Requested-With, expectedHeaderValue=XMLHttpRequest]
-2024-05-04T00:30:54.162+01:00 DEBUG 26802 --- [main] s.w.a.DelegatingAuthenticationEntryPoint : No match found. Using default entry point org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint@4a5fab78
-2024-05-04T00:30:54.238+01:00 DEBUG 26802 --- [main] w.c.HttpSessionSecurityContextRepository : Created HttpSession as SecurityContext is non-default
-2024-05-04T00:30:54.240+01:00 DEBUG 26802 --- [main] w.c.HttpSessionSecurityContextRepository : Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=email@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[ROLE_USER]]] to HttpSession [org.springframework.mock.web.MockHttpSession@29ea5e0]
-2024-05-04T00:30:54.241+01:00 DEBUG 26802 --- [main] o.s.security.web.FilterChainProxy        : Securing GET /api/v1/account/balance
-2024-05-04T00:30:54.243+01:00 DEBUG 26802 --- [main] w.c.HttpSessionSecurityContextRepository : Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=email@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[ROLE_USER]]]
-2024-05-04T00:30:54.244+01:00 DEBUG 26802 --- [main] o.s.security.web.FilterChainProxy        : Secured GET /api/v1/account/balance
+2024-05-06T10:24:43.147+01:00  WARN 44442 --- [main] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.support.DependencyInjectionTestExecutionListener] to prepare test instance [org.henry.onlinebankingsystemp.repository.TokenRepositoryTest@52dd1be2]
+
+java.lang.IllegalStateException: ApplicationContext failure threshold (1) exceeded: skipping repeated attempt to load context for [MergedContextConfiguration@22b10124 testClass = org.henry.onlinebankingsystemp.repository.TokenRepositoryTest, locations = [], classes = [org.henry.onlinebankingsystemp.OnlineBankingSystemPApplication], contextInitializerClasses = [], activeProfiles = [], propertySourceDescriptors = [], propertySourceProperties = ["org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTestContextBootstrapper=true"], contextCustomizers = [[ImportsContextCustomizer@6f36e806 key = [org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManagerAutoConfiguration, org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration, org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration, org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcClientAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@4007f65e, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@5965d37, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@1807e3f6, org.springframework.boot.test.autoconfigure.actuate.observability.ObservabilityContextCustomizerFactory$DisableObservabilityContextCustomizer@1f, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@34be3d80, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@1824156e, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizer@1500b2f3, org.springframework.boot.test.context.SpringBootTestAnnotation@ee21a6f3], contextLoader = org.springframework.boot.test.context.SpringBootContextLoader, parent = null]
+	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:145) ~[spring-test-6.1.5.jar:6.1.5]
+	at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:130) ~[spring-test-6.1.5.jar:6.1.5]
+	at org.springframework.test.context.support.DependencyInjectionTestExecutionListener.injectDependencies(DependencyInjectionTestExecutionListener.java:142) ~[spring-test-6.1.5.jar:6.1.5]
+	at org.springframework.test.context.support.DependencyInjectionTestExecutionListener.prepareTestInstance(DependencyInjectionTestExecutionListener.java:98) ~[spring-test-6.1.5.jar:6.1.5]
+	at org.springframework.test.context.TestContextManager.prepareTestInstance(TestContextManager.java:260) ~[spring-test-6.1.5.jar:6.1.5]
+	at org.springframework.test.context.junit.jupiter.SpringExtension.postProcessTestInstance(SpringExtension.java:163) ~[spring-test-6.1.5.jar:6.1.5]
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$10(ClassBasedTestDescriptor.java:378) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.executeAndMaskThrowable(ClassBasedTestDescriptor.java:383) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$11(ClassBasedTestDescriptor.java:378) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197) ~[na:na]
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179) ~[na:na]
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708) ~[na:na]
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509) ~[na:na]
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[na:na]
+	at java.base/java.util.stream.StreamSpliterators$WrappingSpliterator.forEachRemaining(StreamSpliterators.java:310) ~[na:na]
+	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:735) ~[na:na]
+	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:734) ~[na:na]
+	at java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:762) ~[na:na]
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.invokeTestInstancePostProcessors(ClassBasedTestDescriptor.java:377) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$instantiateAndPostProcessTestInstance$6(ClassBasedTestDescriptor.java:290) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.instantiateAndPostProcessTestInstance(ClassBasedTestDescriptor.java:289) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$4(ClassBasedTestDescriptor.java:279) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
+	at java.base/java.util.Optional.orElseGet(Optional.java:364) ~[na:na]
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$5(ClassBasedTestDescriptor.java:278) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
+	at org.junit.jupiter.engine.execution.TestInstancesProvider.getTestInstances(TestInstancesProvider.java:31) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$prepare$0(TestMethodTestDescriptor.java:106) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:105) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:69) ~[junit-jupiter-engine-5.10.2.jar:5.10.2]
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$prepare$2(NodeTestTask.java:123) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.prepare(NodeTestTask.java:123) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:90) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596) ~[na:na]
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596) ~[na:na]
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54) ~[junit-platform-engine-1.10.2.jar:1.10.2]
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:198) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:169) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:93) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:58) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:141) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:57) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
+	at org.junit.platform.launcher.core.SessionPerRequestLauncher.execute(SessionPerRequestLauncher.java:63) ~[junit-platform-launcher-1.10.2.jar:1.10.2]
+	at com.intellij.junit5.JUnit5IdeaTestRunner.startRunnerWithArgs(JUnit5IdeaTestRunner.java:57) ~[junit5-rt.jar:na]
+	at com.intellij.rt.junit.IdeaTestRunner$Repeater$1.execute(IdeaTestRunner.java:38) ~[junit-rt.jar:na]
+	at com.intellij.rt.execution.junit.TestsRepeater.repeat(TestsRepeater.java:11) ~[idea_rt.jar:na]
+	at com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:35) ~[junit-rt.jar:na]
+	at com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:232) ~[junit-rt.jar:na]
+	at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:55) ~[junit-rt.jar:na]
+
+2024-05-06T10:26:24.314+01:00  INFO 44479 --- [main] o.h.o.repository.TokenRepositoryTest     : Starting TokenRepositoryTest using Java 21.0.2 with PID 44479 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T10:26:24.316+01:00  INFO 44479 --- [main] o.h.o.repository.TokenRepositoryTest     : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T10:26:24.807+01:00  INFO 44479 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-05-06T10:26:24.899+01:00  INFO 44479 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 84 ms. Found 8 JPA repository interfaces.
+2024-05-06T10:26:24.969+01:00  INFO 44479 --- [main] beddedDataSourceBeanFactoryPostProcessor : Replacing 'dataSource' DataSource bean with embedded version
+2024-05-06T10:26:26.230+01:00  INFO 44479 --- [main] o.s.j.d.e.EmbeddedDatabaseFactory        : Starting embedded database: url='jdbc:h2:mem:78f7fc00-250b-40f8-a29f-070312e0f313;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false', username='sa'
+2024-05-06T10:26:26.648+01:00  INFO 44479 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-05-06T10:26:26.712+01:00  INFO 44479 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-05-06T10:26:26.757+01:00  INFO 44479 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-05-06T10:26:26.889+01:00  INFO 44479 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-05-06T10:26:26.945+01:00  WARN 44479 --- [main] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2024-05-06T10:26:27.913+01:00  INFO 44479 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-05-06T10:26:27.979+01:00  INFO 44479 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-05-06T10:26:28.454+01:00  INFO 44479 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-05-06T10:26:29.165+01:00  INFO 44479 --- [main] o.h.o.repository.TokenRepositoryTest     : Started TokenRepositoryTest in 5.219 seconds (process running for 6.491)
+2024-05-06T10:26:29.217+01:00  INFO 44479 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-05-06T10:28:06.063+01:00  INFO 44502 --- [main] o.h.o.repository.TokenRepositoryTest     : Starting TokenRepositoryTest using Java 21.0.2 with PID 44502 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T10:28:06.065+01:00  INFO 44502 --- [main] o.h.o.repository.TokenRepositoryTest     : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T10:28:06.539+01:00  INFO 44502 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-05-06T10:28:06.630+01:00  INFO 44502 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 83 ms. Found 8 JPA repository interfaces.
+2024-05-06T10:28:06.702+01:00  INFO 44502 --- [main] beddedDataSourceBeanFactoryPostProcessor : Replacing 'dataSource' DataSource bean with embedded version
+2024-05-06T10:28:07.907+01:00  INFO 44502 --- [main] o.s.j.d.e.EmbeddedDatabaseFactory        : Starting embedded database: url='jdbc:h2:mem:c703c5f6-6f07-4926-94d5-d9abd87b701f;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false', username='sa'
+2024-05-06T10:28:08.305+01:00  INFO 44502 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-05-06T10:28:08.371+01:00  INFO 44502 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-05-06T10:28:08.417+01:00  INFO 44502 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-05-06T10:28:08.546+01:00  INFO 44502 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-05-06T10:28:09.572+01:00  INFO 44502 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-05-06T10:28:09.639+01:00  INFO 44502 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-05-06T10:28:10.167+01:00  INFO 44502 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-05-06T10:28:10.766+01:00  INFO 44502 --- [main] o.h.o.repository.TokenRepositoryTest     : Started TokenRepositoryTest in 5.079 seconds (process running for 6.293)
+2024-05-06T10:28:10.822+01:00  INFO 44502 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-05-06T10:30:20.450+01:00  INFO 44522 --- [main] o.h.o.repository.TokenRepositoryTest     : Starting TokenRepositoryTest using Java 21.0.2 with PID 44522 (started by henry in /Users/henry/Developer/SystemSpecs/OnlineBankSystem)
+2024-05-06T10:30:20.453+01:00  INFO 44522 --- [main] o.h.o.repository.TokenRepositoryTest     : No active profile set, falling back to 1 default profile: "default"
+2024-05-06T10:30:21.202+01:00  INFO 44522 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-05-06T10:30:21.337+01:00  INFO 44522 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 122 ms. Found 8 JPA repository interfaces.
+2024-05-06T10:30:24.004+01:00  INFO 44522 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-05-06T10:30:24.091+01:00  INFO 44522 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-05-06T10:30:24.159+01:00  INFO 44522 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-05-06T10:30:24.315+01:00  INFO 44522 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-05-06T10:30:24.362+01:00  INFO 44522 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-05-06T10:30:24.372+01:00  WARN 44522 --- [main] c.zaxxer.hikari.util.DriverDataSource    : Registered driver with driverClassName=com.mysql.jdbc.Driver was not found, trying direct instantiation.
+2024-05-06T10:30:24.928+01:00  INFO 44522 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5da1a97f
+2024-05-06T10:30:24.932+01:00  INFO 44522 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-05-06T10:30:26.704+01:00  INFO 44522 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-05-06T10:30:27.764+01:00  INFO 44522 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-05-06T10:30:28.247+01:00  INFO 44522 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-05-06T10:30:29.364+01:00  INFO 44522 --- [main] o.h.o.repository.TokenRepositoryTest     : Started TokenRepositoryTest in 9.453 seconds (process running for 55.83)
+2024-05-06T10:30:29.477+01:00  INFO 44522 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-05-06T10:30:29.717+01:00  INFO 44522 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-05-06T10:30:29.761+01:00  INFO 44522 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
