@@ -118,9 +118,9 @@ public class UserService {
             long currentTime = System.currentTimeMillis();
             log.info("Checking OTP expiration time");
             if (otp.getExpirationTime() - currentTime < 0 || otp.getExpired()) {
-                message = "valid";
-            } else {
                 message = "expired";
+            } else {
+                message = "valid";
             }
         } else {
             message = "invalid";
