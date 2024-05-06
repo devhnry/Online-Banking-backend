@@ -1,13 +1,19 @@
 package org.henry.onlinebankingsystemp.controller;
 
 import org.henry.onlinebankingsystemp.dto.BalanceDTO;
+import org.henry.onlinebankingsystemp.dto.DefaultResponse;
+import org.henry.onlinebankingsystemp.dto.TransactionDTO;
+import org.henry.onlinebankingsystemp.dto.UpdateInfoDTO;
+import org.henry.onlinebankingsystemp.dto.enums.Role;
 import org.henry.onlinebankingsystemp.entity.Customer;
+import org.henry.onlinebankingsystemp.entity.OTP;
 import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.henry.onlinebankingsystemp.service.AccountService;
 import org.henry.onlinebankingsystemp.service.JWTService;
 import org.henry.onlinebankingsystemp.service.UserDetailService;
 import org.henry.onlinebankingsystemp.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,15 +23,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -50,6 +58,14 @@ class AccountControllerTest {
     private static final Customer currentUser = new Customer();
     private static String baseUrl = "/api/v1/account/";
 
+    @BeforeEach()
+    void setUp(){
+        currentUser.setCustomerId(1L);
+        currentUser.setFirstName("Henry");
+        currentUser.setLastName("Taiwo");
+        currentUser.setRole(Role.USER);
+    }
+
     @Test
     void willReturnBalanceForAuthorisedPersonnel() throws Exception {
 
@@ -61,7 +77,7 @@ class AccountControllerTest {
         this.mockMvc
                 .perform(get(baseUrl + "balance")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .with(user("email@gmail.com").password("password").roles("USER")))
+                        .with(user(currentUser)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.balance").value(new BigDecimal(2000)))
                 .andDo(MockMvcResultHandlers.print());
@@ -85,4 +101,72 @@ class AccountControllerTest {
 
         verifyNoInteractions(userService);
     }
+
+    @Test
+    void willAllowAuthorisedPersonnelToMakeDeposit() throws Exception {
+        String requestBody =
+                """
+                {
+                "amount" : 100000
+                }
+                """;
+        TransactionDTO transactionDTO = new TransactionDTO();
+        transactionDTO.setAmount(BigDecimal.valueOf(100000));
+
+        DefaultResponse res = new DefaultResponse();
+        res.setStatusCode(200);
+        res.setMessage("Deposit Successful");
+
+        given(accountService.depositMoney(transactionDTO)).willReturn(res);
+        this.mockMvc
+                .perform(post(baseUrl + "deposit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+                        .with(csrf().asHeader())
+                        .with(user(currentUser))
+                )
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        verify(accountService).depositMoney(transactionDTO);
+    }
+
+    @Test
+    void willAllowAuthorisedPersonnelToUpdateInformation() throws Exception{
+        String requestBody =
+                """
+                {
+                  "firstName" : "Beyonce",
+                  "lastName" : "Jam",
+                  "email" : "jam@gmail.com",
+                  "otpCode" : 56702
+                }
+                """;
+        UpdateInfoDTO info = new UpdateInfoDTO();
+        info.setFirstName("Beyonce");
+        info.setLastName("Jam");
+        info.setEmail("jam@gmail.com");
+        info.setOtpCode(56702L);
+
+        DefaultResponse res = new DefaultResponse();
+        res.setStatusCode(200);
+        res.setMessage("Update Successful");
+
+        given(userService.updateDetails(info)).willReturn(res);
+        this.mockMvc
+                .perform(patch(baseUrl + "updateProfile")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+                        .with(csrf().asHeader())
+                        .with(user(currentUser))
+                )
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+
+        verify(userService).updateDetails(info);
+    }
 }
+
