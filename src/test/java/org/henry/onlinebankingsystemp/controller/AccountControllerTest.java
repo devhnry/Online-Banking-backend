@@ -31,6 +31,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
+
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
@@ -64,6 +66,16 @@ class AccountControllerTest {
         currentUser.setFirstName("Henry");
         currentUser.setLastName("Taiwo");
         currentUser.setRole(Role.USER);
+    }
+
+    @Test
+    void notNull(){
+        assertNotNull(jwtService);
+        assertNotNull(accountService);
+        assertNotNull(userRepository);
+        assertNotNull(userDetailService);
+        assertNotNull(tokenRepository);
+        assertNotNull(restTemplate);
     }
 
     @Test
