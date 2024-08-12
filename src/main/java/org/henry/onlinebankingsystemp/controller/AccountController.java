@@ -3,7 +3,7 @@ package org.henry.onlinebankingsystemp.controller;
 import lombok.RequiredArgsConstructor;
 import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.service.AccountService;
-import org.henry.onlinebankingsystemp.service.UserService;
+import org.henry.onlinebankingsystemp.service.CustomerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AccountController {
 
-    private final UserService userService;
-    private final AccountService accountService;
+//    private final CustomerService customerService;
+//    private final AccountService accountService;
 
     /**
      * Endpoint to view the current account balance.

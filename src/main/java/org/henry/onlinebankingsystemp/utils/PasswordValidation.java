@@ -1,4 +1,4 @@
-package org.henry.onlinebankingsystemp.service.utils;
+package org.henry.onlinebankingsystemp.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
