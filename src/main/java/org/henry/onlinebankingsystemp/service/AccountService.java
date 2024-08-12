@@ -11,7 +11,7 @@ import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.entity.Transaction;
 import org.henry.onlinebankingsystemp.repository.AccountRepository;
-import org.henry.onlinebankingsystemp.repository.TransactionRepo;
+import org.henry.onlinebankingsystemp.repository.TransactionRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.henry.onlinebankingsystemp.service.utils.AccountNumberGenerator;
 import org.springframework.security.core.Authentication;
@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
-    private final TransactionRepo transactionRepo;
+    private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
     private final AccountNumberGenerator generator;
 
@@ -104,7 +104,7 @@ public class AccountService {
         accountRepository.save(targetAccount);
         userRepository.save(customer);
         userRepository.save(targetCustomer);
-        transactionRepo.save(transaction);
+        transactionRepository.save(transaction);
 
         res.setStatusCode(200);
         res.setStatusMessage("Transfer Successful");
@@ -113,7 +113,7 @@ public class AccountService {
     }
 
     public BigDecimal getDailyTransactionAmount(Long id) {
-        List<Transaction> transactions = transactionRepo.findTransactionByCustomer(id);
+        List<Transaction> transactions = transactionRepository.findTransactionByCustomer(id);
         BigDecimal totalAmount = BigDecimal.valueOf(0.0);
         for(Transaction tran : transactions){
             if(tran.getTransactionType().equals(TransactionType.DEPOSIT)){
@@ -191,7 +191,7 @@ public class AccountService {
 
             accountRepository.save(userAccount);
             userRepository.save(customer);
-            transactionRepo.save(transaction);
+            transactionRepository.save(transaction);
 
             res.setStatusCode(200);
             res.setStatusMessage(transactionType == TransactionType.WITHDRAWAL ? "Withdrawal Successful" : "Deposit Successful");

@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TransactionRepo extends JpaRepository<Transaction, Long> {
+public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
     @Query("""
-            select t from Transaction t inner join Customer u on t.account.customerId = u.customerId
+            select t from Transaction t inner join Customer u on t.account.customer.customerId = u.customerId
             where u.customerId = :customerId
         """
     )

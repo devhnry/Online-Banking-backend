@@ -3,7 +3,6 @@ package org.henry.onlinebankingsystemp.service.utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.henry.onlinebankingsystemp.repository.IdGenRepository;
 import org.hibernate.id.IdentifierGenerationException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;

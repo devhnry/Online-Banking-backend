@@ -10,8 +10,8 @@ import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.entity.Transaction;
 import org.henry.onlinebankingsystemp.repository.AccountRepository;
-import org.henry.onlinebankingsystemp.repository.OTPRepository;
-import org.henry.onlinebankingsystemp.repository.TransactionRepo;
+import org.henry.onlinebankingsystemp.repository.OtpRepository;
+import org.henry.onlinebankingsystemp.repository.TransactionRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -32,9 +32,9 @@ public class UserService {
     @Autowired
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
-    private final TransactionRepo transactionRepo;
+    private final TransactionRepository transactionRepository;
     private final PasswordEncoder passwordEncoder;
-    private final OTPRepository otpRepository;
+    private final OtpRepository otpRepository;
 
 
     private Long getUserId(){
@@ -67,7 +67,7 @@ public class UserService {
 
     public List<TransactionDTO> viewStatement(){
         Long id = getUserId();
-        List<TransactionDTO> dtos = mapTransactionsToDTOs(transactionRepo.findTransactionByCustomer(id));
+        List<TransactionDTO> dtos = mapTransactionsToDTOs(transactionRepository.findTransactionByCustomer(id));
         return dtos;
     }
 

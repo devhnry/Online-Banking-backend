@@ -9,7 +9,7 @@ import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.entity.Transaction;
 import org.henry.onlinebankingsystemp.repository.AccountRepository;
-import org.henry.onlinebankingsystemp.repository.TransactionRepo;
+import org.henry.onlinebankingsystemp.repository.TransactionRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.henry.onlinebankingsystemp.service.utils.AccountNumberGenerator;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +35,7 @@ class AccountServiceTest {
 
     @Mock private UserRepository userRepository;
     @Mock private AccountRepository accountRepository;
-    @Mock private TransactionRepo transactionRepo;
+    @Mock private TransactionRepository transactionRepository;
     @Mock private AccountNumberGenerator generator;
 
     @InjectMocks private AccountService underTest;
@@ -116,7 +116,7 @@ class AccountServiceTest {
     void willReturnZeroForDailyTransactionAmountIfEmptyList(){
         List<Transaction> transactions = new ArrayList<>();
 
-        given(transactionRepo.findTransactionByCustomer(currentUser.getCustomerId())).willReturn(transactions);
+        given(transactionRepository.findTransactionByCustomer(currentUser.getCustomerId())).willReturn(transactions);
         BigDecimal result = underTest.getDailyTransactionAmount(currentUser.getCustomerId());
 
         assertEquals(BigDecimal.valueOf(0.0), result);
@@ -138,7 +138,7 @@ class AccountServiceTest {
 
         List<Transaction> transactions = List.of(transaction, transaction2, transaction3);
 
-        given(transactionRepo.findTransactionByCustomer(currentUser.getCustomerId())).willReturn(transactions);
+        given(transactionRepository.findTransactionByCustomer(currentUser.getCustomerId())).willReturn(transactions);
         BigDecimal result = underTest.getDailyTransactionAmount(currentUser.getCustomerId());
         assertEquals(BigDecimal.valueOf(600.0), result);
     }
@@ -177,7 +177,7 @@ class AccountServiceTest {
         currentUser.setAccount(account);
         request.setAmount(BigDecimal.valueOf(2500.00));
         request.setTargetAccountNumber(TARGET_ACCOUNT_NUMBER);
-        given(transactionRepo.findTransactionByCustomer(currentUser.getCustomerId())).willReturn(List.of(transaction));
+        given(transactionRepository.findTransactionByCustomer(currentUser.getCustomerId())).willReturn(List.of(transaction));
 
         DefaultApiResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
         log.info(response.getStatusMessage());

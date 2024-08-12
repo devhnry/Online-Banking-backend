@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface OTPRepository extends JpaRepository<OneTimePassword, Long> {
+public interface OtpRepository extends JpaRepository<OneTimePassword, Long> {
     Optional<OneTimePassword> findById(Long id);
     Optional<OneTimePassword> findByCustomerAndOtpCode(Customer customer, Long otpCode );
 }
