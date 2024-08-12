@@ -1,11 +1,8 @@
 package org.henry.onlinebankingsystemp.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.henry.onlinebankingsystemp.dto.enums.Role;
+import lombok.*;
+import org.henry.onlinebankingsystemp.enums.AdminRoles;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,27 +10,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Data
-@Entity
-@Getter
-@Setter
-@ToString
+@Entity @Builder
+@AllArgsConstructor @NoArgsConstructor
+@Setter @Getter @ToString
 @Table(name = "admins")
 public class Admin implements UserDetails {
 
-    @Setter
-    @Getter
     @Id
-    @SequenceGenerator(
-            name = "adminSeq",
-            sequenceName = "adminSeq",
-            allocationSize = 1
-    )
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private Long adminId;
 
     private String firstName;
+
     private String lastName;
+
     private String username;
 
     @Column(unique = true, nullable = false)
@@ -43,14 +33,15 @@ public class Admin implements UserDetails {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private AdminRoles role;
 
     @OneToMany(mappedBy = "admin")
-    private List<Token> token;
+    private List<AuthToken> authToken;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.toString()));
+        // Grant authority based on the admins role
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override

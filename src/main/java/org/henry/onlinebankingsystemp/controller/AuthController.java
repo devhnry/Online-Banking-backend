@@ -3,29 +3,48 @@ package org.henry.onlinebankingsystemp.controller;
 import lombok.RequiredArgsConstructor;
 import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.service.AuthenticationService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/auth")
+@RequestMapping("auth")
 public class AuthController {
 
+    // Service layer dependency to handle authentication-related operations.
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/signup")
-    public DefaultResponse signup(@RequestBody SignUpDTO request){
-        return authenticationService.signUp(request);
+    /**
+     * Endpoint for user onboarding (signup).
+     * @param request contains the details required for onboarding a new user.
+     * @return a response indicating the success of the onboarding process, including the details of the onboarded user.
+     */
+    @PostMapping("/onboard")
+    public ResponseEntity<DefaultApiResponse<SuccessfulOnboardDto>> signup(@RequestBody OnboardUserDto request){
+        DefaultApiResponse<SuccessfulOnboardDto> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    /**
+     * Endpoint for user login.
+     * @param request contains the login credentials.
+     * @return a response containing the authorization details (e.g., access authToken) if login is successful.
+     */
     @PostMapping("/login")
-    public LoginResponseDTO login(@RequestBody LoginRequestDTO request){
-        return authenticationService.login(request);
+    public ResponseEntity<DefaultApiResponse<AuthorisationResponseDto>> login(@RequestBody LoginRequestDto request){
+        DefaultApiResponse<AuthorisationResponseDto> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping("/refreshToken")
-    public LoginResponseDTO refreshToken(@RequestBody RefreshTokenDTO request){
-        return authenticationService.refreshToken(request);
+    /**
+     * Endpoint for refreshing the access authToken using a refresh authToken.
+     * @param request contains the refresh authToken details.
+     * @return a response containing the new authorization details (e.g., new access authToken).
+     */
+    @PostMapping("/refresh-token")
+    public ResponseEntity<DefaultApiResponse<AuthorisationResponseDto>> refreshToken(@RequestBody RefreshTokenDto request){
+        DefaultApiResponse<AuthorisationResponseDto> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
-

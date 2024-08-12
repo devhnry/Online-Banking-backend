@@ -1,12 +1,7 @@
 package org.henry.onlinebankingsystemp.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.henry.onlinebankingsystemp.dto.AddressDTO;
-import org.henry.onlinebankingsystemp.dto.enums.Role;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,62 +9,61 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Data
-@Entity
-@Setter
-@Getter
-@ToString
+@Entity @Builder
+@AllArgsConstructor @NoArgsConstructor
+@Setter @Getter @ToString
 @Table(name = "customers")
 public class Customer implements UserDetails {
 
-    @Setter
-    @Getter
     @Id
-    @SequenceGenerator(
-            name = "userSeq",
-            sequenceName = "userSeq",
-            allocationSize = 1
-    )
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long customerId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String customerId;
+
+    @Column(nullable = false)
     private String firstName;
+
+    @Column(nullable = false)
     private String lastName;
+
+    @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false, unique = true)
     private String email;
+
     @Column(nullable = false, length = 60)
     private String password;
 
+    @Column(nullable = false, unique = true)
     private String phone;
-    @Enumerated(EnumType.STRING)
-    private Role role;
 
-    @OneToOne
-    private Account account;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Account> accounts;
 
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Card> cards;
+
+    @Column(nullable = false)
     private Boolean isSuspended;
-
-    @OneToMany
-    private List<VirtualAccount> virtualAccounts;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.toString()));
+        return List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
     }
 
-    public String getUsername(){
+    @Override
+    public String getUsername() {
         return email;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return !isSuspended;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !isSuspended;
     }
 
     @Override
@@ -79,11 +73,6 @@ public class Customer implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
-    public String toString(){
-        return firstName + lastName;
+        return !isSuspended;
     }
 }

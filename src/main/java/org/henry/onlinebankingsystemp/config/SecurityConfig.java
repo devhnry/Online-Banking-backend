@@ -1,9 +1,8 @@
 package org.henry.onlinebankingsystemp.config;
 
 import lombok.RequiredArgsConstructor;
-import org.henry.onlinebankingsystemp.dto.enums.Role;
+import org.henry.onlinebankingsystemp.enums.AdminRoles;
 import org.henry.onlinebankingsystemp.service.LogoutService;
-import org.henry.onlinebankingsystemp.service.UserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,33 +15,45 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.Arrays;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtSecurityFilter jwtAuthFilter;
-//    private final UserDetailService userDetailService;
     private final LogoutService logoutService;
     private final SecurityAuthProvider authProvider;
 
+    /**
+     * Processes incoming requests in the web application.
+     * Handles authentication, authorization, and protection against exploits.
+     * @param http HttpSecurity configures security for HTTP requests.
+     * */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http.csrf(AbstractHttpConfigurer::disable)
+        http.csrf(AbstractHttpConfigurer::disable) // Disable CSRF
                 .authorizeHttpRequests(request -> request
-                    .requestMatchers("api/v1/auth/**").permitAll()
-                    .requestMatchers("api/v1/admin/**").hasAnyAuthority(Role.ADMIN.toString())
-                    .requestMatchers("api/v1/account/**").hasAnyAuthority(Role.USER.toString())
-                    .anyRequest().authenticated())
+                    .requestMatchers("auth/**").permitAll() // Permits all Users to access Authentication Endpoints
+                        // Protects all admin Endpoints unless having an Admin Role
+                    .requestMatchers("api/v1/admin/**").hasAnyAuthority(Arrays.toString(AdminRoles.values()))
+                    .anyRequest().authenticated()) // Every other Request has to be authenticated.
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                /*
+                    Sets the Authentication Provider to use the Custom Auth Provider Defined
+                    Uses the JWT Filter Defined in the Config.
+                */
                 .authenticationProvider(authProvider.authenticationProvider()).addFilterBefore(
                         jwtAuthFilter, UsernamePasswordAuthenticationFilter.class
+                // Handles the Logout Mechanism of the Applications
                 ).logout( logout -> logout
-                        .logoutUrl("/api/v1/auth/logout").permitAll()
-                        .addLogoutHandler(logoutService)
+                        .logoutUrl("/auth/logout").permitAll()
+                        .addLogoutHandler(logoutService) // Custom Logout Service for JWT Authentication
                         .logoutSuccessHandler((request, response, authentication) -> {
-                            SecurityContextHolder.clearContext();
+                            SecurityContextHolder.clearContext(); // Clears the Security Context of the User.
                         })
+                        // Deletes any Session Cookies that might have been created to invalidate the session totally
                         .deleteCookies("JSESSIONID"));
         return http.build();
     }

@@ -2,63 +2,125 @@ package org.henry.onlinebankingsystemp.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.henry.onlinebankingsystemp.dto.*;
-import org.henry.onlinebankingsystemp.entity.OTP;
 import org.henry.onlinebankingsystemp.service.AccountService;
-import org.henry.onlinebankingsystemp.service.UserService;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.henry.onlinebankingsystemp.service.CustomerService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/account")
 @RequiredArgsConstructor
 public class AccountController {
-    private final UserService userService;
-    private final AccountService accountService;
 
-    @GetMapping("/balance")
-    public BalanceDTO getBalance(){
-        return userService.getBalance();
+//    private final CustomerService customerService;
+//    private final AccountService accountService;
+
+    /**
+     * Endpoint to view the current account balance.
+     * @return the balance of the user's account.
+     */
+    @GetMapping("/view-balance")
+    public ResponseEntity<DefaultApiResponse<ViewBalanceDto>> getBalance(){
+        DefaultApiResponse<ViewBalanceDto> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping("/deposit")
-    public DefaultResponse depositMoney(@RequestBody TransactionDTO req){
-        return accountService.depositMoney(req);
+    /**
+     * Endpoint to deposit money into the account.
+     * @param deposit contains the deposit details.
+     * @return the updated balance after the deposit.
+     */
+    @PostMapping("/make-deposit")
+    public ResponseEntity<DefaultApiResponse<BalanceDto>> makeDeposit(@Validated @RequestBody DepositDto deposit){
+        DefaultApiResponse<BalanceDto> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    /**
+     * Endpoint to withdraw money from the account.
+     * @param withdraw contains the withdrawal details.
+     * @return the updated balance after the withdrawal.
+     */
     @PostMapping("/withdraw")
-    public DefaultResponse withdrawMoney(@RequestBody TransactionDTO req){
-        return accountService.withdrawMoney(req);
+    public ResponseEntity<DefaultApiResponse<BalanceDto>> makeWithdrawal(@Validated @RequestBody WithdrawDto withdraw){
+        DefaultApiResponse<BalanceDto> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping("/transfer")
-    public DefaultResponse transferMoney(@RequestBody TransferDTO req){
-        return accountService.transferMoney(req);
+    /**
+     * Endpoint to transfer money from one account to another.
+     * @param transfer contains the transfer details.
+     * @return the updated balance after the transfer.
+     */
+    @PostMapping("/make-transfer")
+    public ResponseEntity<DefaultApiResponse<BalanceDto>> makeTransfer(@Validated @RequestBody TransferDto transfer) {
+        DefaultApiResponse<BalanceDto> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/statement")
-    public List<TransactionDTO> viewTransactions(){
-        return userService.viewStatement();
+    /**
+     * Endpoint to view the bank statement.
+     * @return the bank statement for the user's account.
+     */
+    @GetMapping("/view-bank-statement")
+    public ResponseEntity<DefaultApiResponse<?>> getBankStatement(){
+        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PatchMapping("/updateProfile")
-    public DefaultResponse updateInformation(@RequestBody UpdateInfoDTO req){
-        return userService.updateDetails(req);
+    /**
+     * Endpoint to update user profile information.
+     * @param updateInfo contains the updated profile information.
+     * @return a response indicating the success of the update.
+     */
+    @PatchMapping("/update-profile")
+    public ResponseEntity<DefaultApiResponse<?>> updateInformation(@RequestBody UpdateInfoDTO updateInfo){
+        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping("/resetPassword")
-    public DefaultResponse resetPassword(@RequestBody PasswordResetDTO pass){
-        return userService.resetPassword(pass);
+    /**
+     * Endpoint to reset the user's password (forgotten password scenario).
+     * @param passwordReset contains the password reset details.
+     * @return a response indicating the success of the reset.
+     */
+    @PutMapping("/forgot-password")
+    public ResponseEntity<DefaultApiResponse<?>> resetPassword(@RequestBody @Validated PasswordResetDto passwordReset){
+        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/generateOtp")
-    public OTP generateOTP(){
-        return userService.generateOTP();
+    /**
+     * Endpoint to change the user's password.
+     * @param passwordChange contains the password change details.
+     * @return a response indicating the success of the change.
+     */
+    @PutMapping("/change-password")
+    public ResponseEntity<DefaultApiResponse<?>> forgotPassword(@RequestBody @Validated PasswordChangeDto passwordChange){
+        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping("/transactionLimit")
-    public DefaultResponse updateTransactionLimit(@RequestBody TransactionLimit transactionLimit) {
-        return userService.updateTransactionLimit(transactionLimit);
+    /**
+     * Endpoint to generate a one-time password (OneTimePassword) for the user.
+     * @return a response indicating the success of OneTimePassword generation.
+     */
+    @GetMapping("/send-otp")
+    public  ResponseEntity<DefaultApiResponse<?>> generateOTP(){
+        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    /**
+     * Endpoint to update the transaction limit for the user's account.
+     * @param transactionLimitDto contains the new transaction limit details.
+     * @return a response indicating the success of the update.
+     */
+    @PutMapping("/update-transaction-limit")
+    public ResponseEntity<DefaultApiResponse<?>> updateTransactionLimit(@RequestBody TransactionLimitDto transactionLimitDto) {
+        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: OnlineBankingSystemP
+  datasource:
+    url: jdbc:mysql://localhost:3306/OnlineBanking
+    username: root
+    password: rootroot
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        show_sql: true
+  mail:
+    host: smtp.gmail.com
+    password:
+    username:
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+logging:
+  file:
+    name: log/appLog.log
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+server:
+  port: 6020
+  error:
+    include-message: always
