@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.dto2.*;
+import org.henry.onlinebankingsystemp.entity.OneTimePassword;
 import org.henry.onlinebankingsystemp.enums.TransactionType;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.entity.Transaction;
-import org.henry.onlinebankingsystemp.entity.OTP;
 import org.henry.onlinebankingsystemp.repository.AccountRepository;
 import org.henry.onlinebankingsystemp.repository.OTPRepository;
 import org.henry.onlinebankingsystemp.repository.TransactionRepo;
@@ -85,25 +85,25 @@ public class UserService {
         return transactionList;
     }
 
-    public OTP generateOTP(){
-        OTP otp = new OTP();
+    public OneTimePassword generateOTP(){
+        OneTimePassword oneTimePassword = new OneTimePassword();
         Customer currentCustomer = getCurrentUser.get();
 
-        otp.setOtpCode(new Random().nextLong(100000L));
-        otp.setCustomer(currentCustomer);
-        otp.setExpired(false);
-        otp.setExpiresIn("4 Minutes");
+        oneTimePassword.setOtpCode(new Random().nextLong(100000L));
+        oneTimePassword.setCustomer(currentCustomer);
+        oneTimePassword.setExpired(false);
+        oneTimePassword.setExpiresIn("4 Minutes");
 
         long expirationTime = 240000;
 
         long currentTime = System.currentTimeMillis();
-        otp.setGeneratedTime(currentTime);
+        oneTimePassword.setGeneratedTime(currentTime);
 
         long expirationTimestamp = currentTime + expirationTime;
-        otp.setExpirationTime(expirationTimestamp);
+        oneTimePassword.setExpirationTime(expirationTimestamp);
 
-        otpRepository.save(otp);
-        return otp;
+        otpRepository.save(oneTimePassword);
+        return oneTimePassword;
     }
 
 
@@ -112,13 +112,13 @@ public class UserService {
         Customer customer = getCurrentUser.get();
 
         log.info("Finding Customer by OtpCode");
-        Optional<OTP> otpOptional = otpRepository.findByCustomerAndOtpCode(customer, otpCode);
+        Optional<OneTimePassword> otpOptional = otpRepository.findByCustomerAndOtpCode(customer, otpCode);
         if (otpOptional.isPresent()) {
             log.info("Customer was found with OTPCode");
-            OTP otp = otpOptional.get();
+            OneTimePassword oneTimePassword = otpOptional.get();
             long currentTime = System.currentTimeMillis();
-            log.info("Checking OTP expiration time");
-            if (otp.getExpirationTime() - currentTime < 0 || otp.getExpired()) {
+            log.info("Checking OneTimePassword expiration time");
+            if (oneTimePassword.getExpirationTime() - currentTime < 0 || oneTimePassword.getExpired()) {
                 message = "expired";
             } else {
                 message = "valid";
@@ -135,18 +135,18 @@ public class UserService {
         DefaultApiResponse response = new DefaultApiResponse();
         Customer customer = getCurrentUser.get();
 
-        Optional<OTP> otpOptional = otpRepository.findByCustomerAndOtpCode(customer, req.getOtpCode());
+        Optional<OneTimePassword> otpOptional = otpRepository.findByCustomerAndOtpCode(customer, req.getOtpCode());
         var otp = otpOptional.orElseThrow();
 
 
         String otpMessage = validateOTP(req.getOtpCode());
         if(otpMessage.equals("invalid")){
             response.setStatusCode(500);
-            response.setStatusMessage("Invalid OTP Code");
+            response.setStatusMessage("Invalid OneTimePassword Code");
 
             return response;
         }else if(otpMessage.equals("expired")){
-            response.setStatusMessage("Expired OTP Code");
+            response.setStatusMessage("Expired OneTimePassword Code");
             response.setStatusCode(500);
             return response;
         }
@@ -175,10 +175,10 @@ public class UserService {
     private DefaultApiResponse validateOTP(String otpMessage, DefaultApiResponse res) {
         if(otpMessage.equals("invalid")){
             res.setStatusCode(500);
-            res.setStatusMessage("Invalid OTP Credentials");
+            res.setStatusMessage("Invalid OneTimePassword Credentials");
         }else if(otpMessage.equals("expired")){
             res.setStatusCode(500);
-            res.setStatusMessage("Expired OTP");
+            res.setStatusMessage("Expired OneTimePassword");
         }
         return res;
     }
@@ -188,13 +188,13 @@ public class UserService {
         DefaultApiResponse res = new DefaultApiResponse();
         Customer customer = getCurrentUser.get();
 
-        Optional<OTP> otpOptional = otpRepository.findByCustomerAndOtpCode(customer, pass.getOtp());
+        Optional<OneTimePassword> otpOptional = otpRepository.findByCustomerAndOtpCode(customer, pass.getOtp());
 
         var otp = otpOptional.orElseThrow();
-        log.info("Getting OTP Message");
+        log.info("Getting OneTimePassword Message");
         String otpMessage = validateOTP(pass.getOtp());
 
-        log.info("Validating OTP");
+        log.info("Validating OneTimePassword");
         validateOTP(otpMessage, res);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -218,7 +218,7 @@ public class UserService {
         DefaultApiResponse res = new DefaultApiResponse();
         Customer customer = getCurrentUser.get();
 
-        Optional<OTP> otpOptional = otpRepository.findByCustomerAndOtpCode(customer, transactionLimitDto.getOtpCode());
+        Optional<OneTimePassword> otpOptional = otpRepository.findByCustomerAndOtpCode(customer, transactionLimitDto.getOtpCode());
 
         var otp = otpOptional.orElseThrow();
         String otpMessage = validateOTP(transactionLimitDto.getOtpCode());

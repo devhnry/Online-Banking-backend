@@ -5,10 +5,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.henry.onlinebankingsystemp.entity.AuthToken;
 import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.service.JWTService;
 import org.henry.onlinebankingsystemp.service.UserDetailService;
-import org.henry.onlinebankingsystemp.entity.Token;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,7 +45,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
             return;
         }
-        // Extracts the JWT Token from the Authorization header.
+        // Extracts the JWT AuthToken from the Authorization header.
         jwtToken = authHeader.substring(7);
 
         // Extracts the Username to confirm he os she exists on the application
@@ -54,16 +54,16 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
         if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = userDetailService.loadUserByUsername(userEmail);
 
-            /*Function to  Validate the Token -> Checks if the token has expired or has been revoked  */
-            Function<Token, Boolean> validateToken = t -> !t.getExpired().equals(true) && !t.getRevoked().equals(true);
+            /*Function to  Validate the AuthToken -> Checks if the authToken has expired or has been revoked  */
+            Function<AuthToken, Boolean> validateToken = t -> !t.getExpired().equals(true) && !t.getRevoked().equals(true);
 
-            /* Looks for the token on the DB, calls function to validate, if it fails, return false */
+            /* Looks for the authToken on the DB, calls function to validate, if it fails, return false */
             var isTokenValid = tokenRepository.findByToken(jwtToken).map(
                     validateToken
             ).orElse(false);
 
 
-            /* If token is valid, Sets the SecurityContext to hold UserDetails and Authorities */
+            /* If authToken is valid, Sets the SecurityContext to hold UserDetails and Authorities */
             if(jwtService.isTokenValid(jwtToken, userDetails) && isTokenValid){
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                 UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(

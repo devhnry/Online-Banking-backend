@@ -3,7 +3,9 @@ package org.henry.onlinebankingsystemp.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
+import org.henry.onlinebankingsystemp.dto.LoginRequestDto;
 import org.henry.onlinebankingsystemp.dto.OnboardUserDto;
+import org.henry.onlinebankingsystemp.dto.RefreshTokenDto;
 import org.henry.onlinebankingsystemp.dto2.*;
 import org.henry.onlinebankingsystemp.entity.Admin;
 import org.henry.onlinebankingsystemp.entity.Customer;
@@ -11,8 +13,7 @@ import org.henry.onlinebankingsystemp.factory.AccountFactory;
 import org.henry.onlinebankingsystemp.repository.AdminRepository;
 import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
-import org.henry.onlinebankingsystemp.entity.Token;
-import org.henry.onlinebankingsystemp.enums.TokenType;
+import org.henry.onlinebankingsystemp.entity.AuthToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class AuthenticationService {
         return accountFactory.createAccount(request);
     }
 
-    public LoginResponseDTO login(LoginRequestDTO request) {
+    public LoginResponseDTO login(LoginRequestDto request) {
         LoginResponseDTO res = new LoginResponseDTO();
         log.info("Performing Authentication");
         try {
@@ -93,7 +94,7 @@ public class AuthenticationService {
         return res;
     }
 
-    public LoginResponseDTO refreshToken(RefreshTokenDTO refreshTokenRequest){
+    public LoginResponseDTO refreshToken(RefreshTokenDto refreshTokenRequest){
         LoginResponseDTO res = new LoginResponseDTO();
         String userEmail = jwtService.extractUsername(refreshTokenRequest.getToken());
         Customer customer = userRepository.findByEmail(userEmail).orElseThrow();
@@ -111,7 +112,7 @@ public class AuthenticationService {
                     res.setToken(newToken);
                     res.setRefreshToken(refreshTokenRequest.getToken());
                     res.setExpirationTime("24hr");
-                    res.setMessage("Successfully Refreshed Token");
+                    res.setMessage("Successfully Refreshed AuthToken");
                 }
             }
             else {
@@ -128,7 +129,7 @@ public class AuthenticationService {
                         res.setToken(newToken);
                         res.setRefreshToken(refreshTokenRequest.getToken());
                         res.setExpirationTime("24hr");
-                        res.setMessage("Successfully Refreshed Token");
+                        res.setMessage("Successfully Refreshed AuthToken");
                     }
                 }
             }
@@ -140,7 +141,7 @@ public class AuthenticationService {
     }
 
     public void saveUserToken(Customer customer, String newToken) {
-        var token = Token.builder()
+        var token = AuthToken.builder()
                 .users(customer)
                 .token(newToken)
                 .tokenType(TokenType.BEARER)
@@ -152,7 +153,7 @@ public class AuthenticationService {
     }
 
     public void saveAdminToken(Admin admin, String newToken){
-        var token = Token.builder()
+        var token = AuthToken.builder()
                 .admin(admin)
                 .token(newToken)
                 .tokenType(TokenType.BEARER)

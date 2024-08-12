@@ -2,7 +2,6 @@ package org.henry.onlinebankingsystemp.config;
 
 import lombok.RequiredArgsConstructor;
 import org.henry.onlinebankingsystemp.enums.AdminRoles;
-import org.henry.onlinebankingsystemp.enums.Role;
 import org.henry.onlinebankingsystemp.service.LogoutService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

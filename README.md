@@ -15,7 +15,7 @@ Welcome to the **OnlineBankSystem API** repository. This backend service imitate
 ## Endpoints (Authentication)
 - **POST /api/v1/auth/signup**: SignUp for an Account.
 - **POST /api/v1/auth/login**: Login to the Account Created.
-- **POST /api/v1/auth/refreshToken**: Refresh Access token that grants authorisation.
+- **POST /api/v1/auth/refreshToken**: Refresh Access authToken that grants authorisation.
 
 ## Endpoints (User Accounts)
 - **GET /api/v1/account/balance: Allows a user to view their balance**

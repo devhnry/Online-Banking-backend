@@ -104,8 +104,8 @@ public class AccountController {
     }
 
     /**
-     * Endpoint to generate a one-time password (OTP) for the user.
-     * @return a response indicating the success of OTP generation.
+     * Endpoint to generate a one-time password (OneTimePassword) for the user.
+     * @return a response indicating the success of OneTimePassword generation.
      */
     @GetMapping("/send-otp")
     public  ResponseEntity<DefaultApiResponse<?>> generateOTP(){

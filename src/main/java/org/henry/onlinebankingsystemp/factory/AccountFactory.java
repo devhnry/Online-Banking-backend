@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
 import org.henry.onlinebankingsystemp.dto.OnboardUserDto;
-import org.henry.onlinebankingsystemp.enums.Role;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Admin;
 import org.henry.onlinebankingsystemp.entity.Customer;

@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.function.Function;
 
-// To generate token, refreshToken
+// To generate authToken, refreshToken
 @Service
 public class JWTService {
 

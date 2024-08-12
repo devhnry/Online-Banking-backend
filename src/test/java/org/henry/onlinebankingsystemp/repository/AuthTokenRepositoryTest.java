@@ -1,8 +1,7 @@
 package org.henry.onlinebankingsystemp.repository;
 
 import jakarta.persistence.EntityManager;
-import org.henry.onlinebankingsystemp.enums.TokenType;
-import org.henry.onlinebankingsystemp.entity.Token;
+import org.henry.onlinebankingsystemp.entity.AuthToken;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -23,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class TokenRepositoryTest {
+class AuthTokenRepositoryTest {
     @MockBean private RestTemplate restTemplate;
     @Autowired
     private TestEntityManager testEntityManager;
@@ -67,26 +66,26 @@ class TokenRepositoryTest {
 
         System.out.println(dataSource.getConnection().getMetaData().getDatabaseProductName());
 
-        Token token = new Token();
-        token.setId(1);
-        token.setRevoked(false);
-        token.setExpired(false);
-        token.setToken("kjvslncmvlksnmkzjsvsz");
-        token.setTokenType(TokenType.BEARER);
-        token.setAdmin(null);
-        token.setUsers(null);
+        AuthToken authToken = new AuthToken();
+        authToken.setId(1);
+        authToken.setRevoked(false);
+        authToken.setExpired(false);
+        authToken.setToken("kjvslncmvlksnmkzjsvsz");
+        authToken.setTokenType(TokenType.BEARER);
+        authToken.setAdmin(null);
+        authToken.setUsers(null);
 
-        Token result = underTest.save(token);
+        AuthToken result = underTest.save(authToken);
         assertNotNull(result.getId());
     }
 
     @Test
     @Sql(scripts = "/scripts/FIND_TOKEN_BY_CUSTOMER.sql")
     void findValidTokenByCustomer() {
-        List<Token> tokens = underTest.findValidTokenByCustomer(1L);
+        List<AuthToken> authTokens = underTest.findValidTokenByCustomer(1L);
 
         assertEquals(3, underTest.count());
-        assertEquals(2, tokens.size());
+        assertEquals(2, authTokens.size());
 
         underTest.findValidTokenByCustomer(1L).forEach(token -> {
                     System.out.println(token.getId());
@@ -95,18 +94,18 @@ class TokenRepositoryTest {
                     System.out.println(token.getUsers());
                 }
         );
-        assertEquals("LSVMSLMDZCKLMCS", tokens.get(0).getToken());
-        assertEquals("LSVMSLMDZCKLMDS", tokens.get(1).getToken());
-        assertEquals(1L, tokens.get(1).getUsers().getCustomerId());
+        assertEquals("LSVMSLMDZCKLMCS", authTokens.get(0).getToken());
+        assertEquals("LSVMSLMDZCKLMDS", authTokens.get(1).getToken());
+        assertEquals(1L, authTokens.get(1).getUsers().getCustomerId());
     }
 
     @Test
     @Sql(scripts = "/scripts/FIND_TOKEN_BY_ADMIN.sql")
     void findValidTokenByAdmin() {
-        List<Token> tokens = underTest.findValidTokenByAdmin(1L);
+        List<AuthToken> authTokens = underTest.findValidTokenByAdmin(1L);
 
         assertEquals(3, underTest.count());
-        assertEquals(2, tokens.size());
+        assertEquals(2, authTokens.size());
 
         underTest.findValidTokenByCustomer(1L).forEach(token -> {
                     System.out.println(token.getId());
@@ -115,8 +114,8 @@ class TokenRepositoryTest {
                     System.out.println(token.getUsers());
                 }
         );
-        assertEquals("LSVMSLMDZCKLMCS", tokens.get(0).getToken());
-        assertEquals("LSVMSLMDZCKLMDS", tokens.get(1).getToken());
-        assertEquals(1L, tokens.get(1).getAdmin().getAdminId());
+        assertEquals("LSVMSLMDZCKLMCS", authTokens.get(0).getToken());
+        assertEquals("LSVMSLMDZCKLMDS", authTokens.get(1).getToken());
+        assertEquals(1L, authTokens.get(1).getAdmin().getAdminId());
     }
 }

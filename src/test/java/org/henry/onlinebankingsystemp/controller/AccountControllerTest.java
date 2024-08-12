@@ -4,7 +4,6 @@ import org.henry.onlinebankingsystemp.dto.BalanceDto;
 import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
 import org.henry.onlinebankingsystemp.dto2.TransactionDTO;
 import org.henry.onlinebankingsystemp.dto.UpdateInfoDTO;
-import org.henry.onlinebankingsystemp.enums.Role;
 import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;

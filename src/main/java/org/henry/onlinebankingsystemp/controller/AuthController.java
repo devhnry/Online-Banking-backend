@@ -1,11 +1,7 @@
 package org.henry.onlinebankingsystemp.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.henry.onlinebankingsystemp.dto.AuthorisationResponseDto;
-import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
-import org.henry.onlinebankingsystemp.dto.OnboardUserDto;
-import org.henry.onlinebankingsystemp.dto.SuccessfulOnboardDto;
-import org.henry.onlinebankingsystemp.dto2.*;
+import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.service.AuthenticationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,21 +29,21 @@ public class AuthController {
     /**
      * Endpoint for user login.
      * @param request contains the login credentials.
-     * @return a response containing the authorization details (e.g., access token) if login is successful.
+     * @return a response containing the authorization details (e.g., access authToken) if login is successful.
      */
     @PostMapping("/login")
-    public ResponseEntity<DefaultApiResponse<AuthorisationResponseDto>> login(@RequestBody LoginRequestDTO request){
+    public ResponseEntity<DefaultApiResponse<AuthorisationResponseDto>> login(@RequestBody LoginRequestDto request){
         DefaultApiResponse<AuthorisationResponseDto> response = new DefaultApiResponse<>();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     /**
-     * Endpoint for refreshing the access token using a refresh token.
-     * @param request contains the refresh token details.
-     * @return a response containing the new authorization details (e.g., new access token).
+     * Endpoint for refreshing the access authToken using a refresh authToken.
+     * @param request contains the refresh authToken details.
+     * @return a response containing the new authorization details (e.g., new access authToken).
      */
     @PostMapping("/refresh-token")
-    public ResponseEntity<DefaultApiResponse<AuthorisationResponseDto>> refreshToken(@RequestBody RefreshTokenDTO request){
+    public ResponseEntity<DefaultApiResponse<AuthorisationResponseDto>> refreshToken(@RequestBody RefreshTokenDto request){
         DefaultApiResponse<AuthorisationResponseDto> response = new DefaultApiResponse<>();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
