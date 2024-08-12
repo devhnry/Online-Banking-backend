@@ -2,10 +2,9 @@ package org.henry.onlinebankingsystemp.factory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.henry.onlinebankingsystemp.dto.AdminSignUpDTO;
 import org.henry.onlinebankingsystemp.dto.DefaultResponse;
 import org.henry.onlinebankingsystemp.dto.SignUpDTO;
-import org.henry.onlinebankingsystemp.dto.enums.Role;
+import org.henry.onlinebankingsystemp.enums.Role;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Admin;
 import org.henry.onlinebankingsystemp.entity.Customer;
@@ -15,7 +14,6 @@ import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.henry.onlinebankingsystemp.service.utils.AccountNumberGenerator;
 import org.henry.onlinebankingsystemp.service.utils.PasswordValidation;
 import org.hibernate.exception.ConstraintViolationException;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package org.henry.onlinebankingsystemp.dto.enums;
+package org.henry.onlinebankingsystemp.enums;
 
 public enum TransactionType {
     DEPOSIT,

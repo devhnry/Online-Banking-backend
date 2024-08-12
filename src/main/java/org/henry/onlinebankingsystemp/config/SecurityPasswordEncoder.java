@@ -11,6 +11,6 @@ public class SecurityPasswordEncoder {
 
     @Bean
     public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(); // Password Encoder...Encodes the password using ByCrypt 
     }
 }

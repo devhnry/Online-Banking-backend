@@ -3,7 +3,7 @@ package org.henry.onlinebankingsystemp.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.henry.onlinebankingsystemp.dto.*;
-import org.henry.onlinebankingsystemp.dto.enums.TransactionType;
+import org.henry.onlinebankingsystemp.enums.TransactionType;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.entity.Transaction;

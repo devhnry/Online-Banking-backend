@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Data;
-import org.henry.onlinebankingsystemp.dto.enums.AccountType;
-import org.henry.onlinebankingsystemp.dto.enums.Role;
+import org.henry.onlinebankingsystemp.enums.AccountType;
+import org.henry.onlinebankingsystemp.enums.Role;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)

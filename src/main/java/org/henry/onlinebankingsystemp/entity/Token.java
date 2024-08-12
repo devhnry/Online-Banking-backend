@@ -3,7 +3,7 @@ package org.henry.onlinebankingsystemp.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.henry.onlinebankingsystemp.dto.enums.TokenType;
+import org.henry.onlinebankingsystemp.enums.TokenType;
 
 @Data
 @Entity

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.henry.onlinebankingsystemp.dto.enums.TransactionType;
+import org.henry.onlinebankingsystemp.enums.TransactionType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

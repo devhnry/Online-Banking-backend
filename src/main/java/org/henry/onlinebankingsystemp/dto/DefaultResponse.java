@@ -3,10 +3,6 @@ package org.henry.onlinebankingsystemp.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import org.henry.onlinebankingsystemp.dto.enums.AccountType;
-import org.henry.onlinebankingsystemp.entity.*;
-
-import java.util.List;
 
 @Data
 @JsonIgnoreProperties

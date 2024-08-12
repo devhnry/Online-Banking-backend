@@ -1,37 +1,22 @@
 package org.henry.onlinebankingsystemp.repository;
 
 import jakarta.persistence.EntityManager;
-import net.bytebuddy.utility.dispatcher.JavaDispatcher;
-import org.henry.onlinebankingsystemp.controller.AccountController;
-import org.henry.onlinebankingsystemp.dto.enums.TokenType;
-import org.henry.onlinebankingsystemp.entity.Customer;
+import org.henry.onlinebankingsystemp.enums.TokenType;
 import org.henry.onlinebankingsystemp.entity.Token;
-import org.henry.onlinebankingsystemp.service.AccountService;
-import org.henry.onlinebankingsystemp.service.JWTService;
-import org.henry.onlinebankingsystemp.service.UserDetailService;
-import org.henry.onlinebankingsystemp.service.UserService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runners.Parameterized;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
 import org.testcontainers.containers.MySQLContainer;
 
 import javax.sql.DataSource;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

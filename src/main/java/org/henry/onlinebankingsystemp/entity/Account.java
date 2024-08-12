@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.henry.onlinebankingsystemp.dto.enums.AccountType;
+import org.henry.onlinebankingsystemp.enums.AccountType;
 
 import java.math.BigDecimal;
 

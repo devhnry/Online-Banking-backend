@@ -10,7 +10,7 @@ import org.henry.onlinebankingsystemp.repository.AdminRepository;
 import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.henry.onlinebankingsystemp.entity.Token;
-import org.henry.onlinebankingsystemp.dto.enums.TokenType;
+import org.henry.onlinebankingsystemp.enums.TokenType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;

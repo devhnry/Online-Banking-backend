@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.henry.onlinebankingsystemp.dto.DefaultResponse;
 import org.henry.onlinebankingsystemp.dto.TransactionDTO;
 import org.henry.onlinebankingsystemp.dto.TransferDTO;
-import org.henry.onlinebankingsystemp.dto.enums.TransactionType;
+import org.henry.onlinebankingsystemp.enums.TransactionType;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.entity.Transaction;
