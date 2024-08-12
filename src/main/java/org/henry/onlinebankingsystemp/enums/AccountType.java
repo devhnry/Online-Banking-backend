@@ -1,5 +1,8 @@
 package org.henry.onlinebankingsystemp.enums;
 
 public enum AccountType {
-    SAVINGS, CURRENT
+    SAVINGS,
+    CHECKING,
+    FIXED_DEPOSIT,
+    CURRENT
 }

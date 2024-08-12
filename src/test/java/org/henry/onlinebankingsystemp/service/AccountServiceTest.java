@@ -1,9 +1,9 @@
 package org.henry.onlinebankingsystemp.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.henry.onlinebankingsystemp.dto.DefaultResponse;
-import org.henry.onlinebankingsystemp.dto.TransactionDTO;
-import org.henry.onlinebankingsystemp.dto.TransferDTO;
+import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
+import org.henry.onlinebankingsystemp.dto2.TransactionDTO;
+import org.henry.onlinebankingsystemp.dto2.TransferDTO;
 import org.henry.onlinebankingsystemp.enums.TransactionType;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Customer;
@@ -68,11 +68,11 @@ class AccountServiceTest {
         given(accountRepository.findByAccountNumber(TARGET_ACCOUNT_NUMBER)).willReturn(Optional.of(account));
 
         request.setAmount(BigDecimal.valueOf(500)); // Assuming transfer amount is valid
-        DefaultResponse response = underTest.transferMoney(request);
+        DefaultApiResponse response = underTest.transferMoney(request);
 
         // Verify
         assertEquals(200, response.getStatusCode());
-        assertEquals("Transfer Successful", response.getMessage());
+        assertEquals("Transfer Successful", response.getStatusMessage());
     }
 
     @Test
@@ -92,9 +92,9 @@ class AccountServiceTest {
         request.setAmount(BigDecimal.valueOf(3000)); // Assuming transfer amount is valid
         account.setBalance(BigDecimal.valueOf(2500L));
 
-        DefaultResponse response = underTest.transferMoney(request);
+        DefaultApiResponse response = underTest.transferMoney(request);
         assertEquals(500, response.getStatusCode());
-        assertEquals("Insufficient Balance", response.getMessage());
+        assertEquals("Insufficient Balance", response.getStatusMessage());
     }
 
     @Test
@@ -107,9 +107,9 @@ class AccountServiceTest {
         given(accountRepository.findByAccountNumber(TARGET_ACCOUNT_NUMBER)).willReturn(Optional.of(account));
         request.setAmount(BigDecimal.valueOf(150)); // Assuming transfer amount is valid
 
-        DefaultResponse response = underTest.transferMoney(request);
+        DefaultApiResponse response = underTest.transferMoney(request);
         assertEquals(500, response.getStatusCode());
-        assertEquals("Can't transfer less than 200 NGN", response.getMessage());
+        assertEquals("Can't transfer less than 200 NGN", response.getStatusMessage());
     }
 
     @Test
@@ -148,9 +148,9 @@ class AccountServiceTest {
         initiateCustomerAndAccount();
         TransactionDTO request = new TransactionDTO();
         request.setAmount(BigDecimal.valueOf(200));
-        DefaultResponse response = underTest.updateBalance(request, TransactionType.DEPOSIT, "addition");
+        DefaultApiResponse response = underTest.updateBalance(request, TransactionType.DEPOSIT, "addition");
         assertEquals(200, response.getStatusCode());
-        assertEquals("Deposit Successful", response.getMessage());
+        assertEquals("Deposit Successful", response.getStatusMessage());
     }
 
     @Test
@@ -158,10 +158,10 @@ class AccountServiceTest {
         initiateCustomerAndAccount();
         TransactionDTO request = new TransactionDTO();
         request.setAmount(BigDecimal.valueOf(600.00));
-        DefaultResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
-        log.info(response.getMessage());
+        DefaultApiResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
+        log.info(response.getStatusMessage());
         assertEquals(200, response.getStatusCode());
-        assertEquals("Withdrawal Successful", response.getMessage());
+        assertEquals("Withdrawal Successful", response.getStatusMessage());
     }
 
     @Test
@@ -179,10 +179,10 @@ class AccountServiceTest {
         request.setTargetAccountNumber(TARGET_ACCOUNT_NUMBER);
         given(transactionRepo.findTransactionByCustomer(currentUser.getCustomerId())).willReturn(List.of(transaction));
 
-        DefaultResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
-        log.info(response.getMessage());
+        DefaultApiResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
+        log.info(response.getStatusMessage());
         assertEquals(500, response.getStatusCode());
-        assertEquals("You have exceeded your transaction limit for today", response.getMessage());
+        assertEquals("You have exceeded your transaction limit for today", response.getStatusMessage());
     }
 
     @Test
@@ -192,9 +192,9 @@ class AccountServiceTest {
         TransactionDTO request = new TransactionDTO();
         request.setAmount(BigDecimal.valueOf(-300.00));
 
-        DefaultResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
+        DefaultApiResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
         assertEquals(500, response.getStatusCode());
-        assertEquals("Invalid amount", response.getMessage());
+        assertEquals("Invalid amount", response.getStatusMessage());
     }
 
 
@@ -205,8 +205,8 @@ class AccountServiceTest {
         TransactionDTO request = new TransactionDTO();
         request.setAmount(BigDecimal.valueOf(3500.00));
 
-        DefaultResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
+        DefaultApiResponse response = underTest.updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
         assertEquals(500, response.getStatusCode());
-        assertEquals("Insufficient Balance", response.getMessage());
+        assertEquals("Insufficient Balance", response.getStatusMessage());
     }
 }

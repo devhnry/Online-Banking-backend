@@ -3,6 +3,7 @@ package org.henry.onlinebankingsystemp.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.henry.onlinebankingsystemp.dto.*;
+import org.henry.onlinebankingsystemp.dto2.*;
 import org.henry.onlinebankingsystemp.enums.TransactionType;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Customer;
@@ -51,8 +52,8 @@ public class UserService {
     };
 
 
-    public BalanceDTO getBalance(){
-        BalanceDTO userBalance = new BalanceDTO();
+    public BalanceDto getBalance(){
+        BalanceDto userBalance = new BalanceDto();
 
         Customer customer = getCurrentUser.get();
         Optional<Account> optAccount = accountRepository.findByCustomerId(customer.getCustomerId());
@@ -130,8 +131,8 @@ public class UserService {
     }
 
     @Transactional
-    public DefaultResponse updateDetails(UpdateInfoDTO req){
-        DefaultResponse response = new DefaultResponse();
+    public DefaultApiResponse updateDetails(UpdateInfoDTO req){
+        DefaultApiResponse response = new DefaultApiResponse();
         Customer customer = getCurrentUser.get();
 
         Optional<OTP> otpOptional = otpRepository.findByCustomerAndOtpCode(customer, req.getOtpCode());
@@ -141,11 +142,11 @@ public class UserService {
         String otpMessage = validateOTP(req.getOtpCode());
         if(otpMessage.equals("invalid")){
             response.setStatusCode(500);
-            response.setMessage("Invalid OTP Code");
+            response.setStatusMessage("Invalid OTP Code");
 
             return response;
         }else if(otpMessage.equals("expired")){
-            response.setMessage("Expired OTP Code");
+            response.setStatusMessage("Expired OTP Code");
             response.setStatusCode(500);
             return response;
         }
@@ -155,7 +156,7 @@ public class UserService {
 
         if (usersOptional.isPresent()){
             response.setStatusCode(500);
-            response.setMessage("Email Already Taken");
+            response.setStatusMessage("Email Already Taken");
             return response;
         }
 
@@ -165,26 +166,26 @@ public class UserService {
         customer.setPhone(req.getPhoneNumber() == null ? customer.getPhone() : req.getPhoneNumber());
 
         response.setStatusCode(200);
-        response.setMessage("Successfully Updated");
+        response.setStatusMessage("Successfully Updated");
         otp.setExpired(true);
 
         return response;
     }
 
-    private DefaultResponse validateOTP(String otpMessage, DefaultResponse res) {
+    private DefaultApiResponse validateOTP(String otpMessage, DefaultApiResponse res) {
         if(otpMessage.equals("invalid")){
             res.setStatusCode(500);
-            res.setMessage("Invalid OTP Credentials");
+            res.setStatusMessage("Invalid OTP Credentials");
         }else if(otpMessage.equals("expired")){
             res.setStatusCode(500);
-            res.setMessage("Expired OTP");
+            res.setStatusMessage("Expired OTP");
         }
         return res;
     }
 
     @Transactional
-    public DefaultResponse resetPassword(PasswordResetDTO pass){
-        DefaultResponse res = new DefaultResponse();
+    public DefaultApiResponse resetPassword(PasswordResetDto pass){
+        DefaultApiResponse res = new DefaultApiResponse();
         Customer customer = getCurrentUser.get();
 
         Optional<OTP> otpOptional = otpRepository.findByCustomerAndOtpCode(customer, pass.getOtp());
@@ -203,36 +204,36 @@ public class UserService {
             customer.setPassword(passwordEncoder.encode(pass.getNewPassword()));
             userRepository.save(customer);
             res.setStatusCode(200);
-            res.setMessage("Successfully updated Password");
+            res.setStatusMessage("Successfully updated Password");
             otp.setExpired(true);
         }else{
             res.setStatusCode(500);
-            res.setMessage("The current password is invalid");
+            res.setStatusMessage("The current password is invalid");
             return res;
         }
         return res;
     }
 
-    public DefaultResponse updateTransactionLimit(TransactionLimit transactionLimit){
-        DefaultResponse res = new DefaultResponse();
+    public DefaultApiResponse updateTransactionLimit(TransactionLimitDto transactionLimitDto){
+        DefaultApiResponse res = new DefaultApiResponse();
         Customer customer = getCurrentUser.get();
 
-        Optional<OTP> otpOptional = otpRepository.findByCustomerAndOtpCode(customer, transactionLimit.getOtpCode());
+        Optional<OTP> otpOptional = otpRepository.findByCustomerAndOtpCode(customer, transactionLimitDto.getOtpCode());
 
         var otp = otpOptional.orElseThrow();
-        String otpMessage = validateOTP(transactionLimit.getOtpCode());
+        String otpMessage = validateOTP(transactionLimitDto.getOtpCode());
         validateOTP(otpMessage, res);
 
-        if(transactionLimit.getAmount().compareTo(BigDecimal.ZERO) > 0){
+        if(transactionLimitDto.getAmount().compareTo(BigDecimal.ZERO) > 0){
             log.error("Updating Transaction Limit");
             res.setStatusCode(500);
-            res.setMessage("Amount cannot be Invalid");
+            res.setStatusMessage("Amount cannot be Invalid");
         }
 
-        customer.getAccount().setTransactionLimit(transactionLimit.getAmount());
+        customer.getAccount().setTransactionLimit(transactionLimitDto.getAmount());
 
         res.setStatusCode(200);
-        res.setMessage("Successfully Updated Transaction Limit");
+        res.setStatusMessage("Successfully Updated Transaction Limit");
         otp.setExpired(true);
         return res;
     }

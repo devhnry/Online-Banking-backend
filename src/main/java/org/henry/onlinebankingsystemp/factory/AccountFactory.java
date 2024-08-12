@@ -2,8 +2,8 @@ package org.henry.onlinebankingsystemp.factory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.henry.onlinebankingsystemp.dto.DefaultResponse;
-import org.henry.onlinebankingsystemp.dto.SignUpDTO;
+import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
+import org.henry.onlinebankingsystemp.dto.OnboardUserDto;
 import org.henry.onlinebankingsystemp.enums.Role;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Admin;
@@ -31,9 +31,9 @@ public class AccountFactory {
     private final PasswordValidation passwordValidation;
     private final PasswordEncoder passwordEncoder;
 
-    DefaultResponse res = new DefaultResponse();
+    DefaultApiResponse res = new DefaultApiResponse();
 
-    public DefaultResponse createAccount(SignUpDTO request){
+    public DefaultApiResponse createAccount(OnboardUserDto request){
         return signUp(request);
     }
 
@@ -41,7 +41,7 @@ public class AccountFactory {
         return accountNumberGenerator.generateAccountNumber();
     }
 
-    private DefaultResponse signUp(SignUpDTO signUpRequest){
+    private DefaultApiResponse signUp(OnboardUserDto signUpRequest){
         try {
             if (signUpRequest.getRole() == Role.ADMIN){
                 return adminSignUp(signUpRequest);
@@ -78,11 +78,11 @@ public class AccountFactory {
 
             log.info("Account created and saved");
             res.setStatusCode(200);
-            res.setMessage("Successful Signup...");
+            res.setStatusMessage("Successful Signup...");
             res.setData(customer);
         }catch (ConstraintViolationException e) {
             res.setStatusCode(500);
-            res.setMessage("Email Already In Use");
+            res.setStatusMessage("Email Already In Use");
         }
 //        }catch (Exception e){
 //            res.setStatusCode(500);
@@ -91,7 +91,7 @@ public class AccountFactory {
         return res;
     }
 
-    private DefaultResponse adminSignUp(SignUpDTO request){
+    private DefaultApiResponse adminSignUp(OnboardUserDto request){
         try {
             Admin admin = new Admin();
             boolean adminAlreadyExist = adminRepository.findByEmail(request.getEmail()).isPresent();
@@ -110,20 +110,20 @@ public class AccountFactory {
 
             log.info("Account created and saved for Admin");
             res.setStatusCode(200);
-            res.setMessage("Successful Signup...");
+            res.setStatusMessage("Successful Signup...");
             res.setData(admin);
         }catch (Exception e){
             res.setStatusCode(500);
-            res.setMessage(e.getMessage());
+            res.setStatusMessage(e.getMessage());
         }
         return res;
     }
 
-    private DefaultResponse checkPasswordAndEmail(boolean accountExist, String password) {
-        DefaultResponse res = new DefaultResponse();
+    private DefaultApiResponse checkPasswordAndEmail(boolean accountExist, String password) {
+        DefaultApiResponse res = new DefaultApiResponse();
         if (accountExist) {
             res.setStatusCode(500);
-            res.setMessage("Email Already Taken");
+            res.setStatusMessage("Email Already Taken");
             return res;
         }
 
@@ -131,7 +131,7 @@ public class AccountFactory {
         if (!passwordValidation.verifyPasswordStrenght(password)) {
             log.error("Password not strong enough");
             res.setStatusCode(500);
-            res.setMessage("Password should contain at least 8 characters,numbers and a symbol");
+            res.setStatusMessage("Password should contain at least 8 characters,numbers and a symbol");
             return res;
         }
         return res;

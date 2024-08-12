@@ -1,7 +1,6 @@
 package org.henry.onlinebankingsystemp.service.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.henry.onlinebankingsystemp.dto.DefaultResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Matcher;

@@ -2,10 +2,10 @@ package org.henry.onlinebankingsystemp.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.henry.onlinebankingsystemp.dto.BalanceDTO;
-import org.henry.onlinebankingsystemp.dto.DefaultResponse;
-import org.henry.onlinebankingsystemp.dto.TransactionDTO;
-import org.henry.onlinebankingsystemp.dto.TransferDTO;
+import org.henry.onlinebankingsystemp.dto.BalanceDto;
+import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
+import org.henry.onlinebankingsystemp.dto2.TransactionDTO;
+import org.henry.onlinebankingsystemp.dto2.TransferDTO;
 import org.henry.onlinebankingsystemp.enums.TransactionType;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Customer;
@@ -60,10 +60,10 @@ public class AccountService {
             return localDateTime;
     }
 
-    public DefaultResponse transferMoney(TransferDTO request) {
-        BalanceDTO userBalance = new BalanceDTO();
+    public DefaultApiResponse transferMoney(TransferDTO request) {
+        BalanceDto userBalance = new BalanceDto();
         Transaction transaction = new Transaction();
-        DefaultResponse res = new DefaultResponse();
+        DefaultApiResponse res = new DefaultApiResponse();
 
         Customer customer = getCurrentUser.get();
         Account userAccount = customer.getAccount();
@@ -74,13 +74,13 @@ public class AccountService {
 
         if(request.getAmount().compareTo(BigDecimal.valueOf(200)) < 0){
             res.setStatusCode(500);
-            res.setMessage("Can't transfer less than 200 NGN");
+            res.setStatusMessage("Can't transfer less than 200 NGN");
             return res;
         }
 
         if(request.getAmount().compareTo(customer.getAccount().getBalance()) > 0){
             res.setStatusCode(500);
-            res.setMessage("Insufficient Balance");
+            res.setStatusMessage("Insufficient Balance");
             return res;
         }
 
@@ -107,7 +107,7 @@ public class AccountService {
         transactionRepo.save(transaction);
 
         res.setStatusCode(200);
-        res.setMessage("Transfer Successful");
+        res.setStatusMessage("Transfer Successful");
 
         return res;
     }
@@ -124,16 +124,16 @@ public class AccountService {
         return totalAmount;
     }
 
-    public DefaultResponse updateBalance(TransactionDTO request, TransactionType transactionType, String operation){
-        DefaultResponse res = new DefaultResponse();
+    public DefaultApiResponse updateBalance(TransactionDTO request, TransactionType transactionType, String operation){
+        DefaultApiResponse res = new DefaultApiResponse();
         try {
-            BalanceDTO userBalance = new BalanceDTO();
+            BalanceDto userBalance = new BalanceDto();
             Customer customer = getCurrentUser.get();
 
             log.info("Comparing Balance and amount returned");
             if(request.getAmount().compareTo(BigDecimal.ZERO) < 0){
                 res.setStatusCode(500);
-                res.setMessage("Invalid amount");
+                res.setStatusMessage("Invalid amount");
                 return res;
             }
 
@@ -146,7 +146,7 @@ public class AccountService {
             log.info("Checking for adequate balance");
             if(request.getAmount().compareTo(customer.getAccount().getBalance()) != -1 && transactionType == TransactionType.WITHDRAWAL){
                 res.setStatusCode(500);
-                res.setMessage("Insufficient Balance");
+                res.setStatusMessage("Insufficient Balance");
                 return res;
             }
 
@@ -154,7 +154,7 @@ public class AccountService {
             if(transactionType != TransactionType.DEPOSIT){
                 if(getDailyTransactionAmount(customer.getCustomerId()).add(request.getAmount()).compareTo(customer.getAccount().getTransactionLimit()) > 0){
                     res.setStatusCode(500);
-                    res.setMessage("You have exceeded your transaction limit for today");
+                    res.setStatusMessage("You have exceeded your transaction limit for today");
                     return res;
                 }
             }
@@ -194,21 +194,21 @@ public class AccountService {
             transactionRepo.save(transaction);
 
             res.setStatusCode(200);
-            res.setMessage(transactionType == TransactionType.WITHDRAWAL ? "Withdrawal Successful" : "Deposit Successful");
+            res.setStatusMessage(transactionType == TransactionType.WITHDRAWAL ? "Withdrawal Successful" : "Deposit Successful");
 
             return res;
         } catch (Exception e) {
             res.setStatusCode(500);
-            res.setMessage(e.getMessage());
+            res.setStatusMessage(e.getMessage());
             return res;
         }
     }
 
-    public DefaultResponse depositMoney(TransactionDTO request){
+    public DefaultApiResponse depositMoney(TransactionDTO request){
         return updateBalance(request, TransactionType.DEPOSIT, "addition");
     }
 
-    public DefaultResponse withdrawMoney(TransactionDTO request){
+    public DefaultApiResponse withdrawMoney(TransactionDTO request){
         return updateBalance(request, TransactionType.WITHDRAWAL, "subtract");
     }
 }

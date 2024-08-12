@@ -4,9 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.henry.onlinebankingsystemp.dto.DefaultResponse;
+import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
 import org.henry.onlinebankingsystemp.repository.TokenRepository;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
@@ -23,13 +22,13 @@ public class LogoutService implements LogoutHandler {
             HttpServletRequest request,
             HttpServletResponse response,
             Authentication authentication) {
-        DefaultResponse res = new DefaultResponse();
+        DefaultApiResponse res = new DefaultApiResponse();
         final String authHeader = request.getHeader("Authorization");
         final String jwtToken;
         if(authHeader == null || authHeader.isBlank()){
             log.error("Blank Authorisation");
             res.setStatusCode(500);
-            res.setMessage("Blank Authorisation");
+            res.setStatusMessage("Blank Authorisation");
             return;
         }
         log.info("Performing LogOut Operation");
@@ -42,7 +41,7 @@ public class LogoutService implements LogoutHandler {
             System.out.println("Successfully Signed out");
 
             res.setStatusCode(200);
-            res.setMessage("Successfully signed out");
+            res.setStatusMessage("Successfully signed out");
         }
     }
 }

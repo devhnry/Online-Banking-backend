@@ -2,7 +2,9 @@ package org.henry.onlinebankingsystemp.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.henry.onlinebankingsystemp.dto.*;
+import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
+import org.henry.onlinebankingsystemp.dto.OnboardUserDto;
+import org.henry.onlinebankingsystemp.dto2.*;
 import org.henry.onlinebankingsystemp.entity.Admin;
 import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.factory.AccountFactory;
@@ -29,7 +31,7 @@ public class AuthenticationService {
     private final AdminRepository adminRepository;
     private final AccountFactory accountFactory;
 
-    public DefaultResponse signUp(SignUpDTO request){
+    public DefaultApiResponse signUp(OnboardUserDto request){
         return accountFactory.createAccount(request);
     }
 

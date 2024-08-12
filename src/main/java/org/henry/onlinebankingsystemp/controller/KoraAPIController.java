@@ -1,10 +1,10 @@
 package org.henry.onlinebankingsystemp.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.henry.onlinebankingsystemp.dto.AccountRequestDTO;
-import org.henry.onlinebankingsystemp.dto.FundAccountDTO;
-import org.henry.onlinebankingsystemp.dto.TransactionResponseDTO;
-import org.henry.onlinebankingsystemp.dto.VirtualAccountResponse;
+import org.henry.onlinebankingsystemp.dto2.AccountRequestDTO;
+import org.henry.onlinebankingsystemp.dto2.FundAccountDTO;
+import org.henry.onlinebankingsystemp.dto2.TransactionResponseDTO;
+import org.henry.onlinebankingsystemp.dto2.VirtualAccountResponse;
 import org.henry.onlinebankingsystemp.entity.VirtualAccount;
 import org.henry.onlinebankingsystemp.service.VirtualAccountService;
 import org.springframework.web.bind.annotation.*;

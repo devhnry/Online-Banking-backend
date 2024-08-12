@@ -2,7 +2,7 @@ package org.henry.onlinebankingsystemp.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.henry.onlinebankingsystemp.dto.*;
+import org.henry.onlinebankingsystemp.dto2.*;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.entity.VirtualAccount;

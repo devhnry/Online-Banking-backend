@@ -2,63 +2,78 @@ package org.henry.onlinebankingsystemp.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.henry.onlinebankingsystemp.dto.*;
-import org.henry.onlinebankingsystemp.entity.OTP;
 import org.henry.onlinebankingsystemp.service.AccountService;
 import org.henry.onlinebankingsystemp.service.UserService;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/account")
 @RequiredArgsConstructor
 public class AccountController {
+
     private final UserService userService;
     private final AccountService accountService;
 
-    @GetMapping("/balance")
-    public BalanceDTO getBalance(){
-        return userService.getBalance();
+    @GetMapping("/view-balance")
+    public ResponseEntity<DefaultApiResponse<ViewBalanceDto>> getBalance(){
+        DefaultApiResponse<ViewBalanceDto> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping("/deposit")
-    public DefaultResponse depositMoney(@RequestBody TransactionDTO req){
-        return accountService.depositMoney(req);
+    @PostMapping("/make-deposit")
+    public ResponseEntity<DefaultApiResponse<BalanceDto>> makeDeposit(@Validated @RequestBody DepositDto deposit){
+        DefaultApiResponse<BalanceDto> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/withdraw")
-    public DefaultResponse withdrawMoney(@RequestBody TransactionDTO req){
-        return accountService.withdrawMoney(req);
+    public ResponseEntity<DefaultApiResponse<BalanceDto>> makeWithdrawal(@Validated @RequestBody WithdrawDto withdraw){
+        DefaultApiResponse<BalanceDto> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping("/transfer")
-    public DefaultResponse transferMoney(@RequestBody TransferDTO req){
-        return accountService.transferMoney(req);
+    @PostMapping("/make-transfer")
+    public ResponseEntity<DefaultApiResponse<BalanceDto>> makeTransfer(@Validated @RequestBody TransferDto transfer) {
+        DefaultApiResponse<BalanceDto> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/statement")
-    public List<TransactionDTO> viewTransactions(){
-        return userService.viewStatement();
+    @GetMapping("/view-bank-statement")
+    public ResponseEntity<DefaultApiResponse<?>> getBankStatement(){
+        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PatchMapping("/updateProfile")
-    public DefaultResponse updateInformation(@RequestBody UpdateInfoDTO req){
-        return userService.updateDetails(req);
+    @PatchMapping("/update-profile")
+    public ResponseEntity<DefaultApiResponse<?>> updateInformation(@RequestBody UpdateInfoDTO updateInfo){
+        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping("/resetPassword")
-    public DefaultResponse resetPassword(@RequestBody PasswordResetDTO pass){
-        return userService.resetPassword(pass);
+    @PutMapping("/forgot-password")
+    public ResponseEntity<DefaultApiResponse<?>> resetPassword(@RequestBody @Validated PasswordResetDto passwordReset){
+        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/generateOtp")
-    public OTP generateOTP(){
-        return userService.generateOTP();
+    @PutMapping("/change-password")
+    public ResponseEntity<DefaultApiResponse<?>> forgotPassword(@RequestBody @Validated PasswordChangeDto passwordChange){
+        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping("/transactionLimit")
-    public DefaultResponse updateTransactionLimit(@RequestBody TransactionLimit transactionLimit) {
-        return userService.updateTransactionLimit(transactionLimit);
+    @GetMapping("/send-otp")
+    public  ResponseEntity<DefaultApiResponse<?>> generateOTP(){
+        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PutMapping("/update-transaction-limit")
+    public ResponseEntity<DefaultApiResponse<?>> updateTransactionLimit(@RequestBody TransactionLimitDto transactionLimitDto) {
+        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

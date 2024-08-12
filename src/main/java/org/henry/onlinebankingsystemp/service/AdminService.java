@@ -2,7 +2,7 @@ package org.henry.onlinebankingsystemp.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.henry.onlinebankingsystemp.dto.DefaultResponse;
+import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
 import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,8 +15,8 @@ public class AdminService {
     private final UserRepository userRepository;
     private final AuthenticationService authenticationService;
 
-    public DefaultResponse suspendUser(Long id){
-        DefaultResponse res = new DefaultResponse();
+    public DefaultApiResponse suspendUser(Long id){
+        DefaultApiResponse res = new DefaultApiResponse();
         Customer customer = userRepository.findById(id).orElseThrow(
                 () -> {
                     log.error("Customer does not exist");
@@ -27,7 +27,7 @@ public class AdminService {
         customer.setIsSuspended(true);
         authenticationService.revokeAllUserTokens(customer);
         res.setStatusCode(200);
-        res.setMessage("Successfully suspended users");
+        res.setStatusMessage("Successfully suspended users");
         log.info("Customer has been saved successfully");
         userRepository.save(customer);
         return res;

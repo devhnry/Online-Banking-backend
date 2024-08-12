@@ -2,18 +2,13 @@ package org.henry.onlinebankingsystemp.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.henry.onlinebankingsystemp.dto.AddressDTO;
-import org.henry.onlinebankingsystemp.dto.CardHolderDTO;
 import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.function.Supplier;

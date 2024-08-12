@@ -1,8 +1,8 @@
 package org.henry.onlinebankingsystemp.controller;
 
-import org.henry.onlinebankingsystemp.dto.BalanceDTO;
-import org.henry.onlinebankingsystemp.dto.DefaultResponse;
-import org.henry.onlinebankingsystemp.dto.TransactionDTO;
+import org.henry.onlinebankingsystemp.dto.BalanceDto;
+import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
+import org.henry.onlinebankingsystemp.dto2.TransactionDTO;
 import org.henry.onlinebankingsystemp.dto.UpdateInfoDTO;
 import org.henry.onlinebankingsystemp.enums.Role;
 import org.henry.onlinebankingsystemp.entity.Customer;
@@ -78,7 +78,7 @@ class AccountControllerTest {
     @Test
     void willReturnBalanceForAuthorisedPersonnel() throws Exception {
 
-        BalanceDTO balanceDTO = new BalanceDTO();
+        BalanceDto balanceDTO = new BalanceDto();
         balanceDTO.setBalance(new BigDecimal(2000));
         balanceDTO.setUsername("email@gmail.com");
         given(userService.getBalance()).willReturn(balanceDTO);
@@ -97,7 +97,7 @@ class AccountControllerTest {
     @Test
     void willReturnBalanceForUnAuthorisedPersonnel() throws Exception {
 
-        BalanceDTO balanceDTO = new BalanceDTO();
+        BalanceDto balanceDTO = new BalanceDto();
         balanceDTO.setBalance(new BigDecimal(2000));
         balanceDTO.setUsername("email@gmail.com");
         given(userService.getBalance()).willReturn(balanceDTO);
@@ -122,9 +122,9 @@ class AccountControllerTest {
         TransactionDTO transactionDTO = new TransactionDTO();
         transactionDTO.setAmount(BigDecimal.valueOf(100000));
 
-        DefaultResponse res = new DefaultResponse();
+        DefaultApiResponse res = new DefaultApiResponse();
         res.setStatusCode(200);
-        res.setMessage("Deposit Successful");
+        res.setStatusMessage("Deposit Successful");
 
         given(accountService.depositMoney(transactionDTO)).willReturn(res);
         this.mockMvc
@@ -159,9 +159,9 @@ class AccountControllerTest {
         info.setEmail("jam@gmail.com");
         info.setOtpCode(56702L);
 
-        DefaultResponse res = new DefaultResponse();
+        DefaultApiResponse res = new DefaultApiResponse();
         res.setStatusCode(200);
-        res.setMessage("Update Successful");
+        res.setStatusMessage("Update Successful");
 
         given(userService.updateDetails(info)).willReturn(res);
         this.mockMvc
