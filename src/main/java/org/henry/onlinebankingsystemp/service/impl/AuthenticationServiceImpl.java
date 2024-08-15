@@ -67,6 +67,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return response;
         }
 
+        /* Verifies the password Strength during ONBOARD */
+        if (!verifyPasswordStrength(requestBody.password())) {
+            log.info("Password not strong enough");
+            response.setStatusCode(400);
+            response.setStatusMessage("Password should contain at least 8 characters, numbers and a symbol");
+            return response;
+        }
+
         // Calls Method to Generate Account and Customer
         generateCustomerAndAccount(newCustomer, newAccount, requestBody);
         responseData = setResponseData(newAccount, newCustomer);
@@ -177,17 +185,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             t.setRevoked(true);
         });
         tokenRepository.saveAll(validUserTokens);
-    }
-
-    /* Verifies the password Strength during ONBOARD and Login. */
-    private DefaultApiResponse<SuccessfulOnboardDto> checkPassword(String password) {
-        DefaultApiResponse<SuccessfulOnboardDto> response = new DefaultApiResponse<>();
-        if (!verifyPasswordStrength(password)) {
-            log.info("Password not strong enough");
-            response.setStatusCode(500);
-            response.setStatusMessage("Password should contain at least 8 characters, numbers and a symbol");
-        }
-        return response;
     }
 
     /* Generates Account Number for Customer */
