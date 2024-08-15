@@ -116,7 +116,67 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public DefaultApiResponse<AuthorisationResponseDto> refreshToken(RefreshTokenDto requestBody) {
-        return null;
+        log.info("Processing Refreshing Token Request");
+        DefaultApiResponse<AuthorisationResponseDto> response = new DefaultApiResponse<>();
+
+        // Gets the User Email of the token that needs to be Refreshed
+        String userEmail = jwtService.extractUsername(requestBody.refreshToken());
+        log.info("Email of the Refresh Token: {}", userEmail);
+
+        // If Refresh Token has expired.
+        log.info("Checking if Refresh token has expired");
+        if(jwtService.isTokenExpired(requestBody.refreshToken())){
+            response.setStatusCode(200);
+            response.setStatusMessage("Refresh Token Expired: User needs to Log in Again");
+            log.info("Refresh Token has expired {}", requestBody.refreshToken());
+            return response;
+        }
+
+        try{
+            Optional<Customer> existingCustomer = userRepository.findByEmail(userEmail);
+            if(existingCustomer.isPresent()){
+                Customer customer = existingCustomer.get();
+
+                log.info("Verifying Token is valid and properly signed");
+                // Verifies the token is valid and generates new token for the USER
+                if(jwtService.isTokenValid(requestBody.refreshToken(), customer) ){
+                    log.info("Generating New Token");
+
+                    String newAccessToken = jwtService.createJWT(customer);
+
+                    revokeOldTokens(customer);
+                    saveCustomerToken(customer, newAccessToken, requestBody.refreshToken());
+
+                    response.setStatusCode(HttpStatus.CREATED.value());
+                    response.setStatusMessage("Successfully Refreshed AuthToken");
+                }
+            }
+        } catch (Exception e) {
+            log.error("An error occurred while refreshing Access Token: {}", e.getMessage());
+        }
+        return response;
+    }
+
+    public void saveCustomerToken(Customer customer, String newToken, String refreshToken) {
+        AuthToken token = AuthToken.builder()
+                .customer(customer)
+                .accessToken(newToken)
+                .refreshToken(refreshToken)
+                .expired(false)
+                .revoked(false)
+                .build();
+        tokenRepository.save(token);
+    }
+
+    public void revokeOldTokens(Customer customer) {
+        List<AuthToken> validUserTokens = tokenRepository.findValidTokenByCustomer(customer.getCustomerId());
+        if (validUserTokens.isEmpty())
+            return;
+        validUserTokens.forEach(t -> {
+            t.setExpired(true);
+            t.setRevoked(true);
+        });
+        tokenRepository.saveAll(validUserTokens);
     }
 
     /* Verifies the password Strength during ONBOARD and Login. */
@@ -252,97 +312,4 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         tokenRepository.save(newAuthToken);
         return new generateAccessTokenAndRefreshToken(accessToken, refreshToken);
     }
-
-//    public LoginResponseDTO refreshToken(RefreshTokenDto refreshTokenRequest){
-//        LoginResponseDTO res = new LoginResponseDTO();
-//        String userEmail = jwtService.extractUsername(refreshTokenRequest.getToken());
-//        Customer customer = userRepository.findByEmail(userEmail).orElseThrow();
-//
-//        try {
-//            Optional<Customer> optionalUser = userRepository.findByEmail(userEmail);
-//            if(optionalUser.isPresent()){
-//                if(jwtService.isTokenValid(refreshTokenRequest.getToken(), customer)){
-//                    var newToken = jwtService.generateToken(customer);
-//
-//                    revokeAllUserTokens(customer);
-//                    saveUserToken(customer,newToken);
-//
-//                    res.setStatusCode(200);
-//                    res.setToken(newToken);
-//                    res.setRefreshToken(refreshTokenRequest.getToken());
-//                    res.setExpirationTime("24hr");
-//                    res.setMessage("Successfully Refreshed AuthToken");
-//                }
-//            }
-//            else {
-//                Admin admin = adminRepository.findByEmail(userEmail).orElseThrow();
-//                Optional<Admin> optionalAdmin = adminRepository.findByEmail(userEmail);
-//                if (optionalAdmin.isPresent()) {
-//                    if(jwtService.isTokenValid(refreshTokenRequest.getToken(), admin)){
-//                        var newToken = jwtService.generateToken(admin);
-//
-//                        revokeAllUserTokens(customer);
-//                        saveUserToken(customer,newToken);
-//
-//                        res.setStatusCode(200);
-//                        res.setToken(newToken);
-//                        res.setRefreshToken(refreshTokenRequest.getToken());
-//                        res.setExpirationTime("24hr");
-//                        res.setMessage("Successfully Refreshed AuthToken");
-//                    }
-//                }
-//            }
-//        } catch (Exception e) {
-//            res.setStatusCode(500);
-//            res.setMessage(e.getMessage());
-//        }
-//        return res;
-//    }
-//
-//    public void saveUserToken(Customer customer, String newToken) {
-//        var token = AuthToken.builder()
-//                .users(customer)
-//                .token(newToken)
-//                .tokenType(TokenType.BEARER)
-//                .expired(false)
-//                .revoked(false)
-//                .build();
-//
-//        tokenRepository.save(token);
-//    }
-//
-//    public void saveAdminToken(Admin admin, String newToken){
-//        var token = AuthToken.builder()
-//                .admin(admin)
-//                .token(newToken)
-//                .tokenType(TokenType.BEARER)
-//                .expired(false)
-//                .revoked(false)
-//                .build();
-//
-//        tokenRepository.save(token);
-//    }
-//
-//    public void revokeAllUserTokens(Customer customer){
-//        var validUserTokens = tokenRepository.findValidTokenByCustomer(customer.getCustomerId());
-//        if(validUserTokens.isEmpty())
-//            return;
-//        validUserTokens.forEach(t -> {
-//            t.setExpired(true);
-//            t.setRevoked(true);
-//        });
-//        tokenRepository.saveAll(validUserTokens);
-//    }
-//
-//    public void revokeAllAdminTokens(Admin admin){
-//        var validAdminToken = tokenRepository.findValidTokenByAdmin(admin.getAdminId());
-//        System.out.println(validAdminToken);
-//        if(validAdminToken.isEmpty())
-//            return;
-//        validAdminToken.forEach(t -> {
-//            t.setExpired(true);
-//            t.setRevoked(true);
-//        });
-//        tokenRepository.saveAll(validAdminToken);
-//    }
 }

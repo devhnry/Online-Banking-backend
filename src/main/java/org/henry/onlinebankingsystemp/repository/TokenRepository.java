@@ -13,10 +13,10 @@ public interface TokenRepository extends JpaRepository<AuthToken, Integer> {
 
     @Query("""
             select t from AuthToken t inner join Customer u on t.customer.customerId = u.customerId
-            where u.customerId = :userId and (t.expired = false or t.revoked = false)
+            where u.customerId = :customerId and (t.expired = false or t.revoked = false)
         """
     )
-    List<AuthToken> findValidTokenByCustomer(Long userId);
+    List<AuthToken> findValidTokenByCustomer(String customerId);
     @Query("""
             select t from AuthToken t inner join Admin a on t.admin.adminId = a.adminId
             where a.adminId = :adminId and (t.expired = false or t.revoked = false)
