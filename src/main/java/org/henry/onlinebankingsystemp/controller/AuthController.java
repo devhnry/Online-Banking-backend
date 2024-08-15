@@ -22,7 +22,7 @@ public class AuthController {
      */
     @PostMapping("/onboard")
     public ResponseEntity<DefaultApiResponse<SuccessfulOnboardDto>> signup(@RequestBody OnboardUserDto request){
-        DefaultApiResponse<SuccessfulOnboardDto> response = new DefaultApiResponse<>();
+        DefaultApiResponse<SuccessfulOnboardDto> response = authenticationService.onBoard(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -33,7 +33,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<DefaultApiResponse<AuthorisationResponseDto>> login(@RequestBody LoginRequestDto request){
-        DefaultApiResponse<AuthorisationResponseDto> response = new DefaultApiResponse<>();
+        DefaultApiResponse<AuthorisationResponseDto> response = authenticationService.login(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -44,7 +44,7 @@ public class AuthController {
      */
     @PostMapping("/refresh-token")
     public ResponseEntity<DefaultApiResponse<AuthorisationResponseDto>> refreshToken(@RequestBody RefreshTokenDto request){
-        DefaultApiResponse<AuthorisationResponseDto> response = new DefaultApiResponse<>();
+        DefaultApiResponse<AuthorisationResponseDto> response = authenticationService.refreshToken(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

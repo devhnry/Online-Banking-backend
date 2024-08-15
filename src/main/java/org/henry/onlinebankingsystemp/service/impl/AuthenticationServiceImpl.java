@@ -43,6 +43,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private record generateAccessTokenAndRefreshToken(String accessToken, String refreshToken) {}
 
+    /**
+     * Method to accept user onboarding request (signup).
+     * @param requestBody contains the details required for onboarding a new user.
+     * @return a response indicating the success of the onboarding process, including the details of the onboarded user.
+     */
     @Override
     public DefaultApiResponse<SuccessfulOnboardDto> onBoard(OnboardUserDto requestBody) {
         DefaultApiResponse<SuccessfulOnboardDto> response = new DefaultApiResponse<>();
@@ -86,6 +91,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return response;
     }
 
+    /**
+     * Method to accept user Login Request (signup).
+     * @param requestBody contains the details required for a user to be able to log in
+     * @return a response indicating the success of the Login process, including the details of the onboarded user.
+     */
     @Override
     public DefaultApiResponse<AuthorisationResponseDto> login(LoginRequestDto requestBody) {
         DefaultApiResponse<AuthorisationResponseDto> response = new DefaultApiResponse<>();
@@ -100,6 +110,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             if(customerOptional.isPresent()){
                 customer = customerOptional.get();
                 log.info("User Found on the DB: {}", customer);
+
+                // Verifies password matches with the one created
+                if(!passwordEncoder.matches(requestBody.password(), customer.getPassword())){
+                    response.setStatusCode(400);
+                    response.setStatusMessage("Invalid Password");
+                }
             }else{
                 log.info("User Not Found on the DB");
                 response.setStatusCode(400);
@@ -122,6 +138,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return response;
     }
 
+    /**
+     * Method for refreshing the access authToken using a refresh authToken.
+     * @param requestBody contains the refresh authToken details.
+     * @return a response containing the new authorization details (e.g., new access authToken).
+     */
     @Override
     public DefaultApiResponse<AuthorisationResponseDto> refreshToken(RefreshTokenDto requestBody) {
         log.info("Processing Refreshing Token Request");
