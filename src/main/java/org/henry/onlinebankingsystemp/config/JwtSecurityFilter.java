@@ -58,7 +58,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
             Function<AuthToken, Boolean> validateToken = t -> !t.getExpired().equals(true) && !t.getRevoked().equals(true);
 
             /* Looks for the authToken on the DB, calls function to validate, if it fails, return false */
-            var isTokenValid = tokenRepository.findByToken(jwtToken).map(
+            var isTokenValid = tokenRepository.findByAccessToken(jwtToken).map(
                     validateToken
             ).orElse(false);
 

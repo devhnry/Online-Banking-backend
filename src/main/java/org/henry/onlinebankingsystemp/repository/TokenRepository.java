@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TokenRepository extends JpaRepository<AuthToken, Integer> {
+public interface TokenRepository extends JpaRepository<AuthToken, Long> {
 
     @Query("""
             select t from AuthToken t inner join Customer u on t.customer.customerId = u.customerId
@@ -23,5 +23,5 @@ public interface TokenRepository extends JpaRepository<AuthToken, Integer> {
         """
     )
     List<AuthToken> findValidTokenByAdmin(Long adminId);
-    Optional<AuthToken> findByToken(String authToken);
+    Optional<AuthToken> findByAccessToken(String authToken);
 }

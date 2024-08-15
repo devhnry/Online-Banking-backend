@@ -18,7 +18,7 @@ public class Admin implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private Long adminId;
+    private String adminId;
 
     private String firstName;
 

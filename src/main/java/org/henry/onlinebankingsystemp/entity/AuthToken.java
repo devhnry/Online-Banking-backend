@@ -11,7 +11,7 @@ import lombok.*;
 public class AuthToken {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -20,6 +20,7 @@ public class AuthToken {
     @Column(nullable = false, unique = true)
     private String refreshToken;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean expired = false;
 
@@ -29,7 +30,7 @@ public class AuthToken {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", referencedColumnName = "id")
+    @JoinColumn(name = "customerId", referencedColumnName = "customerId")
     private Customer customer;
 
     @JsonIgnore @Builder.Default

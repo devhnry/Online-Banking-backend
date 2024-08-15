@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
 
     // Service layer dependency to handle admin-related operations.
-    private final AdminService adminService;
+//    private final AdminService adminService;
 
     /**
      * Endpoint for an admin to suspend a user.

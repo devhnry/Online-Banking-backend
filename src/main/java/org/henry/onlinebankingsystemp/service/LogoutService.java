@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
+import org.henry.onlinebankingsystemp.entity.AuthToken;
 import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -33,7 +34,7 @@ public class LogoutService implements LogoutHandler {
         }
         log.info("Performing LogOut Operation");
         jwtToken = authHeader.substring(7);
-        var storedToken = tokenRepository.findByToken(jwtToken).orElse(null);
+        AuthToken storedToken = tokenRepository.findByAccessToken(jwtToken).orElse(null);
         if(storedToken != null){
             storedToken.setExpired(true);
             storedToken.setRevoked(true);
