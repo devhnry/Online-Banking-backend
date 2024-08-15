@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import org.henry.onlinebankingsystemp.enums.AccountType;
+import org.henry.onlinebankingsystemp.enums.CurrencyType;
 
 import java.math.BigDecimal;
 
@@ -16,6 +17,6 @@ public class AccountDto {
     private String accountNumber;
     private String accountHolderName;
     private AccountType accountType;
+    private CurrencyType currencyType;
     private BigDecimal balance;
-    private String currency;
 }

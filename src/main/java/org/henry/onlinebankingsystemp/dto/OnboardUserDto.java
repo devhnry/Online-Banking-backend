@@ -1,18 +1,17 @@
 package org.henry.onlinebankingsystemp.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Data;
 import org.henry.onlinebankingsystemp.enums.AccountType;
+import org.henry.onlinebankingsystemp.enums.CurrencyType;
 
-@Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties
-public class OnboardUserDto {
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String password;
-    private String phoneNumber;
-    private AccountType accountType;
-}
+import java.math.BigDecimal;
+
+public record OnboardUserDto(
+    String firstName,
+    String lastName,
+    String email,
+    String password,
+    String phoneNumber,
+    AccountType accountType,
+    CurrencyType currencyType,
+    BigDecimal initialDeposit
+) {}
