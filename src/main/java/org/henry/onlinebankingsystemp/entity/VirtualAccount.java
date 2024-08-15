@@ -2,41 +2,56 @@ package org.henry.onlinebankingsystemp.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.henry.onlinebankingsystemp.enums.AccountType;
+import org.henry.onlinebankingsystemp.enums.CurrencyType;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
-//@Data
-//@Entity
-//@Getter
-//@Setter
-//@ToString
-//@Table(name = "virtualAccounts")
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.List;
+
+@Entity
+@Getter @Setter @ToString
+@Builder @AllArgsConstructor @NoArgsConstructor
 public class VirtualAccount {
-//    @Setter
-//    @Getter
-//    @Id
-//    @SequenceGenerator(
-//            name = "vAccountSeq",
-//            sequenceName = "vAccountSeq",
-//            allocationSize = 1
-//    )
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-//    private Long id;
-//    private String unique_id;
-//
-//    private String accountName;
-//    private String accountNumber;
-//
-//    private String bank_code;
-//    private String bank_name;
-//    private String account_reference;
-//    private String account_status;
-//    private String created_at;
-//    private String currency;
-//    private Double balance;
-//
-//    @JoinColumn(name = "customerId", nullable = false)
-//    private Long customerId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String vAccountId;
+
+    private String uniqueId;
+
+    @Column(nullable = false)
+    private String accountHolderName;
+
+    @Column(unique = true, nullable = false)
+    private String accountNumber;
+
+    @Column(nullable = false)
+    private String bankCode;
+
+    @Column(nullable = false)
+    private String bankName;
+
+    @Column(nullable = false)
+    private String accountReference;
+
+    @Column(nullable = false)
+    private String accountStatus;
+
+    @Column(nullable = false)
+    @CreatedDate
+    private Instant createdAt;
+
+    @Column(nullable = false)
+    private String currency;
+
+    @Column(nullable = false)
+    private Double balance;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "customerId", nullable = false)
+    private Customer customer;
 }
