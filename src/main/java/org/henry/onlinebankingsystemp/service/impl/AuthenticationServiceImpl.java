@@ -5,21 +5,26 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.entity.Account;
+import org.henry.onlinebankingsystemp.entity.AuthToken;
 import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.repository.AccountRepository;
 import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.henry.onlinebankingsystemp.service.AuthenticationService;
 import org.henry.onlinebankingsystemp.service.JWTService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +40,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final static BigDecimal DEFAULT_TRANSACTION_LIMIT = BigDecimal.valueOf(200_000.00);
     private final static BigDecimal DEFAULT_INTEREST_RATE = BigDecimal.valueOf(4);
+
+    private record generateAccessTokenAndRefreshToken(String accessToken, String refreshToken) {}
 
     @Override
     public DefaultApiResponse<SuccessfulOnboardDto> onBoard(OnboardUserDto requestBody) {
@@ -73,7 +80,38 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public DefaultApiResponse<AuthorisationResponseDto> login(LoginRequestDto requestBody) {
-        return null;
+        DefaultApiResponse<AuthorisationResponseDto> response = new DefaultApiResponse<>();
+        log.info("Performing Authentication and Processing Login Request");
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(requestBody.email(), requestBody.password()));
+
+            // Checks if the User exists in the System : Prompts to Onboard
+            Customer customer = new Customer();
+            Optional<Customer> customerOptional = userRepository.findByEmail(requestBody.email());
+            if(customerOptional.isPresent()){
+                customer = customerOptional.get();
+                log.info("User Found on the DB: {}", customer);
+            }else{
+                log.info("User Not Found on the DB");
+                response.setStatusCode(400);
+                response.setStatusMessage("Customer Not Found: OnBoard on the System or Verify Email");
+            }
+
+            generateAccessTokenAndRefreshToken result = getGenerateAccessTokenAndRefreshToken(customer);
+
+            AuthorisationResponseDto authorisationResponseDto = new AuthorisationResponseDto(
+                    result.accessToken(), result.refreshToken(), Instant.now(), "24hrs");
+
+            response.setStatusCode(HttpStatus.OK.value());
+            response.setStatusMessage("Successfully Logged In");
+            response.setData(authorisationResponseDto);
+            log.info("Successfully Logged In: Login ");
+
+        }catch (RuntimeException ex){
+            log.error("An error occurred while performing Authentication: {}", ex.getMessage());
+        }
+        return response;
     }
 
     @Override
@@ -196,66 +234,25 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return false;
     }
 
+    private @NotNull generateAccessTokenAndRefreshToken getGenerateAccessTokenAndRefreshToken(Customer customer) {
+        /* Generates AccessToken and RefreshToken for Customer. */
+        HashMap<String, Object> claims = new HashMap<>();
+        claims.put("customerId", customer.getCustomerId());
+        claims.put("email", customer.getEmail());
 
-//
-//    public LoginResponseDTO login(LoginRequestDto request) {
-//        LoginResponseDTO res = new LoginResponseDTO();
-//        log.info("Performing Authentication");
-//        try {
-//            authenticationManager.authenticate(
-//                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-//
-//            Optional<Admin> optionalAdmin = adminRepository.findByEmail(request.getEmail());
-//            if (optionalAdmin.isPresent()) {
-//                var admin = optionalAdmin.orElseThrow();
-//                var jwtToken = jwtService.generateToken(admin);
-//                jwtService.generateRefreshToken(new HashMap<>(), admin);
-//
-//                res.setStatusCode(200);
-//                res.setEmail(request.getEmail());
-//                res.setToken(jwtToken);
-//                res.setRefreshToken(jwtToken);
-//                res.setExpirationTime("24hr");
-//                res.setMessage("Successfully Logged In");
-//                log.info(res.getMessage());
-//
-//                revokeAllAdminTokens(admin);
-//                saveAdminToken(admin, jwtToken);
-//            } else {
-//                boolean optionalUser = userRepository.findByEmail(request.getEmail()).isPresent();
-//                if(!optionalUser){
-//                    res.setStatusCode(404);
-//                    res.setMessage("Customer or Admin not found");
-//                    return res;
-//                }
-//                var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-//                if(user.getIsSuspended()){
-//                    res.setMessage("Your account has been suspended");
-//                    res.setStatusCode(500);
-//                    return res;
-//                }
-//
-//                var jwtToken = jwtService.generateToken(user);
-//                jwtService.generateRefreshToken(new HashMap<>(), user);
-//
-//                res.setStatusCode(200);
-//                res.setEmail(request.getEmail());
-//                res.setToken(jwtToken);
-//                res.setRefreshToken(jwtToken);
-//                res.setExpirationTime("24hr");
-//                res.setMessage("Successfully Signed In");
-//                log.info("Logged In Successfully");
-//
-//                revokeAllUserTokens(user);
-//                saveUserToken(user, jwtToken);
-//            }
-//        } catch (Exception e) {
-//            res.setStatusCode(500);
-//            res.setMessage(e.getMessage());
-//        }
-//        return res;
-//    }
-//
+        String accessToken = jwtService.createJWT(customer);
+        String refreshToken = jwtService.generateRefreshToken(claims, customer);
+
+        /* Generates AuthToken for Customer and saves to the DB */
+        AuthToken newAuthToken = AuthToken.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .customer(customer)
+                .build();
+        tokenRepository.save(newAuthToken);
+        return new generateAccessTokenAndRefreshToken(accessToken, refreshToken);
+    }
+
 //    public LoginResponseDTO refreshToken(RefreshTokenDto refreshTokenRequest){
 //        LoginResponseDTO res = new LoginResponseDTO();
 //        String userEmail = jwtService.extractUsername(refreshTokenRequest.getToken());

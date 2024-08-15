@@ -2,6 +2,7 @@ package org.henry.onlinebankingsystemp.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.henry.onlinebankingsystemp.entity.Customer;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -26,19 +27,30 @@ public class JWTService {
         this.key = new SecretKeySpec(keyByte,"HmacSHA256");
     }
 
-    public String generateToken(UserDetails userDetails){
+    public String createJWT(Customer customer) { return  generateToken(customer); }
+
+    private String generateToken(Customer customer){
+        HashMap<String, Object> claims = new HashMap<>();
+
+        claims.put("customerId",customer.getCustomerId());
+        claims.put("firstName",customer.getFirstName());
+        claims.put("lastName",customer.getLastName());
+        claims.put("email",customer.getEmail());
+        claims.put("phoneNumber",customer.getPhoneNumber());
+
         return Jwts.builder()
-                .subject(userDetails.getUsername())
+                .claims(claims)
+                .subject(customer.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(key)
                 .compact();
     }
 
-    public String generateRefreshToken(HashMap<String, Object> claims, UserDetails userDetails){
+    public String generateRefreshToken(HashMap<String, Object> claims, Customer customer){
         return Jwts.builder()
                 .claims(claims)
-                .subject(userDetails.getUsername())
+                .subject(customer.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(key)
