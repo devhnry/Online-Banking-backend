@@ -35,7 +35,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf(AbstractHttpConfigurer::disable) // Disable CSRF
                 .authorizeHttpRequests(request -> request
-                    .requestMatchers("auth/**").permitAll() // Permits all Users to access Authentication Endpoints
+                    .requestMatchers("auth/**", "/error**").permitAll() // Permits all Users to access Authentication Endpoints
                         // Protects all admin Endpoints unless having an Admin Role
                     .requestMatchers("api/v1/admin/**").hasAnyAuthority(Arrays.toString(AdminRoles.values()))
                     .anyRequest().authenticated()) // Every other Request has to be authenticated.

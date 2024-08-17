@@ -81,8 +81,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         // Calls Method to Generate Account and Customer
-        generateCustomerAndAccount(newCustomer, newAccount, requestBody);
-        responseData = setResponseData(newAccount, newCustomer);
+        newCustomer = generateCustomerAndAccount(newCustomer, newAccount, requestBody);
+        responseData = setResponseData(newCustomer.getAccounts().getFirst(), newCustomer);
 
         response.setStatusCode(HttpStatus.CREATED.value());
         response.setStatusMessage("Customer Successfully Onboarded");
@@ -109,7 +109,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             Optional<Customer> customerOptional = userRepository.findByEmail(requestBody.email());
             if(customerOptional.isPresent()){
                 customer = customerOptional.get();
-                log.info("User Found on the DB: {}", customer);
+                log.info("User Found on the DB");
 
                 // Verifies password matches with the one created
                 if(!passwordEncoder.matches(requestBody.password(), customer.getPassword())){
@@ -172,9 +172,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     log.info("Generating New Token");
 
                     String newAccessToken = jwtService.createJWT(customer);
+                    String newRefreshToken = jwtService.generateRefreshToken(generateRefreshTokenClaims(customer),customer);
 
                     revokeOldTokens(customer);
-                    saveCustomerToken(customer, newAccessToken, requestBody.refreshToken());
+                    saveCustomerToken(customer, newAccessToken, newRefreshToken);
 
                     response.setStatusCode(HttpStatus.CREATED.value());
                     response.setStatusMessage("Successfully Refreshed AuthToken");
@@ -217,11 +218,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         * Generates a random number from the characters
         * Adds the uniqueValue to the end of uniqueNumber which changes as number of users increases
         */
-        uniqueNumber = RandomStringUtils.random((int) (10 - uniqueValue), "0123456789");
+        do{
+            uniqueNumber = RandomStringUtils.random((int) (uniqueValue % 10), "0123456789");
+        }while(accountRepository.existsByAccountNumber(uniqueNumber + uniqueValue));
+
         return uniqueNumber + uniqueValue;
     }
 
-    private void generateCustomerAndAccount(Customer newCustomer, Account newAccount, OnboardUserDto requestBody){
+    private Customer generateCustomerAndAccount(Customer newCustomer, Account newAccount, OnboardUserDto requestBody){
         String accountNumber = generateAccountNumber();
         String fullName = String.format("%s %s", requestBody.firstName(), requestBody.lastName());
 
@@ -240,15 +244,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .interestRate(DEFAULT_INTEREST_RATE)
                     .lastTransactionDate(Instant.now())
                     .build();
-            accountRepository.save(newAccount);
-            log.info("Account Generated: {}", newAccount);
+            log.info("Account created: {}", newAccount);
         } catch (RuntimeException ex) {
-            log.error("Error generating account for Customer {}", ex.getMessage());
+            log.error("Error creating account for Customer {}", ex.getMessage());
         }
-
-        // Stores the Account in a List and saves it to the customer
-        List<Account> relatedAccounts = new ArrayList<>();
-        relatedAccounts.add(newAccount);
 
         // Generates new Customer from the RequestBody
         log.info("Generating Customer Details for Customer");
@@ -261,13 +260,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .password(passwordEncoder.encode(requestBody.password()))
                     .phoneNumber(requestBody.phoneNumber())
                     .isSuspended(false)
-                    .accounts(relatedAccounts)
+                    .accounts(new ArrayList<>())  // Initialize the accounts list
                     .build();
-            userRepository.save(newCustomer);
-            log.info("Customer created successfully: {}", newCustomer);
+
+            newCustomer.getAccounts().add(newAccount);
+            newAccount.setCustomer(newCustomer);
+
+            userRepository.save(newCustomer); // This will cascade and save the account too
+            log.info("Customer created successfully with Account");
         } catch (RuntimeException ex) {
             log.error("Error generating customer entity {}", ex.getMessage());
         }
+
+        return newCustomer;
     }
 
     // Method to Assign New Customer and Account to SuccessOnboardDto Response
@@ -314,9 +319,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private @NotNull generateAccessTokenAndRefreshToken getGenerateAccessTokenAndRefreshToken(Customer customer) {
         /* Generates AccessToken and RefreshToken for Customer. */
-        HashMap<String, Object> claims = new HashMap<>();
-        claims.put("customerId", customer.getCustomerId());
-        claims.put("email", customer.getEmail());
+        HashMap<String, Object> claims = generateRefreshTokenClaims(customer);
 
         String accessToken = jwtService.createJWT(customer);
         String refreshToken = jwtService.generateRefreshToken(claims, customer);
@@ -329,5 +332,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
         tokenRepository.save(newAuthToken);
         return new generateAccessTokenAndRefreshToken(accessToken, refreshToken);
+    }
+
+    private static @NotNull HashMap<String, Object> generateRefreshTokenClaims(Customer customer) {
+        HashMap<String, Object> claims = new HashMap<>();
+        claims.put("customerId", customer.getCustomerId());
+        claims.put("email", customer.getEmail());
+        return claims;
     }
 }
