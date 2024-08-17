@@ -21,14 +21,12 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Service @Slf4j
+@Service
+@Slf4j
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
@@ -43,11 +41,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private record generateAccessTokenAndRefreshToken(String accessToken, String refreshToken) {}
 
-    /**
-     * Method to accept user onboarding request (signup).
-     * @param requestBody contains the details required for onboarding a new user.
-     * @return a response indicating the success of the onboarding process, including the details of the onboarded user.
-     */
     @Override
     public DefaultApiResponse<SuccessfulOnboardDto> onBoard(OnboardUserDto requestBody) {
         DefaultApiResponse<SuccessfulOnboardDto> response = new DefaultApiResponse<>();
@@ -56,33 +49,48 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Account newAccount = new Account();
         Customer newCustomer = new Customer();
 
-        boolean customerAlreadyExists = userRepository.existsByEmail(requestBody.email());
+        try {
+            // Log the start of the onboarding process
+            log.info("Starting the onboarding process for {}", requestBody.email());
 
-        /* Checks if the Customer Already exist: Prompts the user to Log in */
-        if (customerAlreadyExists) {
-            response.setStatusCode(200);
-            response.setStatusMessage("Customer Already Exists: Try Logging in");
-            return response;
+            // Validate the onboarding request data
+            OnboardUserDto.validate(requestBody);
+            boolean customerAlreadyExists = userRepository.existsByEmail(requestBody.email());
+
+            if (customerAlreadyExists) {
+                log.info("Customer with email {} already exists.", requestBody.email());
+                response.setStatusCode(200);
+                response.setStatusMessage("Customer Already Exists: Try Logging in");
+                return response;
+            }
+
+            if(!(requestBody.initialDeposit().compareTo(BigDecimal.valueOf(5000.00)) >= 0)){
+                log.warn("Initial deposit {} is less than the minimum required amount of 5000.", requestBody.initialDeposit());
+                response.setStatusCode(400);
+                response.setStatusMessage("An account need ot be created with an Initial Deposit of MIN 5000.");
+                return response;
+            }
+
+            if (!verifyPasswordStrength(requestBody.password())) {
+                log.info("Password not strong enough for user {}.", requestBody.email());
+                response.setStatusCode(400);
+                response.setStatusMessage("Password should contain at least 8 characters, numbers and a symbol");
+                return response;
+            }
+
+            // Generate customer and account based on the request data
+            newCustomer = generateCustomerAndAccount(newCustomer, newAccount, requestBody);
+            responseData = setResponseData(newCustomer.getAccounts().getFirst(), newCustomer);
+
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid Argument during Onboarding: {}", e.getMessage());
+            throw new IllegalArgumentException(e.getMessage());
+        } catch (RuntimeException e) {
+            log.error("An Error occurred while performing OnBoarding :{}",e.getMessage());
         }
 
-        // Checks if the initial Deposit is up to the Required Amount
-        if(!(requestBody.initialDeposit().compareTo(BigDecimal.valueOf(5000.00)) >= 0)){
-            response.setStatusCode(400);
-            response.setStatusMessage("An account need ot be created with an Initial Deposit of MIN 5000.");
-            return response;
-        }
-
-        /* Verifies the password Strength during ONBOARD */
-        if (!verifyPasswordStrength(requestBody.password())) {
-            log.info("Password not strong enough");
-            response.setStatusCode(400);
-            response.setStatusMessage("Password should contain at least 8 characters, numbers and a symbol");
-            return response;
-        }
-
-        // Calls Method to Generate Account and Customer
-        newCustomer = generateCustomerAndAccount(newCustomer, newAccount, requestBody);
-        responseData = setResponseData(newCustomer.getAccounts().getFirst(), newCustomer);
+        // Log successful onboarding
+        log.info("Customer successfully onboarded: {}", newCustomer.getEmail());
 
         response.setStatusCode(HttpStatus.CREATED.value());
         response.setStatusMessage("Customer Successfully Onboarded");
@@ -91,122 +99,172 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return response;
     }
 
-    /**
-     * Method to accept user Login Request (signup).
-     * @param requestBody contains the details required for a user to be able to log in
-     * @return a response indicating the success of the Login process, including the details of the onboarded user.
-     */
     @Override
     public DefaultApiResponse<AuthorisationResponseDto> login(LoginRequestDto requestBody) {
         DefaultApiResponse<AuthorisationResponseDto> response = new DefaultApiResponse<>();
-        log.info("Performing Authentication and Processing Login Request");
+        log.info("Performing Authentication and Processing Login Request for user {}.", requestBody.email());
         try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(requestBody.email(), requestBody.password()));
+            // Validate the login request data
+            LoginRequestDto.validate(requestBody);
 
-            // Checks if the User exists in the System : Prompts to Onboard
             Customer customer = new Customer();
             Optional<Customer> customerOptional = userRepository.findByEmail(requestBody.email());
             if(customerOptional.isPresent()){
                 customer = customerOptional.get();
-                log.info("User Found on the DB");
+                log.info("User Found on the DB with email {}.", requestBody.email());
 
-                // Verifies password matches with the one created
                 if(!passwordEncoder.matches(requestBody.password(), customer.getPassword())){
+                    log.warn("Invalid Password for user {}.", requestBody.email());
                     response.setStatusCode(400);
                     response.setStatusMessage("Invalid Password");
+                    return response;
                 }
-            }else{
-                log.info("User Not Found on the DB");
+            } else {
+                log.warn("User with email {} not found in the database.", requestBody.email());
                 response.setStatusCode(400);
                 response.setStatusMessage("Customer Not Found: OnBoard on the System or Verify Email");
+                return response;
             }
 
+            // Generate access and refresh tokens for the authenticated customer
             generateAccessTokenAndRefreshToken result = getGenerateAccessTokenAndRefreshToken(customer);
 
             AuthorisationResponseDto authorisationResponseDto = new AuthorisationResponseDto(
                     result.accessToken(), result.refreshToken(), Instant.now(), "24hrs");
 
+            // Authenticate the user with the provided credentials
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(requestBody.email(), requestBody.password()));
+
             response.setStatusCode(HttpStatus.OK.value());
             response.setStatusMessage("Successfully Logged In");
             response.setData(authorisationResponseDto);
-            log.info("Successfully Logged In: Login ");
+            log.info("User {} successfully logged in.", requestBody.email());
 
-        }catch (RuntimeException ex){
-            log.error("An error occurred while performing Authentication: {}", ex.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid Argument during Login for user {}: {}", requestBody.email(), e.getMessage());
+            throw new IllegalArgumentException(e.getMessage());
+        } catch (RuntimeException ex){
+            log.error("An error occurred while performing Authentication for user {}: {}", requestBody.email(), ex.getMessage());
         }
         return response;
     }
 
-    /**
-     * Method for refreshing the access authToken using a refresh authToken.
-     * @param requestBody contains the refresh authToken details.
-     * @return a response containing the new authorization details (e.g., new access authToken).
-     */
     @Override
     public DefaultApiResponse<AuthorisationResponseDto> refreshToken(RefreshTokenDto requestBody) {
-        log.info("Processing Refreshing Token Request");
+        log.info("Processing Refreshing Token Request for user.");
         DefaultApiResponse<AuthorisationResponseDto> response = new DefaultApiResponse<>();
 
-        // Gets the User Email of the token that needs to be Refreshed
-        String userEmail = jwtService.extractUsername(requestBody.refreshToken());
-        log.info("Email of the Refresh Token: {}", userEmail);
+        try {
+            // Validate the refresh token request data
+            RefreshTokenDto.validate(requestBody);
 
-        // If Refresh Token has expired.
-        log.info("Checking if Refresh token has expired");
-        if(jwtService.isTokenExpired(requestBody.refreshToken())){
-            response.setStatusCode(200);
-            response.setStatusMessage("Refresh Token Expired: User needs to Log in Again");
-            log.info("Refresh Token has expired {}", requestBody.refreshToken());
-            return response;
-        }
+            String userEmail = jwtService.extractUsername(requestBody.refreshToken());
+            log.info("Email of the Refresh Token: {}", userEmail);
 
-        try{
+            log.info("Checking if Refresh token has expired.");
+            if(jwtService.isTokenExpired(requestBody.refreshToken())){
+                response.setStatusCode(200);
+                response.setStatusMessage("Refresh Token Expired: User needs to Log in Again");
+                log.warn("Refresh Token has expired for user {}: {}", userEmail, requestBody.refreshToken());
+                return response;
+            }
+
             Optional<Customer> existingCustomer = userRepository.findByEmail(userEmail);
             if(existingCustomer.isPresent()){
                 Customer customer = existingCustomer.get();
 
-                log.info("Verifying Token is valid and properly signed");
-                // Verifies the token is valid and generates new token for the USER
-                if(jwtService.isTokenValid(requestBody.refreshToken(), customer) ){
-                    log.info("Generating New Token");
+                log.info("Verifying Token is valid and properly signed for user {}.", userEmail);
+                if(jwtService.isTokenValid(requestBody.refreshToken(), customer)){
+                    log.info("Generating New Token for user {}.", userEmail);
 
                     String newAccessToken = jwtService.createJWT(customer);
-                    String newRefreshToken = jwtService.generateRefreshToken(generateRefreshTokenClaims(customer),customer);
+                    String newRefreshToken = jwtService.generateRefreshToken(generateRefreshTokenClaims(customer), customer);
 
+                    // Revoke old tokens and save the new tokens
                     revokeOldTokens(customer);
                     saveCustomerToken(customer, newAccessToken, newRefreshToken);
 
                     response.setStatusCode(HttpStatus.CREATED.value());
                     response.setStatusMessage("Successfully Refreshed AuthToken");
+                    AuthorisationResponseDto responseDto = new AuthorisationResponseDto(
+                            newAccessToken, newRefreshToken, Instant.now(), "24hrs");
+                    response.setData(responseDto);
+                } else {
+                    log.warn("Invalid Token signature for user {}.", userEmail);
                 }
             }
-        } catch (Exception e) {
-            log.error("An error occurred while refreshing Access Token: {}", e.getMessage());
+
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid Argument during Refreshing Token: {}", e.getMessage());
+            throw new IllegalArgumentException(e.getMessage());
+        } catch (RuntimeException ex){
+            log.error("An error occurred while refreshing the token: {}", ex.getMessage());
         }
         return response;
     }
 
-    public void saveCustomerToken(Customer customer, String newToken, String refreshToken) {
+    private void saveCustomerToken(Customer customer, String jwtToken, String refreshToken){
+        // Log the process of saving tokens
+        log.info("Saving tokens for customer {}", customer.getEmail());
+
+        // Save the generated access and refresh tokens for the customer
         AuthToken token = AuthToken.builder()
                 .customer(customer)
-                .accessToken(newToken)
+                .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .expired(false)
                 .revoked(false)
                 .build();
         tokenRepository.save(token);
+
+        // Log successful token saving
+        log.info("Saved Access and Refresh tokens for customer {}", customer.getEmail());
     }
 
-    public void revokeOldTokens(Customer customer) {
-        List<AuthToken> validUserTokens = tokenRepository.findValidTokenByCustomer(customer.getCustomerId());
-        if (validUserTokens.isEmpty())
+    private void revokeOldTokens(Customer customer){
+        // Log the process of revoking old tokens
+        log.info("Revoking old tokens for customer {}", customer.getEmail());
+
+        // Revoke all old tokens for the customer
+        List<AuthToken> validTokens = tokenRepository.findValidTokenByCustomer(customer.getCustomerId());
+        if (validTokens.isEmpty()){
+            log.info("No valid tokens found for customer {}.", customer.getEmail());
             return;
-        validUserTokens.forEach(t -> {
-            t.setExpired(true);
-            t.setRevoked(true);
+        }
+        validTokens.forEach(token -> {
+            token.setRevoked(true);
+            token.setExpired(true);
         });
-        tokenRepository.saveAll(validUserTokens);
+        tokenRepository.saveAll(validTokens);
+
+        // Log successful token revocation
+        log.info("Revoked old tokens for customer {}.", customer.getEmail());
+    }
+
+    // Method to Assign New Customer and Account to SuccessOnboardDto Response
+    private SuccessfulOnboardDto setResponseData(Account newAccount, Customer newCustomer) {
+        log.info("Setting response data for successful onboarding of customer {}", newCustomer.getEmail());
+        SuccessfulOnboardDto responseData = new SuccessfulOnboardDto();
+
+        // Creates a Mock Value of the account
+        AccountDto accountDto = new AccountDto();
+        accountDto.setAccountId(newAccount.getAccountId());
+        accountDto.setAccountHolderName(newAccount.getAccountHolderName());
+        accountDto.setAccountNumber(newAccount.getAccountNumber());
+        accountDto.setAccountType(newAccount.getAccountType());
+        accountDto.setCurrencyType(newAccount.getCurrencyType());
+        accountDto.setBalance(newAccount.getAccountBalance());
+
+        // Creates Response Data Body
+        responseData.setCustomerId(newCustomer.getCustomerId());
+        responseData.setFirstName(newCustomer.getFirstName());
+        responseData.setLastName(newCustomer.getLastName());
+        responseData.setEmail(newCustomer.getEmail());
+        responseData.setPhoneNumber(newCustomer.getPhoneNumber());
+        responseData.setAccount(accountDto);
+
+        return responseData;
     }
 
     /* Generates Account Number for Customer */
@@ -215,9 +273,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         long uniqueValue = userRepository.count();
         String uniqueNumber = "";
         /*
-        * Generates a random number from the characters
-        * Adds the uniqueValue to the end of uniqueNumber which changes as number of users increases
-        */
+         * Generates a random number from the characters
+         * Adds the uniqueValue to the end of uniqueNumber which changes as number of users increases
+         */
         do{
             uniqueNumber = RandomStringUtils.random((int) (uniqueValue % 10), "0123456789");
         }while(accountRepository.existsByAccountNumber(uniqueNumber + uniqueValue));
@@ -236,7 +294,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .accountNumber(accountNumber)
                     .accountHolderName(fullName)
                     .accountType(requestBody.accountType())
-                    .balance(requestBody.initialDeposit())
+                    .accountBalance(requestBody.initialDeposit())
                     .transactionLimit(DEFAULT_TRANSACTION_LIMIT)
                     .dateOpened(Instant.now())
                     .isActive(true)
@@ -260,7 +318,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .password(passwordEncoder.encode(requestBody.password()))
                     .phoneNumber(requestBody.phoneNumber())
                     .isSuspended(false)
-                    .accounts(new ArrayList<>())  // Initialize the accounts list
+                    .accounts(new ArrayList<>())  // Initializes the accounts list
                     .build();
 
             newCustomer.getAccounts().add(newAccount);
@@ -275,69 +333,35 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return newCustomer;
     }
 
-    // Method to Assign New Customer and Account to SuccessOnboardDto Response
-    private SuccessfulOnboardDto setResponseData(Account newAccount, Customer newCustomer) {
-        SuccessfulOnboardDto responseData = new SuccessfulOnboardDto();
+    private @NotNull generateAccessTokenAndRefreshToken getGenerateAccessTokenAndRefreshToken(Customer customer){
+        // Log the token generation process
+        log.info("Generating Access Token and Refresh Token for Customer");
 
-        // Creates a Mock Value of the account
-        AccountDto accountDto = new AccountDto();
-        accountDto.setAccountId(newAccount.getAccountId());
-        accountDto.setAccountHolderName(newAccount.getAccountHolderName());
-        accountDto.setAccountNumber(newAccount.getAccountNumber());
-        accountDto.setAccountType(newAccount.getAccountType());
-        accountDto.setCurrencyType(newAccount.getCurrencyType());
-        accountDto.setBalance(newAccount.getBalance());
+        String jwtToken = jwtService.createJWT(customer);
+        String refreshToken = jwtService.generateRefreshToken(generateRefreshTokenClaims(customer), customer);
 
-        // Creates Response Data Body
-        responseData.setCustomerId(newCustomer.getCustomerId());
-        responseData.setFirstName(newCustomer.getFirstName());
-        responseData.setLastName(newCustomer.getLastName());
-        responseData.setEmail(newCustomer.getEmail());
-        responseData.setPhoneNumber(newCustomer.getPhoneNumber());
-        responseData.setAccount(accountDto);
-
-        return responseData;
+        saveCustomerToken(customer, jwtToken, refreshToken);
+        return new generateAccessTokenAndRefreshToken(jwtToken, refreshToken);
     }
 
     private static boolean verifyPasswordStrength(String password) {
+        // Log the password strength verification process
         log.info("Verifying password strength");
-        if(password.length()>=8) {
-            Pattern letter = Pattern.compile("[a-zA-z]");
-            Pattern digit = Pattern.compile("[0-9]");
-            Pattern special = Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
 
-            Matcher hasLetter = letter.matcher(password);
-            Matcher hasDigit = digit.matcher(password);
-            Matcher hasSpecial = special.matcher(password);
-
-            log.info("Password strength validation passed!");
-            return hasLetter.find() && hasDigit.find() && hasSpecial.find();
-        }
-        log.info("Password strength validation failed!");
-        return false;
+        String regex = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(password);
+        return matcher.matches();
     }
 
-    private @NotNull generateAccessTokenAndRefreshToken getGenerateAccessTokenAndRefreshToken(Customer customer) {
-        /* Generates AccessToken and RefreshToken for Customer. */
-        HashMap<String, Object> claims = generateRefreshTokenClaims(customer);
+    private @NotNull HashMap<String, Object> generateRefreshTokenClaims(Customer customer){
+        // Log the process of generating refresh token claims
+        log.info("Generating Refresh Token Claims");
 
-        String accessToken = jwtService.createJWT(customer);
-        String refreshToken = jwtService.generateRefreshToken(claims, customer);
-
-        /* Generates AuthToken for Customer and saves to the DB */
-        AuthToken newAuthToken = AuthToken.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .customer(customer)
-                .build();
-        tokenRepository.save(newAuthToken);
-        return new generateAccessTokenAndRefreshToken(accessToken, refreshToken);
-    }
-
-    private static @NotNull HashMap<String, Object> generateRefreshTokenClaims(Customer customer) {
         HashMap<String, Object> claims = new HashMap<>();
-        claims.put("customerId", customer.getCustomerId());
+        claims.put("username", customer.getUsername());
         claims.put("email", customer.getEmail());
+        claims.put("customerId", customer.getCustomerId());
         return claims;
     }
 }

@@ -64,7 +64,20 @@
             <scope>test</scope>
         </dependency>
 
-<!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.auth0/java-jwt &ndash;&gt;-->
+        <!-- https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>7.0.4.Final</version>
+        </dependency>
+
+        <!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.auth0/java-jwt &ndash;&gt;-->
 <!--        <dependency>-->
 <!--            <groupId>com.auth0</groupId>-->
 <!--            <artifactId>java-jwt</artifactId>-->

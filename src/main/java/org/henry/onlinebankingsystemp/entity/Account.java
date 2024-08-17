@@ -33,7 +33,7 @@ public class Account {
     private AccountType accountType;
 
     @Column(nullable = false)
-    private BigDecimal balance;
+    private BigDecimal accountBalance;
 
     @Column(nullable = false)
     private BigDecimal transactionLimit;

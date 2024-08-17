@@ -68,7 +68,7 @@ public class AccountServiceImpl implements AccountService {
                     BalanceDto balance = BalanceDto.builder()
                             .email(existingCustomer.getEmail())
                             .accountNumber(existingAccount.getAccountNumber())
-                            .balance(existingAccount.getBalance())
+                            .balance(existingAccount.getAccountBalance())
                             .lastUpdatedAt(Instant.now())
                             .build();
                     apiResponse.setData(balance);

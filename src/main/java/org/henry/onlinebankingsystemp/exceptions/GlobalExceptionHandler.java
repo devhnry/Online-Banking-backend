@@ -1,36 +1,36 @@
 package org.henry.onlinebankingsystemp.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
+import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ResponseStatus(HttpStatus.OK)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    private ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> validationErrors = new HashMap<>();
-        List<ObjectError> validationErrorList = ex.getBindingResult().getAllErrors();
-        log.info("Validation errors: {}", validationErrorList);
-        log.info(ex.getMessage());
 
-        validationErrorList.forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String validationMsg = error.getDefaultMessage();
-            validationErrors.put(fieldName, validationMsg);
-        });
-        return new ResponseEntity<>(validationErrors, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<DefaultApiResponse<?>> handleRuntimeException(RuntimeException ex) {
+        log.error("RuntimeException: {}", ex.getMessage());
+
+        DefaultApiResponse<?> responseDto = new DefaultApiResponse<>();
+
+        responseDto.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        responseDto.setStatusMessage(ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<DefaultApiResponse<?>> handleException(IllegalArgumentException e) {
+        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+
+        response.setStatusCode(400);
+        response.setStatusMessage(String.format("Validation Failed: (%s)", e.getMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }
