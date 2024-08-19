@@ -13,10 +13,10 @@ spring:
       hibernate:
         show_sql: true
   mail:
-    host: smtp.gmail.com
-    password:
-    username:
-    port: 587
+    host: ${EMAIL_HOST}
+    password: ${EMAIL_PASSWORD}
+    username: ${EMAIL_SENDER}
+    port: ${EMAIL_PORT}
     properties:
       mail:
         smtp:

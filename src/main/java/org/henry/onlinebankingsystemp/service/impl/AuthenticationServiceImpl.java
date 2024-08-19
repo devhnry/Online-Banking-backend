@@ -11,6 +11,7 @@ import org.henry.onlinebankingsystemp.repository.AccountRepository;
 import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.henry.onlinebankingsystemp.service.AuthenticationService;
+import org.henry.onlinebankingsystemp.service.EmailService;
 import org.henry.onlinebankingsystemp.service.JWTService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -35,6 +37,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JWTService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
 
     private final static BigDecimal DEFAULT_TRANSACTION_LIMIT = BigDecimal.valueOf(200_000.00);
     private final static BigDecimal DEFAULT_INTEREST_RATE = BigDecimal.valueOf(4);
@@ -91,6 +94,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         // Log successful onboarding
         log.info("Customer successfully onboarded: {}", newCustomer.getEmail());
+
+        Context emailContext = getEmailContext(newCustomer);
+        emailService.sendEmail(newCustomer.getEmail(), "Onboarding Success", emailContext, "OnBoardingTemplate");
+        log.info("Onboarding Email has been sent to the Customer");
 
         response.setStatusCode(HttpStatus.CREATED.value());
         response.setStatusMessage("Customer Successfully Onboarded");
@@ -202,6 +209,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.error("An error occurred while refreshing the token: {}", ex.getMessage());
         }
         return response;
+    }
+
+    // Gets the Customer's Name and Assign it to the Variable on the Email Template
+    private Context getEmailContext(Customer customer){
+        Context emailContext = new Context();
+        emailContext.setVariable("name", customer.getFirstName() + " " + customer.getLastName());
+        log.info("Name has been applied to Email Context");
+        return emailContext;
     }
 
     private void saveCustomerToken(Customer customer, String jwtToken, String refreshToken){
