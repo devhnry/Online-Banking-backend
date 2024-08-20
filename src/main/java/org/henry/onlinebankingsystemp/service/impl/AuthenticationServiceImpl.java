@@ -7,6 +7,8 @@ import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.AuthToken;
 import org.henry.onlinebankingsystemp.entity.Customer;
+import org.henry.onlinebankingsystemp.enums.AccountType;
+import org.henry.onlinebankingsystemp.enums.CurrencyType;
 import org.henry.onlinebankingsystemp.repository.AccountRepository;
 import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
@@ -15,12 +17,14 @@ import org.henry.onlinebankingsystemp.service.EmailService;
 import org.henry.onlinebankingsystemp.service.JWTService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
+import javax.mail.MessagingException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
@@ -47,7 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public DefaultApiResponse<SuccessfulOnboardDto> onBoard(OnboardUserDto requestBody) {
         DefaultApiResponse<SuccessfulOnboardDto> response = new DefaultApiResponse<>();
-        SuccessfulOnboardDto responseData = new SuccessfulOnboardDto();
+        SuccessfulOnboardDto responseData;
 
         Account newAccount = new Account();
         Customer newCustomer = new Customer();
@@ -56,8 +60,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             // Log the start of the onboarding process
             log.info("Starting the onboarding process for {}", requestBody.email());
 
-            // Validate the onboarding request data
-            OnboardUserDto.validate(requestBody);
             boolean customerAlreadyExists = userRepository.existsByEmail(requestBody.email());
 
             if (customerAlreadyExists) {
@@ -67,7 +69,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return response;
             }
 
-            if(!(requestBody.initialDeposit().compareTo(BigDecimal.valueOf(5000.00)) >= 0)){
+            if (!(requestBody.initialDeposit().compareTo(BigDecimal.valueOf(5000.00)) >= 0)) {
                 log.warn("Initial deposit {} is less than the minimum required amount of 5000.", requestBody.initialDeposit());
                 response.setStatusCode(400);
                 response.setStatusMessage("An account need ot be created with an Initial Deposit of MIN 5000.");
@@ -81,22 +83,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return response;
             }
 
+            // Calls Method to validate that Enum Type is Correct
+            validateEnumTypes(requestBody);
+
             // Generate customer and account based on the request data
             newCustomer = generateCustomerAndAccount(newCustomer, newAccount, requestBody);
             responseData = setResponseData(newCustomer.getAccounts().getFirst(), newCustomer);
 
-        } catch (IllegalArgumentException e) {
-            log.error("Invalid Argument during Onboarding: {}", e.getMessage());
-            throw new IllegalArgumentException(e.getMessage());
+        }catch (HttpMessageConversionException e){
+            throw new HttpMessageConversionException(e.getMessage());
         } catch (RuntimeException e) {
             log.error("An Error occurred while performing OnBoarding :{}",e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
-
         // Log successful onboarding
         log.info("Customer successfully onboarded: {}", newCustomer.getEmail());
 
-        Context emailContext = getEmailContext(newCustomer);
-        emailService.sendEmail(newCustomer.getEmail(), "Onboarding Success", emailContext, "OnBoardingTemplate");
+        try{
+            Context emailContext = getEmailContext(newCustomer);
+            emailService.sendEmail(newCustomer.getEmail().trim(), "Onboarding Success", emailContext, "OnBoardingTemplate");
+        }catch (Exception e){
+            log.error("Error Occurred in sending email after Three tries");
+        }
+
         log.info("Onboarding Email has been sent to the Customer");
 
         response.setStatusCode(HttpStatus.CREATED.value());
@@ -104,6 +113,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         response.setData(responseData);
 
         return response;
+    }
+
+    private static void validateEnumTypes(OnboardUserDto requestBody) {
+        log.info("Validating Account and Currency Type");
+        List<String> currencyTypes = new ArrayList<>();
+        List<String> accountTypes = new ArrayList<>();
+        for(AccountType accountType : AccountType.values()) {
+            accountTypes.add(accountType.name());
+        }
+        for(CurrencyType currencyType : CurrencyType.values()) {
+            currencyTypes.add(currencyType.name());
+        }
+        if(!accountTypes.contains(requestBody.accountType())) {
+            log.warn("INVALID ACCOUNT TYPE {} for user {}.", requestBody.accountType(), requestBody.email());
+            throw new HttpMessageConversionException(String.format("Account type %s is not supported. (%s).", requestBody.accountType(), Arrays.toString(AccountType.values())));
+        }
+        if(!currencyTypes.contains(requestBody.currencyType())) {
+            log.warn("INVALID CURRENCY_TYPE {} for user {}.", requestBody.currencyType(), requestBody.email());
+            throw new HttpMessageConversionException(String.format("Currency type %s is not supported. (%s).", requestBody.currencyType(), Arrays.toString(CurrencyType.values())));
+        }
     }
 
     @Override
@@ -114,7 +143,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             // Validate the login request data
             LoginRequestDto.validate(requestBody);
 
-            Customer customer = new Customer();
+            Customer customer;
             Optional<Customer> customerOptional = userRepository.findByEmail(requestBody.email());
             if(customerOptional.isPresent()){
                 customer = customerOptional.get();
@@ -148,9 +177,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             response.setData(authorisationResponseDto);
             log.info("User {} successfully logged in.", requestBody.email());
 
-        } catch (IllegalArgumentException e) {
-            log.error("Invalid Argument during Login for user {}: {}", requestBody.email(), e.getMessage());
-            throw new IllegalArgumentException(e.getMessage());
         } catch (RuntimeException ex){
             log.error("An error occurred while performing Authentication for user {}: {}", requestBody.email(), ex.getMessage());
         }
@@ -201,10 +227,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     log.warn("Invalid Token signature for user {}.", userEmail);
                 }
             }
-
-        } catch (IllegalArgumentException e) {
-            log.error("Invalid Argument during Refreshing Token: {}", e.getMessage());
-            throw new IllegalArgumentException(e.getMessage());
         } catch (RuntimeException ex){
             log.error("An error occurred while refreshing the token: {}", ex.getMessage());
         }
@@ -292,7 +314,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
          * Adds the uniqueValue to the end of uniqueNumber which changes as number of users increases
          */
         do{
-            uniqueNumber = RandomStringUtils.random((int) (uniqueValue % 10), "0123456789");
+            uniqueNumber = RandomStringUtils.random((int) (10 - uniqueValue > 10 ? uniqueValue % 10: uniqueValue), "0123456789");
         }while(accountRepository.existsByAccountNumber(uniqueNumber + uniqueValue));
 
         return uniqueNumber + uniqueValue;
@@ -300,7 +322,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private Customer generateCustomerAndAccount(Customer newCustomer, Account newAccount, OnboardUserDto requestBody){
         String accountNumber = generateAccountNumber();
-        String fullName = String.format("%s %s", requestBody.firstName(), requestBody.lastName());
+        String fullName = String.format("%s %s", requestBody.firstName().trim(), requestBody.lastName().trim());
 
         // Generates new Account from the RequestBody
         log.info("Generating Account for Customer");
@@ -308,12 +330,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             newAccount = Account.builder()
                     .accountNumber(accountNumber)
                     .accountHolderName(fullName)
-                    .accountType(requestBody.accountType())
+                    .accountType(AccountType.valueOf(requestBody.accountType()))
                     .accountBalance(requestBody.initialDeposit())
                     .transactionLimit(DEFAULT_TRANSACTION_LIMIT)
                     .dateOpened(Instant.now())
                     .isActive(true)
-                    .currencyType(requestBody.currencyType())
+                    .currencyType(CurrencyType.valueOf(requestBody.currencyType()))
                     .interestRate(DEFAULT_INTEREST_RATE)
                     .lastTransactionDate(Instant.now())
                     .build();
@@ -326,8 +348,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.info("Generating Customer Details for Customer");
         try {
             newCustomer = Customer.builder()
-                    .firstName(requestBody.firstName())
-                    .lastName(requestBody.lastName())
+                    .firstName(requestBody.firstName().trim())
+                    .lastName(requestBody.lastName().trim())
                     .username(requestBody.email())
                     .email(requestBody.email())
                     .password(passwordEncoder.encode(requestBody.password()))

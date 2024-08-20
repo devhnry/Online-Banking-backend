@@ -3,6 +3,7 @@ package org.henry.onlinebankingsystemp.config;
 import lombok.RequiredArgsConstructor;
 import org.henry.onlinebankingsystemp.enums.AdminRoles;
 import org.henry.onlinebankingsystemp.service.LogoutService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.util.Arrays;
 
@@ -22,9 +24,10 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtSecurityFilter jwtAuthFilter;
+//    private final JwtSecurityFilter jwtAuthFilter;
     private final LogoutService logoutService;
     private final SecurityAuthProvider authProvider;
+    private final JwtSecurityFilter jwtSecurityFilter;
 
     /**
      * Processes incoming requests in the web application.
@@ -45,7 +48,7 @@ public class SecurityConfig {
                     Uses the JWT Filter Defined in the Config.
                 */
                 .authenticationProvider(authProvider.authenticationProvider()).addFilterBefore(
-                        jwtAuthFilter, UsernamePasswordAuthenticationFilter.class
+                        jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class
                 // Handles the Logout Mechanism of the Applications
                 ).logout( logout -> logout
                         .logoutUrl("/auth/logout").permitAll()
@@ -63,5 +66,4 @@ public class SecurityConfig {
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
 }

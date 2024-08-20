@@ -19,6 +19,8 @@ spring:
     port: ${EMAIL_PORT}
     properties:
       mail:
+        transport:
+          protocol: smtp
         smtp:
           auth: true
           starttls:

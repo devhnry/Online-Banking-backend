@@ -1,38 +1,41 @@
 package org.henry.onlinebankingsystemp.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.henry.onlinebankingsystemp.enums.AccountType;
 import org.henry.onlinebankingsystemp.enums.CurrencyType;
-
+import org.intellij.lang.annotations.Pattern;
 import java.math.BigDecimal;
 
 public record OnboardUserDto(
+        @NotNull(message = "First name is required")
+        @NotBlank(message = "First name cannot be empty")
         String firstName,
+
+        @NotNull(message = "Last name is required")
+        @NotBlank(message = "Last name cannot be empty")
         String lastName,
+
+        @NotBlank(message = "Email cannot be empty")
+        @NotNull(message = "A valid email is required.")
+        @Pattern("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$") @Email
         String email,
+
+        @NotNull(message = "Password is required")
+        @NotBlank(message = "Password cannot be empty")
         String password,
+
+        @NotNull(message = "Phone is required")
+        @NotBlank(message = "Phone number cannot be empty")
         String phoneNumber,
-        AccountType accountType,
-        CurrencyType currencyType,
+
+        @NotNull(message = "Account Type cannot be null")
+        String accountType,
+
+        @NotNull(message = "Currency Type cannot be null")
+        String currencyType,
+
+        @NotNull(message = "Initial deposit cannot be null")
         BigDecimal initialDeposit
-) {
-        public static void validate(OnboardUserDto dto) {
-                if (dto.firstName == null || dto.firstName.isBlank()) {
-                        throw new IllegalArgumentException("First name is required.");
-                }
-                if (dto.lastName == null || dto.lastName.isBlank()) {
-                        throw new IllegalArgumentException("Last name is required.");
-                }
-                if (dto.email == null || !dto.email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-                        throw new IllegalArgumentException("A valid email is required.");
-                }
-                if (dto.password == null || dto.password.length() < 8) {
-                        throw new IllegalArgumentException("Password must be at least 8 characters long.");
-                }
-                if (dto.phoneNumber == null || dto.phoneNumber.isBlank()) {
-                        throw new IllegalArgumentException("Phone number is required.");
-                }
-                if (dto.initialDeposit == null || dto.initialDeposit.compareTo(BigDecimal.ZERO) <= 0) {
-                        throw new IllegalArgumentException("Initial deposit must be greater than zero.");
-                }
-        }
-}
+) {}

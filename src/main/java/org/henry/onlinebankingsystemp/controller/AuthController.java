@@ -1,6 +1,7 @@
 package org.henry.onlinebankingsystemp.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.service.AuthenticationService;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("auth")
@@ -15,6 +17,7 @@ public class AuthController {
 
     // Service layer dependency to handle authentication-related operations.
     private final AuthenticationService authenticationService;
+
 
     /**
      * Endpoint for user onboarding (signup).
