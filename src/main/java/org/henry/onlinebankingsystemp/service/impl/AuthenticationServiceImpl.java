@@ -3,6 +3,7 @@ package org.henry.onlinebankingsystemp.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.henry.onlinebankingsystemp.constants.Constants;
 import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.AuthToken;
@@ -30,6 +31,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.henry.onlinebankingsystemp.constants.Constants.*;
 
 @Service
 @Slf4j
@@ -64,22 +67,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             if (customerAlreadyExists) {
                 log.info("Customer with email {} already exists.", requestBody.email());
-                response.setStatusCode(200);
+                response.setStatusCode(ONBOARDING_SUCCESS );
                 response.setStatusMessage("Customer Already Exists: Try Logging in");
                 return response;
             }
 
             if (!(requestBody.initialDeposit().compareTo(BigDecimal.valueOf(5000.00)) >= 0)) {
                 log.warn("Initial deposit {} is less than the minimum required amount of 5000.", requestBody.initialDeposit());
-                response.setStatusCode(400);
+                response.setStatusCode(DEPOSIT_NOT_ENOUGH);
                 response.setStatusMessage("An account need ot be created with an Initial Deposit of MIN 5000.");
                 return response;
             }
 
             if (!verifyPasswordStrength(requestBody.password())) {
                 log.info("Password not strong enough for user {}.", requestBody.email());
-                response.setStatusCode(400);
-                response.setStatusMessage("Password should contain at least 8 characters, numbers and a symbol");
+                response.setStatusCode(INVALID_PASSWORD);
+                response.setStatusMessage("Password should contain at least 8 characters, at least One Uppercase letter, numbers and a symbol");
                 return response;
             }
 
@@ -101,14 +104,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         try{
             Context emailContext = getEmailContext(newCustomer);
-            emailService.sendEmail(newCustomer.getEmail().trim(), "Onboarding Success", emailContext, "OnBoardingTemplate");
-        }catch (Exception e){
+            emailService.sendEmail(newCustomer.getEmail().trim(), "Welcome to EasyBanking", emailContext);
+        }catch (RuntimeException e){
             log.error("Error Occurred in sending email after Three tries");
         }
 
         log.info("Onboarding Email has been sent to the Customer");
 
-        response.setStatusCode(HttpStatus.CREATED.value());
+        response.setStatusCode(ONBOARDING_SUCCESS);
         response.setStatusMessage("Customer Successfully Onboarded");
         response.setData(responseData);
 
@@ -151,13 +154,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
                 if(!passwordEncoder.matches(requestBody.password(), customer.getPassword())){
                     log.warn("Invalid Password for user {}.", requestBody.email());
-                    response.setStatusCode(400);
+                    response.setStatusCode(INVALID_PASSWORD);
                     response.setStatusMessage("Invalid Password");
                     return response;
                 }
             } else {
                 log.warn("User with email {} not found in the database.", requestBody.email());
-                response.setStatusCode(400);
+                response.setStatusCode(CUSTOMER_ALREADY_EXISTS);
                 response.setStatusMessage("Customer Not Found: OnBoard on the System or Verify Email");
                 return response;
             }
@@ -172,7 +175,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(requestBody.email(), requestBody.password()));
 
-            response.setStatusCode(HttpStatus.OK.value());
+            response.setStatusCode(LOGIN_SUCCESS);
             response.setStatusMessage("Successfully Logged In");
             response.setData(authorisationResponseDto);
             log.info("User {} successfully logged in.", requestBody.email());
@@ -197,7 +200,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             log.info("Checking if Refresh token has expired.");
             if(jwtService.isTokenExpired(requestBody.refreshToken())){
-                response.setStatusCode(200);
+                response.setStatusCode(AUTH_TOKEN_BAD_REQUEST);
                 response.setStatusMessage("Refresh Token Expired: User needs to Log in Again");
                 log.warn("Refresh Token has expired for user {}: {}", userEmail, requestBody.refreshToken());
                 return response;
@@ -218,7 +221,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     revokeOldTokens(customer);
                     saveCustomerToken(customer, newAccessToken, newRefreshToken);
 
-                    response.setStatusCode(HttpStatus.CREATED.value());
+                    response.setStatusCode(AUTH_TOKEN_CREATED);
                     response.setStatusMessage("Successfully Refreshed AuthToken");
                     AuthorisationResponseDto responseDto = new AuthorisationResponseDto(
                             newAccessToken, newRefreshToken, Instant.now(), "24hrs");

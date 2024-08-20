@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.henry.onlinebankingsystemp.constants.Constants.*;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -25,7 +27,7 @@ public class GlobalExceptionHandler {
         log.error("RuntimeException: {}", ex.getMessage());
 
         DefaultApiResponse<?> response = new DefaultApiResponse<>();
-        response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        response.setStatusCode(RUNTIME_EXCEPTION);
         response.setStatusMessage(String.format("Unexpected Error Occurred: (%s)", ex.getMessage()));
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
@@ -43,7 +45,7 @@ public class GlobalExceptionHandler {
         DefaultApiResponse<Map<String, String>> response = new DefaultApiResponse<>();
         log.error("Validation Failed: ({})", e.getMessage());
 
-        response.setStatusCode(400);
+        response.setStatusCode(RUNTIME_EXCEPTION);
         response.setStatusMessage("Validation Failed");
         response.setData(errors);
 
@@ -57,7 +59,7 @@ public class GlobalExceptionHandler {
         log.error("JsonParseException: {}", ex.getMessage());
 
         DefaultApiResponse<?> responseDto = new DefaultApiResponse<>();
-        responseDto.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        responseDto.setStatusCode(METHOD_INVALID_EXCEPTION);
         responseDto.setStatusMessage(ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
@@ -69,7 +71,7 @@ public class GlobalExceptionHandler {
     {
         log.warn("Expired JWT Exception: {}", ex.getMessage());
         DefaultApiResponse<?> response = new DefaultApiResponse<>();
-        response.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+        response.setStatusCode(EXPIRED_JWT_EXCEPTION);
         response.setStatusMessage("JWT Expired: Prompt user to Login or Refresh Token");
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
@@ -81,7 +83,7 @@ public class GlobalExceptionHandler {
     {
         log.error("Signature Exception {}", ex.getMessage());
         DefaultApiResponse<?> response = new DefaultApiResponse<>();
-        response.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+        response.setStatusCode(SIGNATURE_EXCEPTION);
         response.setStatusMessage("JWT Expired: Prompt user to Login or Refresh Token");
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);

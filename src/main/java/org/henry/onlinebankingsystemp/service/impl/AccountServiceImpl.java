@@ -1,11 +1,12 @@
 package org.henry.onlinebankingsystemp.service.impl;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.henry.onlinebankingsystemp.dto.BalanceDto;
 import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
+import org.henry.onlinebankingsystemp.dto.ViewBalanceDto;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.repository.AccountRepository;
@@ -13,11 +14,13 @@ import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.henry.onlinebankingsystemp.service.AccountService;
 import org.henry.onlinebankingsystemp.service.JWTService;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Optional;
+
+import static org.henry.onlinebankingsystemp.constants.Constants.GET_BALANCE_SUCCESS;
+import static org.henry.onlinebankingsystemp.constants.Constants.GET_DETAILS_SUCCESS;
 
 @Slf4j @Service
 @RequiredArgsConstructor
@@ -33,21 +36,24 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public DefaultApiResponse<Customer> getDetails() {
+        verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
         String userEmail = jwtService.extractUsername(CUSTOMER_ACCESS_TOKEN());
         DefaultApiResponse<Customer> apiResponse = new DefaultApiResponse<>();
 
         Customer customer = userRepository.findByEmail(userEmail).orElseThrow(
                 () -> new IllegalStateException(String.format("Customer with email %s does not exist", userEmail)));
 
-        apiResponse.setStatusCode(HttpStatus.FOUND.value());
+        apiResponse.setStatusCode(GET_DETAILS_SUCCESS);
         apiResponse.setStatusMessage("Customer details");
         apiResponse.setData(customer);
 
         return apiResponse;
     }
 
-    public DefaultApiResponse<BalanceDto> checkBalance() {
-        DefaultApiResponse<BalanceDto> apiResponse = new DefaultApiResponse<>();
+    @Override
+    public DefaultApiResponse<ViewBalanceDto> checkBalance(){
+//        verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
+        DefaultApiResponse<ViewBalanceDto> apiResponse = new DefaultApiResponse<>();
         String userEmail = jwtService.extractClaims(CUSTOMER_ACCESS_TOKEN(), Claims::getSubject);
 
         Customer existingCustomer;
@@ -55,30 +61,36 @@ public class AccountServiceImpl implements AccountService {
         Optional<Customer> customer = userRepository.findByEmail(userEmail);
 
         try {
-            if(customer.isPresent()) {
+            if (customer.isPresent()) {
                 existingCustomer = customer.get();
                 Optional<Account> account = accountRepository.findAccountByCustomer_CustomerId(existingCustomer.getCustomerId());
 
-                if(account.isPresent()) {
+                if (account.isPresent()) {
                     existingAccount = account.get();
 
-                    apiResponse.setStatusCode(HttpStatus.OK.value());
+                    apiResponse.setStatusCode(GET_BALANCE_SUCCESS);
                     apiResponse.setStatusMessage("Customer Balance");
 
-                    BalanceDto balance = BalanceDto.builder()
-                            .email(existingCustomer.getEmail())
-                            .accountNumber(existingAccount.getAccountNumber())
-                            .balance(existingAccount.getAccountBalance())
-                            .lastUpdatedAt(Instant.now())
-                            .build();
+                    String lastUpdatedAt = LocalDateTime.now().toString().replace("T", " ").substring(0, 16);
+
+                    ViewBalanceDto balance = new ViewBalanceDto(
+                            existingCustomer.getEmail(), existingAccount.getAccountNumber(),
+                            existingAccount.getAccountBalance(), lastUpdatedAt
+                    );
                     apiResponse.setData(balance);
                 }
             }
         } catch (RuntimeException e) {
-            log.error("An Error occurred while trying to fetch balance {} ", e.getMessage());
-        }
+            log.error("An Error occurred while trying to fetch balance {} ", e.getMessage()); }
         return apiResponse;
     }
+
+    private void verifyTokenExpiration(String token) {
+        if (jwtService.isTokenExpired(token)) {
+            throw new ExpiredJwtException(null, null, "Access Token has expired");
+        }
+    }
+
 
 
 //    public DefaultApiResponse transferMoney(TransferDTO request) {
