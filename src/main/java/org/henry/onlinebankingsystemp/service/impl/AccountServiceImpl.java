@@ -5,15 +5,12 @@ import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.henry.onlinebankingsystemp.dto.AccountDto;
-import org.henry.onlinebankingsystemp.dto.CustomerDto;
-import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
-import org.henry.onlinebankingsystemp.dto.ViewBalanceDto;
+import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Customer;
+import org.henry.onlinebankingsystemp.entity.Transaction;
 import org.henry.onlinebankingsystemp.exceptions.ResourceNotFoundException;
 import org.henry.onlinebankingsystemp.repository.AccountRepository;
-import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.henry.onlinebankingsystemp.service.AccountService;
 import org.henry.onlinebankingsystemp.service.JWTService;
@@ -30,7 +27,6 @@ import static org.henry.onlinebankingsystemp.constants.Constants.GET_DETAILS_SUC
 public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
-    private final TokenRepository tokenRepository;
     private final JWTService jwtService;
     private final HttpServletRequest request;
 
@@ -40,17 +36,30 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public DefaultApiResponse<CustomerDto> getDetails() {
+        // Verify if the customer access token is expired
         verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
+
+        // Extract user email from the JWT token
         String userEmail = jwtService.extractUsername(CUSTOMER_ACCESS_TOKEN());
+        log.info("Extracted user email from token: {}", userEmail);
+
         DefaultApiResponse<CustomerDto> apiResponse = new DefaultApiResponse<>();
 
+        // Fetch customer details from the database
         Customer customer = userRepository.findByEmail(userEmail).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("Customer with email %s does not exist", userEmail)));
+                () -> {
+                    log.error("Customer with email {} does not exist", userEmail);
+                    return new ResourceNotFoundException(String.format("Customer with email %s does not exist", userEmail));
+                });
 
+        // Fetch account details associated with the customer
         Account account = accountRepository.findAccountByCustomer_CustomerId(customer.getCustomerId()).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("Account related to Customer with id (%s) does not exist", customer.getCustomerId()))
-        );
+                () -> {
+                    log.error("Account related to Customer with id {} does not exist", customer.getCustomerId());
+                    return new ResourceNotFoundException(String.format("Account related to Customer with id (%s) does not exist", customer.getCustomerId()));
+                });
 
+        // Map account details to AccountDto
         AccountDto accountData = new AccountDto();
         accountData.setAccountId(account.getAccountId());
         accountData.setAccountHolderName(account.getAccountHolderName());
@@ -59,24 +68,30 @@ public class AccountServiceImpl implements AccountService {
         accountData.setCurrencyType(account.getCurrencyType());
         accountData.setBalance(account.getAccountBalance());
 
+        // Map customer and account details to CustomerDto
         CustomerDto customerData = CustomerDto.builder()
                 .customerId(customer.getCustomerId())
-                .fullName(String.format("%s %S",customer.getFirstName(), customer.getLastName()))
+                .fullName(String.format("%s %S", customer.getFirstName(), customer.getLastName()))
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())
                 .accountDetails(accountData)
                 .build();
 
+        // Set API response details
         apiResponse.setStatusCode(GET_DETAILS_SUCCESS);
         apiResponse.setStatusMessage("Customer details");
         apiResponse.setData(customerData);
+
+        log.info("Customer details retrieved successfully for email: {}", userEmail);
 
         return apiResponse;
     }
 
     @Override
-    public DefaultApiResponse<ViewBalanceDto> checkBalance(){
+    public DefaultApiResponse<ViewBalanceDto> checkBalance() {
+        // Verify if the customer access token is expired
         verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
+
         DefaultApiResponse<ViewBalanceDto> apiResponse = new DefaultApiResponse<>();
         String userEmail = jwtService.extractClaims(CUSTOMER_ACCESS_TOKEN(), Claims::getSubject);
 
@@ -87,40 +102,51 @@ public class AccountServiceImpl implements AccountService {
         try {
             if (customer.isPresent()) {
                 existingCustomer = customer.get();
+                log.info("Customer found: {}", existingCustomer.getCustomerId());
+
                 Optional<Account> account = accountRepository.findAccountByCustomer_CustomerId(existingCustomer.getCustomerId());
 
                 if (account.isPresent()) {
                     existingAccount = account.get();
+                    log.info("Account found: {}", existingAccount.getAccountId());
 
+                    // Set API response details
                     apiResponse.setStatusCode(GET_BALANCE_SUCCESS);
                     apiResponse.setStatusMessage("Customer Balance");
 
+                    // Prepare balance data
                     String lastUpdatedAt = LocalDateTime.now().toString().replace("T", " ").substring(0, 16);
-
                     ViewBalanceDto balance = new ViewBalanceDto(
                             existingCustomer.getEmail(), existingAccount.getAccountNumber(),
                             existingAccount.getAccountBalance(), lastUpdatedAt
                     );
                     apiResponse.setData(balance);
+
+                    log.info("Balance details retrieved successfully for account: {}", existingAccount.getAccountNumber());
+                } else {
+                    log.warn("Account not found for customer: {}", existingCustomer.getCustomerId());
                 }
+            } else {
+                log.warn("Customer not found for email: {}", userEmail);
             }
         } catch (RuntimeException e) {
-            log.error("An Error occurred while trying to fetch balance {} ", e.getMessage()); }
+            log.error("An Error occurred while trying to fetch balance: {}", e.getMessage());
+        }
         return apiResponse;
     }
 
     private void verifyTokenExpiration(String token) {
         if (jwtService.isTokenExpired(token)) {
+            log.warn("Token has expired");
             throw new ExpiredJwtException(null, null, "Access Token has expired");
         }
     }
 
 
-
-//    public DefaultApiResponse transferMoney(TransferDTO request) {
-//        BalanceDto userBalance = new BalanceDto();
+//    public DefaultApiResponse<BalanceDto> transferMoneyToCustomer(TransferDto requestBody) {
+//
 //        Transaction transaction = new Transaction();
-//        DefaultApiResponse res = new DefaultApiResponse();
+//        DefaultApiResponse<BalanceDto> res = new DefaultApiResponse<>();
 //
 //        Customer customer = getCurrentUser.get();
 //        Account userAccount = customer.getAccount();

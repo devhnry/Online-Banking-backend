@@ -103,13 +103,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         // Log successful onboarding
         log.info("Customer successfully onboarded: {}", newCustomer.getEmail());
 
-        try{
-            Context emailContext = getEmailContext(newCustomer);
-            emailService.sendEmail(newCustomer.getEmail().trim(), "Welcome to EasyBanking", emailContext);
-        }catch (RuntimeException e){
-            log.error("Error Occurred in sending email after Three tries");
-        }
-
         log.info("Onboarding Email has been sent to the Customer");
 
         response.setStatusCode(ONBOARDING_SUCCESS);
@@ -176,6 +169,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(requestBody.email(), requestBody.password()));
 
+            try{
+                Context emailContext = getEmailContext(customer);
+                emailService.sendEmail(customer.getEmail().trim(), "Welcome to EasyBanking", emailContext);
+            }catch (RuntimeException e){
+                log.error("Error Occurred in sending email after Three tries");
+            }
+
             response.setStatusCode(LOGIN_SUCCESS);
             response.setStatusMessage("Successfully Logged In");
             response.setData(authorisationResponseDto);
@@ -235,6 +235,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.error("An error occurred while refreshing the token: {}", ex.getMessage());
         }
         return response;
+    }
+
+    @Override
+    public DefaultApiResponse<OneTimePasswordDto> sendOtp(String email) {
+        return null;
+    }
+
+    @Override
+    public DefaultApiResponse<?> verifyOtp(VerifyOtpRequest requestBody) {
+        return null;
     }
 
     // Gets the Customer's Name and Assign it to the Variable on the Email Template
