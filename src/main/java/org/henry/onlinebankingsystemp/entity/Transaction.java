@@ -14,9 +14,8 @@ import java.time.LocalDateTime;
 public class Transaction {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transactionSeq")
-    @SequenceGenerator(name = "transactionSeq", sequenceName = "transactionSeq", allocationSize = 1)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long transactionId;
 
     @Column(nullable = false, unique = true)
     private String transactionRef;

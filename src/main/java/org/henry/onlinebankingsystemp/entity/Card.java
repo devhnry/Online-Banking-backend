@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Table(name = "cards")
 public class Card {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cardId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

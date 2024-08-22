@@ -2,8 +2,8 @@ package org.henry.onlinebankingsystemp.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.henry.onlinebankingsystemp.dto.*;
+import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.service.AccountService;
-import org.henry.onlinebankingsystemp.service.CustomerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,8 +14,18 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AccountController {
 
-//    private final CustomerService customerService;
-//    private final AccountService accountService;
+    private final AccountService accountService;
+
+
+    /**
+     * Endpoint to view the current account balance.
+     * @return the balance of the user's account.
+     */
+    @GetMapping("/get-details")
+    public ResponseEntity<DefaultApiResponse<CustomerDto>> getUserDetails(){
+        DefaultApiResponse<CustomerDto> response = accountService.getDetails();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 
     /**
      * Endpoint to view the current account balance.
@@ -23,7 +33,7 @@ public class AccountController {
      */
     @GetMapping("/view-balance")
     public ResponseEntity<DefaultApiResponse<ViewBalanceDto>> getBalance(){
-        DefaultApiResponse<ViewBalanceDto> response = new DefaultApiResponse<>();
+        DefaultApiResponse<ViewBalanceDto> response = accountService.checkBalance();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

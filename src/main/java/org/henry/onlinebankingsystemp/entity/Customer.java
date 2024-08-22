@@ -35,7 +35,7 @@ public class Customer implements UserDetails {
     private String password;
 
     @Column(nullable = false, unique = true)
-    private String phone;
+    private String phoneNumber;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Account> accounts;

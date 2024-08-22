@@ -2,6 +2,8 @@ package org.henry.onlinebankingsystemp.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
+import org.henry.onlinebankingsystemp.entity.Customer;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -14,39 +16,50 @@ import java.util.HashMap;
 import java.util.function.Function;
 
 // To generate authToken, refreshToken
-@Service
+@Service @Slf4j
 public class JWTService {
 
-    private SecretKey key;
+    private SecretKey SECRET_KEY;
     private static final long EXPIRATION_TIME = 86400000; //24hrs
 
     public JWTService() {
         String secretString = "HFUKNSF09839IKSFV9348J39GHIUEWFJR9EF089WUJ4FNR9HG738UJW4ONEMSCO";
         byte[] keyByte = Base64.getDecoder().decode(secretString.getBytes(StandardCharsets.UTF_8));
-        this.key = new SecretKeySpec(keyByte,"HmacSHA256");
+        this.SECRET_KEY = new SecretKeySpec(keyByte,"HmacSHA256");
     }
 
-    public String generateToken(UserDetails userDetails){
-        return Jwts.builder()
-                .subject(userDetails.getUsername())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(key)
-                .compact();
-    }
+    public String createJWT(Customer customer) { return  generateToken(customer); }
 
-    public String generateRefreshToken(HashMap<String, Object> claims, UserDetails userDetails){
+    private String generateToken(Customer customer){
+        HashMap<String, Object> claims = new HashMap<>();
+
+        claims.put("customerId",customer.getCustomerId());
+        claims.put("firstName",customer.getFirstName());
+        claims.put("lastName",customer.getLastName());
+        claims.put("email",customer.getEmail());
+        claims.put("phoneNumber",customer.getPhoneNumber());
+
         return Jwts.builder()
                 .claims(claims)
-                .subject(userDetails.getUsername())
+                .subject(customer.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(key)
+                .signWith(SECRET_KEY)
                 .compact();
     }
 
-    public <T> T extractClaims(String token, Function<Claims, T> claimsTFunction){
-        return claimsTFunction.apply(Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload());
+    public String generateRefreshToken(HashMap<String, Object> claims, Customer customer){
+        return Jwts.builder()
+                .claims(claims)
+                .subject(customer.getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(SECRET_KEY)
+                .compact();
+    }
+
+    public <T> T extractClaims(String token, Function<Claims, T> claimsTFunction) {
+        return claimsTFunction.apply(Jwts.parser().verifyWith(SECRET_KEY).build().parseSignedClaims(token).getPayload());
     }
 
     public String extractUsername(String token){

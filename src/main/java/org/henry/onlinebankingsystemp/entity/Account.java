@@ -3,9 +3,10 @@ package org.henry.onlinebankingsystemp.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.henry.onlinebankingsystemp.enums.AccountType;
+import org.henry.onlinebankingsystemp.enums.CurrencyType;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -32,23 +33,24 @@ public class Account {
     private AccountType accountType;
 
     @Column(nullable = false)
-    private BigDecimal balance;
+    private BigDecimal accountBalance;
 
     @Column(nullable = false)
     private BigDecimal transactionLimit;
 
     @Column(nullable = false)
-    private LocalDateTime dateOpened;
+    private Instant dateOpened;
 
     @Column(nullable = false)
     private Boolean isActive;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String currency;
+    private CurrencyType currencyType;
 
     private BigDecimal interestRate;
 
-    private LocalDateTime lastTransactionDate;
+    private Instant lastTransactionDate;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Transaction> transactions;
