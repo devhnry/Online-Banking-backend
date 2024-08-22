@@ -9,6 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface OtpRepository extends JpaRepository<OneTimePassword, Long> {
-    Optional<OneTimePassword> findById(Long id);
-    Optional<OneTimePassword> findByCustomerAndOtpCode(Customer customer, Long otpCode );
+    Optional<OneTimePassword> findByOtpCode(String otp);
 }

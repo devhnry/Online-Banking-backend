@@ -8,7 +8,7 @@ import lombok.Data;
 @JsonIgnoreProperties
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefaultApiResponse<T> {
-    private String statusCode;
+    private int statusCode;
     private String statusMessage;
     private T data;
 }

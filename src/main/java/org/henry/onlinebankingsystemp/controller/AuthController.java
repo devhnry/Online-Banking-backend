@@ -31,6 +31,29 @@ public class AuthController {
     }
 
     /**
+     * Endpoint for sending OTP to User's Email (signup).
+     * @param email contains the email of the newly onboarded user
+     * @return a response indicating the success of the OTP Sent , including the details of the OTP (One Time Password)
+     */
+    @PostMapping("/send-otp")
+    public ResponseEntity<DefaultApiResponse<OneTimePasswordDto>> sendOtp(@RequestParam("email") String email){
+        DefaultApiResponse<OneTimePasswordDto> response = authenticationService.sendOtp(email);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+
+    /**
+     * Endpoint for verifying OTP that was sent to the User (signup).
+     * @param request contains the details for verifying OTP of onboarded user.
+     * @return a response indicating the success of verified OTP or Not.
+     */
+    @PostMapping("onboard/verify-otp")
+    public ResponseEntity<DefaultApiResponse<?>> verifyOtp(@RequestBody @Validated VerifyOtpRequest request){
+        DefaultApiResponse<?> response = authenticationService.verifyOtp(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /**
      * Endpoint for user login.
      * @param request contains the login credentials.
      * @return a response containing the authorization details (e.g., access authToken) if login is successful.

@@ -46,6 +46,9 @@ public class Customer implements UserDetails {
     @Column(nullable = false)
     private Boolean isSuspended;
 
+    @Column(nullable = false)
+    private Boolean isEnabled;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER"));

@@ -3,22 +3,23 @@ package org.henry.onlinebankingsystemp.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.henry.onlinebankingsystemp.constants.Constants;
+import org.henry.onlinebankingsystemp.constants.StatusCodeConstants;
 import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.AuthToken;
 import org.henry.onlinebankingsystemp.entity.Customer;
+import org.henry.onlinebankingsystemp.entity.OneTimePassword;
 import org.henry.onlinebankingsystemp.enums.AccountType;
 import org.henry.onlinebankingsystemp.enums.CurrencyType;
 import org.henry.onlinebankingsystemp.exceptions.ResourceNotFoundException;
 import org.henry.onlinebankingsystemp.repository.AccountRepository;
+import org.henry.onlinebankingsystemp.repository.OtpRepository;
 import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.henry.onlinebankingsystemp.service.AuthenticationService;
 import org.henry.onlinebankingsystemp.service.EmailService;
 import org.henry.onlinebankingsystemp.service.JWTService;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,14 +27,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
-import javax.mail.MessagingException;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.henry.onlinebankingsystemp.constants.Constants.*;
+import static org.henry.onlinebankingsystemp.constants.StatusCodeConstants.*;
 
 @Service
 @Slf4j
@@ -42,6 +43,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
     private final TokenRepository tokenRepository;
+    private final OtpRepository otpRepository;
     private final JWTService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -75,14 +77,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             if (!(requestBody.initialDeposit().compareTo(BigDecimal.valueOf(5000.00)) >= 0)) {
                 log.warn("Initial deposit {} is less than the minimum required amount of 5000.", requestBody.initialDeposit());
-                response.setStatusCode(DEPOSIT_NOT_ENOUGH);
-                response.setStatusMessage("An account need ot be created with an Initial Deposit of MIN 5000.");
+                response.setStatusCode(ONBOARDING_FAILED);
+                response.setStatusMessage("An account need to be created with an Initial Deposit of MIN 5000.");
                 return response;
             }
 
             if (!verifyPasswordStrength(requestBody.password())) {
                 log.info("Password not strong enough for user {}.", requestBody.email());
-                response.setStatusCode(INVALID_PASSWORD);
+                response.setStatusCode(ONBOARDING_FAILED);
                 response.setStatusMessage("Password should contain at least 8 characters, at least One Uppercase letter, numbers and a symbol");
                 return response;
             }
@@ -103,13 +105,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         // Log successful onboarding
         log.info("Customer successfully onboarded: {}", newCustomer.getEmail());
 
-        try{
-            Context emailContext = getEmailContext(newCustomer);
-            emailService.sendEmail(newCustomer.getEmail().trim(), "Welcome to EasyBanking", emailContext);
-        }catch (RuntimeException e){
-            log.error("Error Occurred in sending email after Three tries");
-        }
-
         log.info("Onboarding Email has been sent to the Customer");
 
         response.setStatusCode(ONBOARDING_SUCCESS);
@@ -117,26 +112,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         response.setData(responseData);
 
         return response;
-    }
-
-    private static void validateEnumTypes(OnboardUserDto requestBody) {
-        log.info("Validating Account and Currency Type");
-        List<String> currencyTypes = new ArrayList<>();
-        List<String> accountTypes = new ArrayList<>();
-        for(AccountType accountType : AccountType.values()) {
-            accountTypes.add(accountType.name());
-        }
-        for(CurrencyType currencyType : CurrencyType.values()) {
-            currencyTypes.add(currencyType.name());
-        }
-        if(!accountTypes.contains(requestBody.accountType())) {
-            log.warn("INVALID ACCOUNT TYPE {} for user {}.", requestBody.accountType(), requestBody.email());
-            throw new HttpMessageConversionException(String.format("Account type %s is not supported. (%s).", requestBody.accountType(), Arrays.toString(AccountType.values())));
-        }
-        if(!currencyTypes.contains(requestBody.currencyType())) {
-            log.warn("INVALID CURRENCY_TYPE {} for user {}.", requestBody.currencyType(), requestBody.email());
-            throw new HttpMessageConversionException(String.format("Currency type %s is not supported. (%s).", requestBody.currencyType(), Arrays.toString(CurrencyType.values())));
-        }
     }
 
     @Override
@@ -151,17 +126,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             Optional<Customer> customerOptional = userRepository.findByEmail(requestBody.email());
             if(customerOptional.isPresent()){
                 customer = customerOptional.get();
+
+                // Prevents the customer from login in if account has not been verified.
+                if(customer.getIsEnabled().equals(false)){
+                    log.warn("Customer account has not been verified {}", requestBody.email());
+                    response.setStatusCode(RESOURCE_NOT_FOUND_EXCEPTION);
+                    response.setStatusMessage("Your Account has not been verified.");
+                    return response;
+                }
+
                 log.info("User Found on the DB with email {}.", requestBody.email());
 
                 if(!passwordEncoder.matches(requestBody.password(), customer.getPassword())){
                     log.warn("Invalid Password for user {}.", requestBody.email());
-                    response.setStatusCode(INVALID_PASSWORD);
+                    response.setStatusCode(LOGIN_INVALID_CREDENTIALS);
                     response.setStatusMessage("Invalid Password");
                     return response;
                 }
             } else {
                 log.warn("User with email {} not found in the database.", requestBody.email());
-                response.setStatusCode(CUSTOMER_ALREADY_EXISTS);
+                response.setStatusCode(DATABASE_ERROR);
                 response.setStatusMessage("Customer Not Found: OnBoard on the System or Verify Email");
                 return response;
             }
@@ -175,6 +159,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             // Authenticate the user with the provided credentials
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(requestBody.email(), requestBody.password()));
+
+            try{
+                Context emailContext = getEmailContext(customer);
+                emailService.sendEmail(customer.getEmail().trim(), "Welcome to EasyBanking", emailContext, "onboardTemplate");
+            }catch (RuntimeException e){
+                log.error("Error Occurred in sending Onboarding email after Three tries");
+            }
 
             response.setStatusCode(LOGIN_SUCCESS);
             response.setStatusMessage("Successfully Logged In");
@@ -201,7 +192,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             log.info("Checking if Refresh token has expired.");
             if(jwtService.isTokenExpired(requestBody.refreshToken())){
-                response.setStatusCode(AUTH_TOKEN_BAD_REQUEST);
+                response.setStatusCode(GENERIC_ERROR);
                 response.setStatusMessage("Refresh Token Expired: User needs to Log in Again");
                 log.warn("Refresh Token has expired for user {}: {}", userEmail, requestBody.refreshToken());
                 return response;
@@ -222,7 +213,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     revokeOldTokens(customer);
                     saveCustomerToken(customer, newAccessToken, newRefreshToken);
 
-                    response.setStatusCode(AUTH_TOKEN_CREATED);
+                    response.setStatusCode(AUTH_TOKEN_CREATED_SUCCESS);
                     response.setStatusMessage("Successfully Refreshed AuthToken");
                     AuthorisationResponseDto responseDto = new AuthorisationResponseDto(
                             newAccessToken, newRefreshToken, Instant.now(), "24hrs");
@@ -237,7 +228,125 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return response;
     }
 
-    // Gets the Customer's Name and Assign it to the Variable on the Email Template
+    @Override
+    public DefaultApiResponse<OneTimePasswordDto> sendOtp(String customerEmail) {
+        DefaultApiResponse<OneTimePasswordDto> response = new DefaultApiResponse<>();
+        Customer customer;
+        OneTimePassword oneTimePassword;
+
+        try {
+            // Fetch customer details from the database
+            customer = userRepository.findByEmail(customerEmail).orElseThrow(
+                    () -> {
+                        log.error("Customer with email {} does not exist", customerEmail);
+                        return new ResourceNotFoundException(String.format("Customer with email %s does not exist", customerEmail));
+                    });
+
+            // Generates OTP Code and sets Time for Validity
+            String otpCode = RandomStringUtils.random(6 , "0123456789");
+            long expirationTime = 15;
+
+            log.info("Generating OTP for user {}.", customerEmail);
+            oneTimePassword = OneTimePassword.builder()
+                    .otpCode(otpCode)
+                    .generatedTime(Instant.now())
+                    .expirationTime(Instant.now().plus(expirationTime, ChronoUnit.MINUTES))
+                    .expiresDuration(String.format("%d Minutes", expirationTime))
+                    .build();
+            otpRepository.save(oneTimePassword);
+
+
+            CustomerDto customerData = CustomerDto.builder()
+                    .customerId(customer.getCustomerId())
+                    .fullName(String.format("%s %s", customer.getFirstName(), customer.getLastName()))
+                    .phoneNumber(customer.getPhoneNumber())
+                    .email(customerEmail)
+                    .build();
+
+            OneTimePasswordDto oneTimePasswordDto = new OneTimePasswordDto();
+            oneTimePasswordDto.setOtpCode(otpCode);
+            oneTimePasswordDto.setExpirationDuration(oneTimePasswordDto.getExpirationDuration());
+            oneTimePasswordDto.setCustomer(customerData);
+
+            response.setStatusCode(ONBOARDING_SUCCESS);
+            response.setStatusMessage("Successfully Generated OTP and Sent Email for user " + customerEmail);
+            response.setData(oneTimePasswordDto);
+
+            log.info("OTP generated for user {}.", customerEmail);
+
+        } catch (ResourceNotFoundException e) {
+            log.error("Customer with email {} does not exist on the DB", customerEmail);
+            throw new ResourceNotFoundException("Customer with email " + customerEmail + " does not exist");
+        } catch (RuntimeException e){
+            throw new RuntimeException(e.getMessage());
+        }
+
+        log.info("Sending OTP to customer via Email: {}", customerEmail);
+
+        try{
+            Context emailContext = generateEmailContextForOTPValidation( customer, oneTimePassword);
+            emailService.sendEmail(customer.getEmail().trim(), "Onboarding Process: Verify OTP", emailContext, "verifyOtpTemplate");
+        }catch (RuntimeException e){
+            log.error("Error Occurred in sending OTP verification email after Three tries");
+        }
+
+        log.info("OTP for email {} has been sent successfully.", customerEmail);
+
+        return response;
+    }
+
+    @Override
+    public DefaultApiResponse<?> verifyOtp(VerifyOtpRequest requestBody) {
+        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+
+        try {
+            Optional<OneTimePassword> existingOtpOpt = otpRepository.findByOtpCode(requestBody.otpCode());
+
+            if (existingOtpOpt.isEmpty()) {
+                return createErrorResponse(response, DATABASE_ERROR, "Onboarding Verification Failed: Couldn't find one-time password");
+            }
+
+            OneTimePassword oneTimePassword = existingOtpOpt.get();
+            if (Instant.now().isAfter(oneTimePassword.getExpirationTime())) {
+                return createErrorResponse(response, OTP_INVALID, "Onboarding Verification Failed: Invalid OTP");
+            }
+
+            Customer customer = oneTimePassword.getCustomer();
+            Customer existingCustomer = userRepository.findByEmail(requestBody.email())
+                    .orElseThrow(() -> {
+                        log.error("Customer with email {} cannot be found", requestBody.email());
+                        return new ResourceNotFoundException(String.format("Customer with email %s does not exist", requestBody.email()));
+                    });
+
+            if (customer.getCustomerId().equals(existingCustomer.getCustomerId())) {
+                return createSuccessResponse(response, requestBody.email());
+            } else {
+                return createErrorResponse(response, OTP_INVALID, "Onboarding Verification Failed: Invalid OTP");
+            }
+
+        } catch (ResourceNotFoundException e) {
+            log.error("Resource Not Found Exception: {}", e.getMessage());
+            throw e;
+        } catch (RuntimeException e) {
+            log.error("Error occurred while trying to verify OTP: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    private DefaultApiResponse<?> createErrorResponse(DefaultApiResponse<?> response, int statusCode, String message) {
+        response.setStatusCode(statusCode);
+        response.setStatusMessage(message);
+        return response;
+    }
+
+    private DefaultApiResponse<?> createSuccessResponse(DefaultApiResponse<?> response, String email) {
+        response.setStatusCode(ONBOARDING_SUCCESS);
+        response.setStatusMessage(String.format("Successfully Verified OTP for user %s [User can now login]", email));
+        return response;
+    }
+
+
+    // Gets the Customer's Details and Assign it to the Variable on the Email Template
     private Context getEmailContext(Customer customer){
         Context emailContext = new Context();
 
@@ -252,6 +361,42 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         log.info("Details have been applied to Email Context");
         return emailContext;
+    }
+
+    // Gets the Customer's Details and takes the OTP and Assign it to the Variable on the Email Template
+    private Context generateEmailContextForOTPValidation(Customer customer, OneTimePassword otp){
+        Context emailContext = new Context();
+
+        Account account = accountRepository.findAccountByCustomer_CustomerId(customer.getCustomerId()).orElseThrow(
+                () -> new ResourceNotFoundException("Customer Not Found: Customer Id: " + customer.getCustomerId())
+        );
+
+        emailContext.setVariable("name", customer.getFirstName() + " " + customer.getLastName());
+        emailContext.setVariable("duration", otp.getExpiresDuration());
+        emailContext.setVariable("otpCode", otp.getOtpCode());
+
+        log.info("Details of OTP and Customer have been applied to Email Context");
+        return emailContext;
+    }
+
+    private static void validateEnumTypes(OnboardUserDto requestBody) {
+        log.info("Validating Account and Currency Type");
+        List<String> currencyTypes = new ArrayList<>();
+        List<String> accountTypes = new ArrayList<>();
+        for(AccountType accountType : AccountType.values()) {
+            accountTypes.add(accountType.name());
+        }
+        for(CurrencyType currencyType : CurrencyType.values()) {
+            currencyTypes.add(currencyType.name());
+        }
+        if(!accountTypes.contains(requestBody.accountType())) {
+            log.warn("INVALID ACCOUNT TYPE {} for user {}.", requestBody.accountType(), requestBody.email());
+            throw new HttpMessageConversionException(String.format("Account type %s is not supported. (%s).", requestBody.accountType(), Arrays.toString(AccountType.values())));
+        }
+        if(!currencyTypes.contains(requestBody.currencyType())) {
+            log.warn("INVALID CURRENCY_TYPE {} for user {}.", requestBody.currencyType(), requestBody.email());
+            throw new HttpMessageConversionException(String.format("Currency type %s is not supported. (%s).", requestBody.currencyType(), Arrays.toString(CurrencyType.values())));
+        }
     }
 
     private void saveCustomerToken(Customer customer, String jwtToken, String refreshToken){
@@ -371,6 +516,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .password(passwordEncoder.encode(requestBody.password()))
                     .phoneNumber(requestBody.phoneNumber())
                     .isSuspended(false)
+                    .isEnabled(false)
                     .accounts(new ArrayList<>())  // Initializes the accounts list
                     .build();
 
