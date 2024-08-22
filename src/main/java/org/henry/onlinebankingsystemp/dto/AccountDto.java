@@ -3,6 +3,7 @@ package org.henry.onlinebankingsystemp.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
 import lombok.Data;
 import org.henry.onlinebankingsystemp.enums.AccountType;
 import org.henry.onlinebankingsystemp.enums.CurrencyType;

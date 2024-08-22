@@ -5,10 +5,13 @@ import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.henry.onlinebankingsystemp.dto.AccountDto;
+import org.henry.onlinebankingsystemp.dto.CustomerDto;
 import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
 import org.henry.onlinebankingsystemp.dto.ViewBalanceDto;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Customer;
+import org.henry.onlinebankingsystemp.exceptions.ResourceNotFoundException;
 import org.henry.onlinebankingsystemp.repository.AccountRepository;
 import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
@@ -35,24 +38,45 @@ public class AccountServiceImpl implements AccountService {
         return request.getHeader("Authorization").substring(7);
     }
 
-    public DefaultApiResponse<Customer> getDetails() {
+    @Override
+    public DefaultApiResponse<CustomerDto> getDetails() {
         verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
         String userEmail = jwtService.extractUsername(CUSTOMER_ACCESS_TOKEN());
-        DefaultApiResponse<Customer> apiResponse = new DefaultApiResponse<>();
+        DefaultApiResponse<CustomerDto> apiResponse = new DefaultApiResponse<>();
 
         Customer customer = userRepository.findByEmail(userEmail).orElseThrow(
-                () -> new IllegalStateException(String.format("Customer with email %s does not exist", userEmail)));
+                () -> new ResourceNotFoundException(String.format("Customer with email %s does not exist", userEmail)));
+
+        Account account = accountRepository.findAccountByCustomer_CustomerId(customer.getCustomerId()).orElseThrow(
+                () -> new ResourceNotFoundException(String.format("Account related to Customer with id (%s) does not exist", customer.getCustomerId()))
+        );
+
+        AccountDto accountData = new AccountDto();
+        accountData.setAccountId(account.getAccountId());
+        accountData.setAccountHolderName(account.getAccountHolderName());
+        accountData.setAccountNumber(account.getAccountNumber());
+        accountData.setAccountType(account.getAccountType());
+        accountData.setCurrencyType(account.getCurrencyType());
+        accountData.setBalance(account.getAccountBalance());
+
+        CustomerDto customerData = CustomerDto.builder()
+                .customerId(customer.getCustomerId())
+                .fullName(String.format("%s %S",customer.getFirstName(), customer.getLastName()))
+                .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
+                .accountDetails(accountData)
+                .build();
 
         apiResponse.setStatusCode(GET_DETAILS_SUCCESS);
         apiResponse.setStatusMessage("Customer details");
-        apiResponse.setData(customer);
+        apiResponse.setData(customerData);
 
         return apiResponse;
     }
 
     @Override
     public DefaultApiResponse<ViewBalanceDto> checkBalance(){
-//        verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
+        verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
         DefaultApiResponse<ViewBalanceDto> apiResponse = new DefaultApiResponse<>();
         String userEmail = jwtService.extractClaims(CUSTOMER_ACCESS_TOKEN(), Claims::getSubject);
 

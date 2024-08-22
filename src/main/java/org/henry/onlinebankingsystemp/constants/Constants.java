@@ -14,6 +14,7 @@ public class Constants {
     public static final String EXPIRED_JWT_EXCEPTION = "101";
     public static final String RUNTIME_EXCEPTION = "102";
     public static final String METHOD_INVALID_EXCEPTION = "103";
+    public static final String RESOURCE_NOT_FOUND_EXCEPTION = "104";
 
     // Customer-related codes
     public static final String CUSTOMER_ALREADY_EXISTS = "200";

@@ -2,56 +2,111 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome to EasyBanking Ltd</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to EasyBanking Limited</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
+            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-        h1, h2 {
             color: #333;
         }
-        h1 span {
-            color: #007bff;
-        }
         .container {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            width: 100%;
             max-width: 600px;
-            margin: 20px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
-        .message {
+        .header {
+            background-color: #4CAF50;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 20px;
+        }
+        .content h2 {
+            color: #4CAF50;
+            font-size: 20px;
+        }
+        .content p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .content a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .content .btn {
+            display: inline-block;
+            padding: 12px 20px;
             margin-top: 20px;
-            color: #555;
+            background-color: #4CAF50;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
         }
-        .signature {
-            margin-top: 30px;
+        .footer {
+            background-color: #f4f4f4;
+            color: #666666;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
         }
-        .signature img {
-            max-width: 100%;
-            height: auto;
+        .footer p {
+            margin: 0;
         }
     </style>
 </head>
 <body>
+
 <div class="container">
-    <h1>Greetings,  <span th:text="${name}"></span></h1>
-    <h2>Welcome to EasyBanking Ltd.</h2>
-    <h3>You have been successfully onboarded on the system</h3>
-    <div class="message">
-        <p>We are thrilled to have you on board! We at EasyBanking help you track and enhance your finances efficiently, as we provide a safe place to store your funds. Explore the features, stay updated with your finances, and aim for the top 1%</p>
-        <p>Get ready to achieve new milestones. If you have any questions or need assistance, feel free to reach out to our support team.</p>
+    <div class="header">
+        <h1>Welcome to EasyBanking Limited</h1>
+    </div>
+
+    <div class="content">
+        <h2>Dear <span th:text="${name}"></span>,</h2>
+        <p>We are thrilled to have you come onboard with EasyBanking. Your account has been successfully created, and you're now ready to experience the convenience and security of our banking services.</p>
+
+        <p>Here’s a quick overview of your new account:</p>
+        <ul>
+            <li><strong>Account Holder Name: </strong><span th:text="${accountHolderName}"></span></li>
+            <li><strong>Account Number: </strong><span th:text="${accountNumber}"></span></li>
+            <li><strong>Account Type: </strong><span th:text="${accountType}"></span></li>
+        </ul>
+
+        <p>To get started, please follow the link below to log in to your account:</p>
+        <a href="[Login URL]" class="btn">Log in to Your Account</a>
+
+        <p>If you have any questions or need assistance, our customer support team is here to help you 24/7. You can reach us at <strong>devwhenry@gmail.com</strong> or call us at <strong>+234-913-043-0072<strong>.</p>
+
+        <p>Thank you for choosing EasyBanking. We look forward to serving you!</p>
+
+        <p>Best regards,<br>The EasyBank Support Team</p>
+    </div>
+
+    <div class="footer">
+        <p>EasyBank Limited | +234-913-043-0072</p>
+        <p>Follow us on:
+            <a href="[Facebook URL]">Facebook</a> |
+            <a href="[Twitter URL]">Twitter</a> |
+            <a href="[LinkedIn URL]">LinkedIn</a>
+        </p>
+        <p>&copy; 2024 EasyBanking Ltd. All rights reserved.</p>
     </div>
 </div>
+
 </body>
 </html>

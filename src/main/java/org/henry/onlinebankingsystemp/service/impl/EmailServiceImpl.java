@@ -31,8 +31,8 @@ public class EmailServiceImpl implements EmailService {
 
         final String htmlContent = springTemplateEngine.process("onboardTemplate", context);
 
-        while (retryCount < maxRetries) {
-            try {
+        do {
+            try{
                 MimeMessage message = mailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(message, true);
                 helper.setFrom(SENDER_EMAIL);
@@ -60,6 +60,6 @@ public class EmailServiceImpl implements EmailService {
                     throw new RuntimeException("Retry interrupted", ex);
                 }
             }
-        }
+        } while (retryCount < maxRetries);
     }
 }

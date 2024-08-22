@@ -10,6 +10,7 @@ import org.henry.onlinebankingsystemp.entity.AuthToken;
 import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.enums.AccountType;
 import org.henry.onlinebankingsystemp.enums.CurrencyType;
+import org.henry.onlinebankingsystemp.exceptions.ResourceNotFoundException;
 import org.henry.onlinebankingsystemp.repository.AccountRepository;
 import org.henry.onlinebankingsystemp.repository.TokenRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
@@ -239,8 +240,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     // Gets the Customer's Name and Assign it to the Variable on the Email Template
     private Context getEmailContext(Customer customer){
         Context emailContext = new Context();
+
+        Account account = accountRepository.findAccountByCustomer_CustomerId(customer.getCustomerId()).orElseThrow(
+                () -> new ResourceNotFoundException("Customer Not Found: Customer Id: " + customer.getCustomerId())
+        );
+
         emailContext.setVariable("name", customer.getFirstName() + " " + customer.getLastName());
-        log.info("Name has been applied to Email Context");
+        emailContext.setVariable("accountHolderName", account.getAccountHolderName());
+        emailContext.setVariable("accountNumber", account.getAccountNumber() );
+        emailContext.setVariable("accountType", account.getAccountType());
+
+        log.info("Details have been applied to Email Context");
         return emailContext;
     }
 
@@ -311,16 +321,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private String generateAccountNumber() {
         log.info("Generating Account Number for Customer");
         long uniqueValue = userRepository.count();
-        String uniqueNumber = "";
+        String accountNumber;
+        String uniqueNumber;
         /*
          * Generates a random number from the characters
          * Adds the uniqueValue to the end of uniqueNumber which changes as number of users increases
          */
         do{
-            uniqueNumber = RandomStringUtils.random((int) (10 - uniqueValue > 10 ? uniqueValue % 10: uniqueValue), "0123456789");
+            uniqueNumber = RandomStringUtils.random(10 , "0123456789");
+            int subStringEnd = (10 - String.valueOf(uniqueValue).length());
+            accountNumber = uniqueNumber.substring(0, subStringEnd) + uniqueValue;
         }while(accountRepository.existsByAccountNumber(uniqueNumber + uniqueValue));
 
-        return uniqueNumber + uniqueValue;
+        return accountNumber;
     }
 
     private Customer generateCustomerAndAccount(Customer newCustomer, Account newAccount, OnboardUserDto requestBody){
