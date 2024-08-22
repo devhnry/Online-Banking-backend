@@ -3,6 +3,7 @@ package org.henry.onlinebankingsystemp.exceptions;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
+import org.henry.onlinebankingsystemp.constants.StatusCodeConstants;
 import org.henry.onlinebankingsystemp.dto.DefaultApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.henry.onlinebankingsystemp.constants.Constants.*;
+import static org.henry.onlinebankingsystemp.constants.StatusCodeConstants.*;
 
 @Slf4j
 @RestControllerAdvice
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler {
         log.error("RuntimeException: {}", ex.getMessage());
 
         DefaultApiResponse<?> response = new DefaultApiResponse<>();
-        response.setStatusCode(RUNTIME_EXCEPTION);
+        response.setStatusCode(GENERIC_ERROR);
         response.setStatusMessage(String.format("Unexpected Error Occurred: (%s)", ex.getMessage()));
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
@@ -45,7 +46,7 @@ public class GlobalExceptionHandler {
         DefaultApiResponse<Map<String, String>> response = new DefaultApiResponse<>();
         log.error("Validation Failed: ({})", e.getMessage());
 
-        response.setStatusCode(RUNTIME_EXCEPTION);
+        response.setStatusCode(GENERIC_ERROR);
         response.setStatusMessage("Validation Failed");
         response.setData(errors);
 
@@ -59,7 +60,7 @@ public class GlobalExceptionHandler {
         log.error("JsonParseException: {}", ex.getMessage());
 
         DefaultApiResponse<?> responseDto = new DefaultApiResponse<>();
-        responseDto.setStatusCode(METHOD_INVALID_EXCEPTION);
+        responseDto.setStatusCode(GENERIC_ERROR);
         responseDto.setStatusMessage(ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);

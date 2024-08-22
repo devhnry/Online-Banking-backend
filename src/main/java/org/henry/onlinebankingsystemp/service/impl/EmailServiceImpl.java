@@ -24,12 +24,12 @@ public class EmailServiceImpl implements EmailService {
 
     @Async("customEmailExecutor")/* Send Email Asynchronously */
     @Override
-    public void sendEmail(String toEmail, String subject, Context context) {
+    public void sendEmail(String toEmail, String subject, Context context, String template) {
         int maxRetries = 3;
         int retryCount = 0;
         long retryDelay = 2000; // 2 second
 
-        final String htmlContent = springTemplateEngine.process("onboardTemplate", context);
+        final String htmlContent = springTemplateEngine.process(template, context);
 
         do {
             try{

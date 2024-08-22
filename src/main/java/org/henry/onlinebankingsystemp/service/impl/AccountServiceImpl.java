@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Customer;
-import org.henry.onlinebankingsystemp.entity.Transaction;
 import org.henry.onlinebankingsystemp.exceptions.ResourceNotFoundException;
 import org.henry.onlinebankingsystemp.repository.AccountRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
@@ -19,8 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.henry.onlinebankingsystemp.constants.Constants.GET_BALANCE_SUCCESS;
-import static org.henry.onlinebankingsystemp.constants.Constants.GET_DETAILS_SUCCESS;
+import static org.henry.onlinebankingsystemp.constants.StatusCodeConstants.*;
 
 @Slf4j @Service
 @RequiredArgsConstructor
@@ -78,7 +76,7 @@ public class AccountServiceImpl implements AccountService {
                 .build();
 
         // Set API response details
-        apiResponse.setStatusCode(GET_DETAILS_SUCCESS);
+        apiResponse.setStatusCode(SUCCESS);
         apiResponse.setStatusMessage("Customer details");
         apiResponse.setData(customerData);
 
@@ -111,7 +109,7 @@ public class AccountServiceImpl implements AccountService {
                     log.info("Account found: {}", existingAccount.getAccountId());
 
                     // Set API response details
-                    apiResponse.setStatusCode(GET_BALANCE_SUCCESS);
+                    apiResponse.setStatusCode(SUCCESS);
                     apiResponse.setStatusMessage("Customer Balance");
 
                     // Prepare balance data

@@ -10,8 +10,7 @@ import java.time.Instant;
 @JsonIgnoreProperties
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OneTimePasswordDto {
-    private Long id;
-    private Long otpCode;
+    private String otpCode;
     private Boolean expired;
     private Instant generatedTime;
     private Instant expirationTime;

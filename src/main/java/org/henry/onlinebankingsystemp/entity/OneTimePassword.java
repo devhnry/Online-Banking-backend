@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
 
-@Entity @Getter @Setter
+@Entity @Data @Builder
 @NoArgsConstructor @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @ToString(exclude = "customer")
@@ -16,10 +16,11 @@ public class OneTimePassword {
     private Long id;
 
     @Column(nullable = false)
-    private Long otpCode;
+    private String otpCode;
 
     @Column(nullable = false)
-    private Boolean expired;
+    @Builder.Default
+    private Boolean verified = false;
 
     @Column(nullable = false)
     private Instant generatedTime;
