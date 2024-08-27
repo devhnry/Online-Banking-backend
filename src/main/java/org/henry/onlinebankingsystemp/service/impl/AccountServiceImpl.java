@@ -2,10 +2,10 @@ package org.henry.onlinebankingsystemp.service.impl;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import jakarta.persistence.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.henry.onlinebankingsystemp.config.SecurityPasswordEncoder;
 import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.Customer;
@@ -21,8 +21,8 @@ import org.henry.onlinebankingsystemp.service.JWTService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,6 +36,7 @@ public class AccountServiceImpl implements AccountService {
     private final UserRepository userRepository;
     private final JWTService jwtService;
     private final HttpServletRequest request;
+    private final SecurityPasswordEncoder encoder;
 
     private String CUSTOMER_ACCESS_TOKEN(){
         return request.getHeader("Authorization").substring(7);
@@ -163,21 +164,20 @@ public class AccountServiceImpl implements AccountService {
 
         try {
             log.info("Checking if Amount is Valid");
-            if(requestBody.amountToDeposit().compareTo(BigDecimal.ZERO) < 0){
+            if(requestBody.amountToDeposit().compareTo(BigDecimal.ZERO) < 0 || requestBody.amountToDeposit().compareTo(BigDecimal.valueOf(500)) < 0){
                 response.setStatusCode(TRANSACTION_FAILED);
-                response.setStatusMessage("Invalid Deposit Amount: ( Negative Number )");
+                response.setStatusMessage("Invalid Deposit Amount: ( Amount needs to be 500 upwards )");
                 return response;
             }
 
             Optional<Account> customerAccount = accountRepository.findAccountByCustomer_Email(userEmail);
             if(customerAccount.isPresent()){
                 account = customerAccount.get();
-                account.setAccountBalance(requestBody.amountToDeposit());
+                account.setAccountBalance(account.getAccountBalance().add(requestBody.amountToDeposit()));
                 account.setLastTransactionDate(LocalDateTime.now());
                 accountRepository.save(account);
             }
 
-            //
             Transaction newTransaction = Transaction.builder()
                     .transactionRef(generateTransactionRef())
                     .customer(customer)
@@ -207,7 +207,78 @@ public class AccountServiceImpl implements AccountService {
             return response;
 
         } catch (Exception e) {
-            response.setStatusCode(500);
+            response.setStatusCode(TRANSACTION_FAILED);
+            response.setStatusMessage(e.getMessage());
+        }
+
+        return response;
+    }
+
+    @Override
+    public DefaultApiResponse<BalanceDto> makeWithdrawal(WithdrawDto requestBody) {
+        Account account = new Account();
+        verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
+        DefaultApiResponse<BalanceDto> response = new DefaultApiResponse<>();
+        String userEmail = jwtService.extractUsername(CUSTOMER_ACCESS_TOKEN());
+        Customer customer = userRepository.findCustomerByEmail(userEmail);
+
+        try {
+            Optional<Account> customerAccount = accountRepository.findAccountByCustomer_Email(userEmail);
+            if(customerAccount.isPresent()){
+                account = customerAccount.get();
+                account.setAccountBalance(account.getAccountBalance().subtract(requestBody.amountToWithdraw()));
+                account.setLastTransactionDate(LocalDateTime.now());
+                accountRepository.save(account);
+            }
+
+            if(!encoder.passwordEncoder().matches(requestBody.hashedPin(), account.getHashedPin())){
+                response.setStatusCode(TRANSACTION_FAILED);
+                response.setStatusMessage("Invalid Account Pin");
+                return response;
+            }
+
+            BigDecimal totalTransactionAmount = getTotalTransactionAmountForToday(customer.getCustomerId());
+            if(totalTransactionAmount.compareTo(account.getTransactionLimit()) < 0){
+                response.setStatusCode(TRANSACTION_LIMIT_EXCEEDED);
+                response.setStatusMessage("Transaction Limit Exceeded");
+                return response;
+            }
+
+            Transaction newTransaction = Transaction.builder()
+                    .transactionRef(generateTransactionRef())
+                    .customer(customer)
+                    .account(account)
+                    .transactionType(TransactionType.DEPOSIT)
+                    .transactionCategory(TransactionCategory.CREDIT)
+                    .amount(requestBody.amountToWithdraw())
+                    .transactionDate(LocalDateTime.now())
+                    .runningBalance(account.getAccountBalance())
+                    .balanceAfterTransaction(account.getAccountBalance().subtract(requestBody.amountToWithdraw()))
+                    .targetAccountNumber(account.getAccountNumber())
+                    .build();
+            transactionRepository.save(newTransaction);
+
+            account.getTransactions().add(newTransaction);
+            accountRepository.save(account);
+
+            String lastUpdatedAt = LocalDateTime.now().toString().replace("T", " ").substring(0, 16);
+            BalanceDto data = BalanceDto.builder()
+                    .email(customer.getEmail())
+                    .accountNumber(account.getAccountNumber())
+                    .balance(account.getAccountBalance())
+                    .requestType(TransactionCategory.DEBIT.toString())
+                    .lastUpdatedAt(lastUpdatedAt)
+                    .build();
+
+            log.info("Account Withdrawal Was Successful");
+            response.setStatusCode(TRANSACTION_SUCCESS);
+            response.setStatusMessage("Account Deposit Successful");
+            response.setData(data);
+
+            return response;
+
+        }catch (RuntimeException e){
+            response.setStatusCode(TRANSACTION_FAILED);
             response.setStatusMessage(e.getMessage());
         }
 
@@ -222,6 +293,18 @@ public class AccountServiceImpl implements AccountService {
             transactionReference = UUID.randomUUID().toString().substring(0,12).replace("-","");
         }while(transactionRepository.existsByTransactionRef(transactionReference));
         return transactionReference;
+    }
+
+    private BigDecimal getTotalTransactionAmountForToday(String id) {
+        List<Transaction> transactions = transactionRepository.findAllByCustomer_CustomerId(id);
+        BigDecimal totalAmount = BigDecimal.valueOf(0.0);
+        for(Transaction transaction : transactions){
+            if(transaction.getTransactionType().equals(TransactionType.DEPOSIT)){
+                continue;
+            }
+            totalAmount = totalAmount.add(transaction.getAmount());
+        }
+        return totalAmount;
     }
 
 
@@ -277,16 +360,5 @@ public class AccountServiceImpl implements AccountService {
 //        return res;
 //    }
 //
-//    public BigDecimal getDailyTransactionAmount(Long id) {
-//        List<Transaction> transactions = transactionRepository.findTransactionByCustomer(id);
-//        BigDecimal totalAmount = BigDecimal.valueOf(0.0);
-//        for(Transaction tran : transactions){
-//            if(tran.getTransactionType().equals(TransactionType.DEPOSIT)){
-//                continue;
-//            }
-//            totalAmount = totalAmount.add(tran.getAmount());
-//        }
-//        return totalAmount;
-//    }
 //
 }

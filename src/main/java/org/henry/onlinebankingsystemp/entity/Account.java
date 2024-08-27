@@ -34,6 +34,9 @@ public class Account {
     private AccountType accountType;
 
     @Column(nullable = false)
+    private String hashedPin;
+
+    @Column(nullable = false)
     private BigDecimal accountBalance;
 
     @Column(nullable = false)
