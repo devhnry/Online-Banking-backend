@@ -326,17 +326,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     });
 
             if (customer.getCustomerId().equals(existingCustomer.getCustomerId())) {
-
                 existingCustomer.setIsEnabled(true);
+
+                if(oneTimePassword.getVerified()){
+                    response.setStatusCode(OTP_EXPIRED);
+                    response.setStatusMessage("OTP has been verified already, Log In");
+                    return response;
+                }
+
+                oneTimePassword.setVerified(true);
+                otpRepository.save(oneTimePassword);
                 userRepository.save(existingCustomer);
                 log.info("OTP verified");
 
+                // Generate access and refresh tokens for the authenticated customer
+                generateAccessTokenAndRefreshToken result = getGenerateAccessTokenAndRefreshToken(customer);
+
                 AuthorisationResponseDto responseDto = new AuthorisationResponseDto(
-                        jwtService.createJWT(existingCustomer),
-                        jwtService.generateRefreshToken(generateRefreshTokenClaims(existingCustomer)  , existingCustomer),
-                        Instant.now(),
-                        "24hrs"
+                       result.accessToken, result.refreshToken,  Instant.now(), "24hrs"
                 );
+
+                // Authenticate the user with the provided credentials
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(requestBody.email(), requestBody.password()));
 
                 try{
                     Context emailContext = getEmailContext(customer);

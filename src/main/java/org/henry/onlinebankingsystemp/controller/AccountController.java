@@ -47,10 +47,8 @@ public class AccountController {
      * @return the updated balance after the deposit.
      */
     @PostMapping("/make-deposit")
-    public ResponseEntity<DefaultApiResponse<ViewBalanceDto>> makeDeposit(@RequestBody DepositDto deposit){
-        log.info("Response before service");
+    public ResponseEntity<DefaultApiResponse<ViewBalanceDto>> makeDeposit(@Valid @RequestBody DepositDto deposit){
         DefaultApiResponse<ViewBalanceDto> response = accountService.depositMoney(deposit);
-        log.info("Response from service {}", response);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
