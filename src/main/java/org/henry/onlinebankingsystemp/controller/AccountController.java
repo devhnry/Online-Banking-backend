@@ -1,9 +1,12 @@
 package org.henry.onlinebankingsystemp.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.service.AccountService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AccountController {
 
+    private static final Logger log = LoggerFactory.getLogger(AccountController.class);
     private final AccountService accountService;
 
 
@@ -43,8 +47,10 @@ public class AccountController {
      * @return the updated balance after the deposit.
      */
     @PostMapping("/make-deposit")
-    public ResponseEntity<DefaultApiResponse<BalanceDto>> makeDeposit(@Validated @RequestBody DepositDto deposit){
-        DefaultApiResponse<BalanceDto> response = new DefaultApiResponse<>();
+    public ResponseEntity<DefaultApiResponse<ViewBalanceDto>> makeDeposit(@RequestBody DepositDto deposit){
+        log.info("Response before service");
+        DefaultApiResponse<ViewBalanceDto> response = accountService.depositMoney(deposit);
+        log.info("Response from service {}", response);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -54,7 +60,7 @@ public class AccountController {
      * @return the updated balance after the withdrawal.
      */
     @PostMapping("/withdraw")
-    public ResponseEntity<DefaultApiResponse<BalanceDto>> makeWithdrawal(@Validated @RequestBody WithdrawDto withdraw){
+    public ResponseEntity<DefaultApiResponse<BalanceDto>> makeWithdrawal(@Valid @RequestBody WithdrawDto withdraw){
         DefaultApiResponse<BalanceDto> response = new DefaultApiResponse<>();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -65,7 +71,7 @@ public class AccountController {
      * @return the updated balance after the transfer.
      */
     @PostMapping("/make-transfer")
-    public ResponseEntity<DefaultApiResponse<BalanceDto>> makeTransfer(@Validated @RequestBody TransferDto transfer) {
+    public ResponseEntity<DefaultApiResponse<BalanceDto>> makeTransfer(@Valid @RequestBody TransferDto transfer) {
         DefaultApiResponse<BalanceDto> response = new DefaultApiResponse<>();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -97,7 +103,7 @@ public class AccountController {
      * @return a response indicating the success of the reset.
      */
     @PutMapping("/forgot-password")
-    public ResponseEntity<DefaultApiResponse<?>> resetPassword(@RequestBody @Validated PasswordResetDto passwordReset){
+    public ResponseEntity<DefaultApiResponse<?>> resetPassword(@RequestBody @Valid PasswordResetDto passwordReset){
         DefaultApiResponse<?> response = new DefaultApiResponse<>();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
