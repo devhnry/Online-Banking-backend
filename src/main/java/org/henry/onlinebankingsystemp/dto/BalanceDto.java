@@ -17,6 +17,7 @@ public class BalanceDto{
     private String accountNumber;
     private BigDecimal amount;
     private BigDecimal balance;
-    private Instant lastUpdatedAt;
+    private String description;
+    private String lastUpdatedAt;
 }
 

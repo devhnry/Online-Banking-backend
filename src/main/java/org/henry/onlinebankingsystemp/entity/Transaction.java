@@ -8,7 +8,7 @@ import org.henry.onlinebankingsystemp.enums.TransactionType;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity @Getter @Setter
+@Entity @Data @Builder
 @NoArgsConstructor @AllArgsConstructor
 @Table(name = "transactions")
 public class Transaction {
@@ -43,10 +43,10 @@ public class Transaction {
     private LocalDateTime transactionDate;
 
     @Column(nullable = false)
-    private BigDecimal runningBalance;
+    private BigDecimal balanceBeforeTransaction;
 
     @Column(nullable = false)
-    private BigDecimal balanceAfterRunningBalance;
+    private BigDecimal balanceAfterTransaction;
 
     @Column(nullable = false)
     private String targetAccountNumber;

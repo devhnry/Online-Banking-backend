@@ -29,7 +29,7 @@ public class LogoutService implements LogoutHandler {
         final String jwtToken;
         if(authHeader == null || authHeader.isBlank()){
             log.error("Blank Authorisation");
-            res.setStatusCode(StatusCodeConstants.RUNTIME_EXCEPTION);
+            res.setStatusCode(StatusCodeConstants.GENERIC_ERROR);
             res.setStatusMessage("Blank Authorisation");
             return;
         }

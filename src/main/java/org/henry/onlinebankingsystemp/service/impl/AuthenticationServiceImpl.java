@@ -3,7 +3,6 @@ package org.henry.onlinebankingsystemp.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.henry.onlinebankingsystemp.constants.StatusCodeConstants;
 import org.henry.onlinebankingsystemp.dto.*;
 import org.henry.onlinebankingsystemp.entity.Account;
 import org.henry.onlinebankingsystemp.entity.AuthToken;
@@ -29,6 +28,7 @@ import org.thymeleaf.context.Context;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -70,7 +70,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             if (customerAlreadyExists) {
                 log.info("Customer with email {} already exists.", requestBody.email());
-                response.setStatusCode(ONBOARDING_SUCCESS );
+                response.setStatusCode(ONBOARDING_DUPLICATE_EMAIL);
                 response.setStatusMessage("Customer Already Exists: Try Logging in");
                 return response;
             }
@@ -84,8 +84,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             if (!verifyPasswordStrength(requestBody.password())) {
                 log.info("Password not strong enough for user {}.", requestBody.email());
-                response.setStatusCode(ONBOARDING_FAILED);
+                response.setStatusCode(VALIDATION_ERROR);
                 response.setStatusMessage("Password should contain at least 8 characters, at least One Uppercase letter, numbers and a symbol");
+                return response;
+            }
+
+            if(String.valueOf(requestBody.hashedPin()).length() > 4) {
+                response.setStatusCode(VALIDATION_ERROR);
+                response.setStatusMessage("Account HashedPin must be exactly 4 digits");
                 return response;
             }
 
@@ -160,13 +166,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(requestBody.email(), requestBody.password()));
 
-            try{
-                Context emailContext = getEmailContext(customer);
-                emailService.sendEmail(customer.getEmail().trim(), "Welcome to EasyBanking", emailContext, "onboardTemplate");
-            }catch (RuntimeException e){
-                log.error("Error Occurred in sending Onboarding email after Three tries");
-            }
-
             response.setStatusCode(LOGIN_SUCCESS);
             response.setStatusMessage("Successfully Logged In");
             response.setData(authorisationResponseDto);
@@ -213,7 +212,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     revokeOldTokens(customer);
                     saveCustomerToken(customer, newAccessToken, newRefreshToken);
 
-                    response.setStatusCode(AUTH_TOKEN_CREATED_SUCCESS);
+                    response.setStatusCode(REFRESH_TOKEN_SUCCESS);
                     response.setStatusMessage("Successfully Refreshed AuthToken");
                     AuthorisationResponseDto responseDto = new AuthorisationResponseDto(
                             newAccessToken, newRefreshToken, Instant.now(), "24hrs");
@@ -252,6 +251,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .generatedTime(Instant.now())
                     .expirationTime(Instant.now().plus(expirationTime, ChronoUnit.MINUTES))
                     .expiresDuration(String.format("%d Minutes", expirationTime))
+                    .customer(customer)
                     .build();
             otpRepository.save(oneTimePassword);
 
@@ -268,7 +268,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             oneTimePasswordDto.setExpirationDuration(oneTimePasswordDto.getExpirationDuration());
             oneTimePasswordDto.setCustomer(customerData);
 
-            response.setStatusCode(ONBOARDING_SUCCESS);
+            response.setStatusCode(OTP_SENT_SUCCESS);
             response.setStatusMessage("Successfully Generated OTP and Sent Email for user " + customerEmail);
             response.setData(oneTimePasswordDto);
 
@@ -296,21 +296,34 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public DefaultApiResponse<?> verifyOtp(VerifyOtpRequest requestBody) {
-        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+    public DefaultApiResponse<AuthorisationResponseDto> verifyOtp(VerifyOtpRequest requestBody) {
+        DefaultApiResponse<AuthorisationResponseDto> response = new DefaultApiResponse<>();
 
         try {
+            // Checks for the existing OTP on the DB
             Optional<OneTimePassword> existingOtpOpt = otpRepository.findByOtpCode(requestBody.otpCode());
 
+            log.info("Checking if One Time Password Exists");
             if (existingOtpOpt.isEmpty()) {
-                return createErrorResponse(response, DATABASE_ERROR, "Onboarding Verification Failed: Couldn't find one-time password");
+                // If OTP is not found
+                log.info("OTP does not exist on the DB");
+                response.setStatusCode(DATABASE_ERROR);
+                response.setStatusMessage("Onboarding Verification Failed: Couldn't find one-time password");
+                return response;
             }
 
+            // Checks if OTP has not reached his expiration time
+            log.info("Checking if OTP has reached expiration Time");
             OneTimePassword oneTimePassword = existingOtpOpt.get();
             if (Instant.now().isAfter(oneTimePassword.getExpirationTime())) {
-                return createErrorResponse(response, OTP_INVALID, "Onboarding Verification Failed: Invalid OTP");
+                log.info("OTP has expired");
+                response.setStatusCode(OTP_EXPIRED);
+                response.setStatusMessage("Onboarding Verification Failed: Invalid OTP");
+                return response;
             }
 
+            log.info("Comparing OTP for Customer and User sending the Request");
+            // Gets the Customer related to the OTP and Compare to the One making the request.
             Customer customer = oneTimePassword.getCustomer();
             Customer existingCustomer = userRepository.findByEmail(requestBody.email())
                     .orElseThrow(() -> {
@@ -319,9 +332,44 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     });
 
             if (customer.getCustomerId().equals(existingCustomer.getCustomerId())) {
-                return createSuccessResponse(response, requestBody.email());
+                existingCustomer.setIsEnabled(true);
+
+                if(oneTimePassword.getVerified()){
+                    response.setStatusCode(OTP_EXPIRED);
+                    response.setStatusMessage("OTP has been verified already, Log In");
+                    return response;
+                }
+
+                oneTimePassword.setVerified(true);
+                otpRepository.save(oneTimePassword);
+                userRepository.save(existingCustomer);
+                log.info("OTP verified");
+
+                // Generate access and refresh tokens for the authenticated customer
+                generateAccessTokenAndRefreshToken result = getGenerateAccessTokenAndRefreshToken(customer);
+
+                AuthorisationResponseDto responseDto = new AuthorisationResponseDto(
+                       result.accessToken, result.refreshToken,  Instant.now(), "24hrs"
+                );
+
+                // Authenticate the user with the provided credentials
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(requestBody.email(), requestBody.password()));
+
+                try{
+                    Context emailContext = getEmailContext(customer);
+                    emailService.sendEmail(customer.getEmail().trim(), "Welcome to EasyBanking", emailContext, "onboardTemplate");
+                }catch (RuntimeException e){
+                    log.error("Error Occurred in sending Onboarding email after Three tries");
+                }
+
+                return createSuccessResponse(response, requestBody.email(), responseDto);
+
             } else {
-                return createErrorResponse(response, OTP_INVALID, "Onboarding Verification Failed: Invalid OTP");
+                log.info("Customer provided Invalid OTP");
+                response.setStatusCode(OTP_INVALID);
+                response.setStatusMessage("Onboarding Verification Failed: Invalid OTP");
+                return response;
             }
 
         } catch (ResourceNotFoundException e) {
@@ -333,15 +381,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
-    private DefaultApiResponse<?> createErrorResponse(DefaultApiResponse<?> response, int statusCode, String message) {
-        response.setStatusCode(statusCode);
-        response.setStatusMessage(message);
-        return response;
-    }
-
-    private DefaultApiResponse<?> createSuccessResponse(DefaultApiResponse<?> response, String email) {
-        response.setStatusCode(ONBOARDING_SUCCESS);
-        response.setStatusMessage(String.format("Successfully Verified OTP for user %s [User can now login]", email));
+    // Sends SUCCESS Response for OTP validation Method
+    private DefaultApiResponse<AuthorisationResponseDto> createSuccessResponse(DefaultApiResponse<AuthorisationResponseDto> response, String email, AuthorisationResponseDto data) {
+        response.setStatusCode(SUCCESS);
+        response.setStatusMessage(String.format("Successfully Verified OTP for user %s [User has been logged in]", email));
+        response.setData(data);
         return response;
     }
 
@@ -496,9 +540,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .transactionLimit(DEFAULT_TRANSACTION_LIMIT)
                     .dateOpened(Instant.now())
                     .isActive(true)
+                    .hashedPin(passwordEncoder.encode(String.valueOf(requestBody.hashedPin())))
                     .currencyType(CurrencyType.valueOf(requestBody.currencyType()))
                     .interestRate(DEFAULT_INTEREST_RATE)
-                    .lastTransactionDate(Instant.now())
+                    .lastTransactionDate(LocalDateTime.now())
                     .build();
             log.info("Account created: {}", newAccount);
         } catch (RuntimeException ex) {

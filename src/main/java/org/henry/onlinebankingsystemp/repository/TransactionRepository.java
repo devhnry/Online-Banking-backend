@@ -1,6 +1,7 @@
 package org.henry.onlinebankingsystemp.repository;
 
 import org.henry.onlinebankingsystemp.entity.Transaction;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
         """
     )
     List<Transaction> findTransactionByCustomer(Long customerId);
-    @Override
-    Optional<Transaction> findById(Long id);
+
+    List<Transaction> findAllByCustomer_CustomerId(String customerId);
+
+    @NotNull Optional<Transaction> findById(@NotNull Long id);
+    boolean existsByTransactionRef(String transactionReference);
 }

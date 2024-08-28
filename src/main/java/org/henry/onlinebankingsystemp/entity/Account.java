@@ -7,6 +7,7 @@ import org.henry.onlinebankingsystemp.enums.CurrencyType;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -33,6 +34,9 @@ public class Account {
     private AccountType accountType;
 
     @Column(nullable = false)
+    private String hashedPin;
+
+    @Column(nullable = false)
     private BigDecimal accountBalance;
 
     @Column(nullable = false)
@@ -50,7 +54,7 @@ public class Account {
 
     private BigDecimal interestRate;
 
-    private Instant lastTransactionDate;
+    private LocalDateTime lastTransactionDate;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Transaction> transactions;

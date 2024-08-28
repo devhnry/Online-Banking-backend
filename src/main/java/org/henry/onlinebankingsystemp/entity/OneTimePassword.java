@@ -33,6 +33,6 @@ public class OneTimePassword {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "customerId", nullable = false)
     private Customer customer;
 }
