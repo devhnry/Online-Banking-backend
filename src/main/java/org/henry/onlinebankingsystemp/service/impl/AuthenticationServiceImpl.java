@@ -89,6 +89,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return response;
             }
 
+            if(String.valueOf(requestBody.hashedPin()).length() > 4) {
+                response.setStatusCode(VALIDATION_ERROR);
+                response.setStatusMessage("Account HashedPin must be exactly 4 digits");
+                return response;
+            }
+
             // Calls Method to validate that Enum Type is Correct
             validateEnumTypes(requestBody);
 
@@ -534,7 +540,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .transactionLimit(DEFAULT_TRANSACTION_LIMIT)
                     .dateOpened(Instant.now())
                     .isActive(true)
-                    .hashedPin(passwordEncoder.encode(requestBody.hashedPin()))
+                    .hashedPin(passwordEncoder.encode(String.valueOf(requestBody.hashedPin())))
                     .currencyType(CurrencyType.valueOf(requestBody.currencyType()))
                     .interestRate(DEFAULT_INTEREST_RATE)
                     .lastTransactionDate(LocalDateTime.now())

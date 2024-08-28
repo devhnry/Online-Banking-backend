@@ -3,7 +3,7 @@ package org.henry.onlinebankingsystemp.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.henry.onlinebankingsystemp.dto.*;
-import org.henry.onlinebankingsystemp.entity.Customer;
+import org.henry.onlinebankingsystemp.repository.AccountRepository;
 import org.henry.onlinebankingsystemp.service.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +19,7 @@ public class AccountController {
 
     private static final Logger log = LoggerFactory.getLogger(AccountController.class);
     private final AccountService accountService;
+    private final AccountRepository accountRepository;
 
 
     /**
@@ -59,7 +60,7 @@ public class AccountController {
      */
     @PostMapping("/withdraw")
     public ResponseEntity<DefaultApiResponse<BalanceDto>> makeWithdrawal(@Valid @RequestBody WithdrawDto withdraw){
-        DefaultApiResponse<BalanceDto> response = new DefaultApiResponse<>();
+        DefaultApiResponse<BalanceDto> response = accountService.makeWithdrawal(withdraw);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -70,8 +71,29 @@ public class AccountController {
      */
     @PostMapping("/make-transfer")
     public ResponseEntity<DefaultApiResponse<BalanceDto>> makeTransfer(@Valid @RequestBody TransferDto transfer) {
-        DefaultApiResponse<BalanceDto> response = new DefaultApiResponse<>();
+        DefaultApiResponse<BalanceDto> response = accountService.makeTransfer(transfer);
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    /**
+     * Endpoint to get the transfer summary details for a modal
+     * @param transfer contains the transfer details.
+     * @return a summary of the transfer details (amount, charges and total amount)
+     */
+    @PostMapping("/get-transfer-summary")
+    public ResponseEntity<DefaultApiResponse<TransactionSummaryDto>> getTransferSummary(@Valid @RequestBody TransferDto transfer) {
+        DefaultApiResponse<TransactionSummaryDto> response = accountService.displayTransferSummary(transfer);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    /**
+     * Endpoint to get Account Details given the account Number
+     * @param accountNumber accountNumber of the Customer
+     * @return a String of the AccountHolderName
+     */
+    @GetMapping("/details")
+    public ResponseEntity<String> getAccountHolderName(@RequestParam("accountNumber") String accountNumber) {
+        return ResponseEntity.status(HttpStatus.OK).body(accountService.getAccountHolderName(accountNumber));
     }
 
     /**

@@ -21,6 +21,7 @@ import org.henry.onlinebankingsystemp.service.JWTService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -178,18 +179,7 @@ public class AccountServiceImpl implements AccountService {
                 accountRepository.save(account);
             }
 
-            Transaction newTransaction = Transaction.builder()
-                    .transactionRef(generateTransactionRef())
-                    .customer(customer)
-                    .account(account)
-                    .transactionType(TransactionType.DEPOSIT)
-                    .transactionCategory(TransactionCategory.CREDIT)
-                    .amount(requestBody.amountToDeposit())
-                    .transactionDate(LocalDateTime.now())
-                    .runningBalance(account.getAccountBalance())
-                    .balanceAfterTransaction(account.getAccountBalance().add(requestBody.amountToDeposit()))
-                    .targetAccountNumber(account.getAccountNumber())
-                    .build();
+            Transaction newTransaction = getTransaction(account, requestBody.amountToDeposit(), TransactionCategory.CREDIT, TransactionType.DEPOSIT);
             transactionRepository.save(newTransaction);
 
             account.getTransactions().add(newTransaction);
@@ -226,48 +216,37 @@ public class AccountServiceImpl implements AccountService {
             Optional<Account> customerAccount = accountRepository.findAccountByCustomer_Email(userEmail);
             if(customerAccount.isPresent()){
                 account = customerAccount.get();
-                account.setAccountBalance(account.getAccountBalance().subtract(requestBody.amountToWithdraw()));
+                account.setAccountBalance(account.getAccountBalance().subtract(requestBody.amountToWithdraw()
+                        .add(calculateCharges(requestBody.amountToWithdraw(), account))));
                 account.setLastTransactionDate(LocalDateTime.now());
                 accountRepository.save(account);
             }
 
-            if(!encoder.passwordEncoder().matches(requestBody.hashedPin(), account.getHashedPin())){
+            if(!encoder.passwordEncoder().matches(String.valueOf(requestBody.hashedPin()), account.getHashedPin())){
                 response.setStatusCode(TRANSACTION_FAILED);
                 response.setStatusMessage("Invalid Account Pin");
                 return response;
             }
 
             BigDecimal totalTransactionAmount = getTotalTransactionAmountForToday(customer.getCustomerId());
-            if(totalTransactionAmount.compareTo(account.getTransactionLimit()) < 0){
+            if(totalTransactionAmount.compareTo(account.getTransactionLimit()) > 0){
                 response.setStatusCode(TRANSACTION_LIMIT_EXCEEDED);
                 response.setStatusMessage("Transaction Limit Exceeded");
                 return response;
             }
 
-            Transaction newTransaction = Transaction.builder()
-                    .transactionRef(generateTransactionRef())
-                    .customer(customer)
-                    .account(account)
-                    .transactionType(TransactionType.DEPOSIT)
-                    .transactionCategory(TransactionCategory.CREDIT)
-                    .amount(requestBody.amountToWithdraw())
-                    .transactionDate(LocalDateTime.now())
-                    .runningBalance(account.getAccountBalance())
-                    .balanceAfterTransaction(account.getAccountBalance().subtract(requestBody.amountToWithdraw()))
-                    .targetAccountNumber(account.getAccountNumber())
-                    .build();
+            Transaction newTransaction = getTransaction(account, requestBody.amountToWithdraw(), TransactionCategory.CREDIT, TransactionType.WITHDRAWAL);
             transactionRepository.save(newTransaction);
 
             account.getTransactions().add(newTransaction);
             accountRepository.save(account);
 
-            String lastUpdatedAt = LocalDateTime.now().toString().replace("T", " ").substring(0, 16);
             BalanceDto data = BalanceDto.builder()
                     .email(customer.getEmail())
                     .accountNumber(account.getAccountNumber())
                     .balance(account.getAccountBalance())
                     .requestType(TransactionCategory.DEBIT.toString())
-                    .lastUpdatedAt(lastUpdatedAt)
+                    .lastUpdatedAt(getLastUpdatedAt())
                     .build();
 
             log.info("Account Withdrawal Was Successful");
@@ -285,9 +264,228 @@ public class AccountServiceImpl implements AccountService {
         return response;
     }
 
+    @Override
+    public DefaultApiResponse<BalanceDto> makeTransfer(TransferDto requestBody) {
+        Account existingSenderaccount;
+        Account existingReceiveraccount;
+        verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
+        DefaultApiResponse<BalanceDto> response = new DefaultApiResponse<>();
+        String userEmail = jwtService.extractUsername(CUSTOMER_ACCESS_TOKEN());
+        Customer customer = userRepository.findCustomerByEmail(userEmail);
+
+        try {
+            // Step 1: Retrieve Sender Account
+            Optional<Account> senderAccount = accountRepository.findAccountByCustomer_Email(userEmail);
+            if (senderAccount.isPresent()) {
+               existingSenderaccount = senderAccount.get();
+            }else{
+                throw new ResourceNotFoundException("Customer Account Not Found");
+            }
+
+            // Step 2: Retrieve Receiver Account
+            Optional<Account> receiverAccount = accountRepository.findByAccountNumber(requestBody.accountNumber());
+            if (receiverAccount.isPresent()) {
+                existingReceiveraccount = receiverAccount.get();
+            }else{
+                response.setStatusCode(TRANSACTION_INVALID_ACCOUNT);
+                response.setStatusMessage("Receiver Account Not Found");
+                return response;
+            }
+
+            // Validate that both Account are of the same currency
+            if(!existingReceiveraccount.getCurrencyType().equals(existingSenderaccount.getCurrencyType())){
+                response.setStatusCode(TRANSACTION_FAILED);
+                response.setStatusMessage(String.format("Accounts are of different Currencies: (%s and %s)", existingSenderaccount, existingReceiveraccount));
+                return response;
+            }
+
+            // Step 3: Validate Amount & Description
+            if (requestBody.amount().compareTo(BigDecimal.valueOf(50)) <= 0) {
+                response.setStatusCode(TRANSACTION_FAILED);
+                response.setStatusMessage("Invalid Transfer amount: Must be above 50");
+                return response;
+            }
+
+            if (requestBody.description() == null || requestBody.description().trim().isEmpty()) {
+                response.setStatusCode(TRANSACTION_FAILED);
+                response.setStatusMessage("Description cannot be empty");
+                return response;
+            }
+
+            // Step 4: Validate PIN
+            if(validateHashedPin(existingSenderaccount, String.valueOf(requestBody.hashedPin()))) {
+
+                // Step 5: Check for Insufficient Balance
+                if(requestBody.amount().compareTo(existingSenderaccount.getAccountBalance()) > 0){
+                    response.setStatusCode(TRANSACTION_INSUFFICIENT_FUNDS);
+                    response.setStatusMessage("Insufficient Funds to make transfer");
+                    return response;
+                }
+
+                // Step 6: Perform the Transfer
+                performTransfer(existingReceiveraccount, existingSenderaccount, requestBody.amount());
+
+            }else {
+                response.setStatusCode(TRANSACTION_FAILED);
+                response.setStatusMessage("Incorrect Pin to perform transfer operation");
+
+                return response;
+            }
+
+            response.setStatusCode(TRANSACTION_SUCCESS);
+            response.setStatusMessage("Transfer successful");
+            BalanceDto dataBalance = BalanceDto.builder()
+                    .email(customer.getEmail())
+                    .requestType(String.valueOf(TransactionCategory.DEBIT))
+                    .amount(requestBody.amount())
+                    .accountNumber(requestBody.accountNumber())
+                    .balance(existingSenderaccount.getAccountBalance().setScale(2, RoundingMode.CEILING))
+                    .description(requestBody.description())
+                    .lastUpdatedAt(getLastUpdatedAt())
+                    .build();
+            response.setData(dataBalance);
+
+        } catch (ResourceNotFoundException e){
+            throw new ResourceNotFoundException(e.getMessage());
+        }catch (RuntimeException e) {
+            response.setStatusCode(GENERIC_ERROR);
+            response.setStatusMessage("Unexpected Error Occurred: " + e.getMessage());
+        }
+        return response;
+    }
+
+    @Override
+    public DefaultApiResponse<TransactionSummaryDto> displayTransferSummary(TransferDto requestBody) {
+        verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
+        Account existingSenderaccount;
+        DefaultApiResponse<TransactionSummaryDto> response = new DefaultApiResponse<>();
+        String userEmail = jwtService.extractUsername(CUSTOMER_ACCESS_TOKEN());
+
+        try {
+            // Step 1: Retrieve Sender Account
+            Optional<Account> senderAccount = accountRepository.findAccountByCustomer_Email(userEmail);
+            if (senderAccount.isPresent()) {
+                existingSenderaccount = senderAccount.get();
+            }else{
+                throw new ResourceNotFoundException("Customer Account Not Found");
+            }
+
+            // Step 2: Calculate Charges and Total Amount
+            BigDecimal transferAmount = requestBody.amount();
+            BigDecimal charges = calculateCharges(transferAmount, existingSenderaccount);
+            BigDecimal totalAmount = transferAmount.add(charges);
+
+            // Step 3: Transfer Summary DTO to display Data.
+            TransactionSummaryDto summary = new TransactionSummaryDto(
+                    transferAmount, 
+                    charges.setScale(2, RoundingMode.CEILING),
+                    totalAmount.setScale(2, RoundingMode.CEILING)
+            );
+
+            response.setStatusCode(SUCCESS);
+            response.setStatusMessage("Transfer summary calculated successfully");
+            response.setData(summary);
+
+        } catch (RuntimeException e) {
+            response.setStatusCode(GENERIC_ERROR);
+            response.setStatusMessage("Unexpected Error Occurred: " + e.getMessage());
+        }
+        return response;
+    }
+
+    @Override
+    public String getAccountHolderName(String accountNumber){
+        Account existingAccount = new Account();
+        Optional<Account> account = accountRepository.findByAccountNumber(accountNumber);
+        if(account.isPresent()){
+            existingAccount = account.get();
+        }
+        return existingAccount.getAccountHolderName();
+    }
+
+    private void performTransfer(Account existingSenderaccount, Account existingReceiveraccount, BigDecimal amount) {
+        BigDecimal totalAmount = calculateCharges(amount, existingSenderaccount);
+        existingSenderaccount.setAccountBalance(existingSenderaccount.getAccountBalance().subtract(totalAmount));
+        existingReceiveraccount.setAccountBalance(existingReceiveraccount.getAccountBalance().add(amount));
+
+        existingReceiveraccount.setLastTransactionDate(LocalDateTime.now());
+        existingReceiveraccount.setLastTransactionDate(LocalDateTime.now());
+
+        accountRepository.save(existingSenderaccount);
+        accountRepository.save(existingReceiveraccount);
+
+        Transaction senderTransaction = getTransaction(existingSenderaccount, amount, TransactionCategory.DEBIT, TransactionType.TRANSFER);
+        Transaction receiverTransaction = getTransaction(existingReceiveraccount, amount, TransactionCategory.CREDIT, TransactionType.TRANSFER);
+
+        transactionRepository.save(senderTransaction);
+        transactionRepository.save(receiverTransaction);
+
+        existingReceiveraccount.getTransactions().add(receiverTransaction);
+        existingSenderaccount.getTransactions().add(senderTransaction);
+
+        accountRepository.save(existingReceiveraccount);
+        accountRepository.save(existingSenderaccount);
+
+    }
+
+    private Transaction getTransaction(Account account, BigDecimal amount, TransactionCategory category, TransactionType type) {
+        BigDecimal value;
+        if(category == TransactionCategory.CREDIT){
+            value = account.getAccountBalance().subtract(amount);
+        }else{
+            value = account.getAccountBalance().add(amount);
+        }
+
+        return Transaction.builder()
+                .transactionRef(generateTransactionRef())
+                .customer(account.getCustomer())
+                .account(account)
+                .transactionType(type)
+                .transactionCategory(category)
+                .amount(amount)
+                .transactionDate(LocalDateTime.now())
+                .balanceBeforeTransaction(value)
+                .balanceAfterTransaction(account.getAccountBalance())
+                .targetAccountNumber(account.getAccountNumber())
+                .build();
+    }
+
+    private String getLastUpdatedAt(){
+        return LocalDateTime.now().toString().replace("T", " ").substring(0, 16);
+    }
+
+    // Some Mock Data for Bank Charges
+    private BigDecimal calculateCharges(BigDecimal amount, Account account) {
+        String currencyType = String.valueOf(account.getCurrencyType());
+        switch (currencyType) {
+            case "USD":
+                amount = amount.multiply(BigDecimal.valueOf(0.2));
+                if(amount.compareTo(BigDecimal.valueOf(100_000)) < 0){
+                    amount = amount.multiply(BigDecimal.valueOf(0.6));
+                }
+            case "NGN":
+                amount = amount.multiply(BigDecimal.valueOf(0.5));
+                if(amount.compareTo(BigDecimal.valueOf(100_000)) < 0){
+                    amount = amount.multiply(BigDecimal.valueOf(1.5));
+                }
+            case "EUR":
+                amount = amount.multiply(BigDecimal.valueOf(0.35));
+                if(amount.compareTo(BigDecimal.valueOf(100_000)) < 0){
+                    amount = amount.multiply(BigDecimal.valueOf(0.9));
+                }
+        }
+        return amount;
+    }
+
+
+    /* Validate Account Hashed Pin*/
+    private boolean validateHashedPin(Account account, String hashedPin) {
+        log.info(String.valueOf(encoder.passwordEncoder().matches(hashedPin, account.getHashedPin())));
+        return encoder.passwordEncoder().matches(hashedPin, account.getHashedPin());
+    }
+
     /* Generates Transaction Reference for Customer */
     private String generateTransactionRef() {
-        log.info("Generating Transaction Reference");
         String transactionReference;
         do{
             transactionReference = UUID.randomUUID().toString().substring(0,12).replace("-","");
@@ -306,59 +504,4 @@ public class AccountServiceImpl implements AccountService {
         }
         return totalAmount;
     }
-
-
-//    public DefaultApiResponse<BalanceDto> transferMoneyToCustomer(TransferDto requestBody) {
-//
-//        Transaction transaction = new Transaction();
-//        DefaultApiResponse<BalanceDto> res = new DefaultApiResponse<>();
-//
-//        Customer customer = getCurrentUser.get();
-//        Account userAccount = customer.getAccount();
-//        String targetAccountNumber = request.getTargetAccountNumber();
-//
-//        Account targetAccount = getTarget(targetAccountNumber);
-//        Customer targetCustomer = getDetails(targetAccount.getCustomerId());
-//
-//        if(request.getAmount().compareTo(BigDecimal.valueOf(200)) < 0){
-//            res.setStatusCode(500);
-//            res.setStatusMessage("Can't transfer less than 200 NGN");
-//            return res;
-//        }
-//
-//        if(request.getAmount().compareTo(customer.getAccount().getBalance()) > 0){
-//            res.setStatusCode(500);
-//            res.setStatusMessage("Insufficient Balance");
-//            return res;
-//        }
-//
-//        transaction.setCustomer(customer);
-//        targetAccount.setBalance(targetCustomer.getAccount().getBalance().add(request.getAmount()));
-//        transaction.setAccount(targetAccount);
-//        transaction.setTransactionType(TransactionType.TRANSFER);
-//        transaction.setTransactionDate(MillisToDateTime());
-//        transaction.setTargetAccountNumber(String.valueOf(request.getAmount()));
-//        transaction.setAmount(request.getAmount());
-//        transaction.setDebit(request.getAmount());
-//        transaction.setCredit(null);
-//        transaction.setRunningBalance(request.getAmount());
-//        transaction.setTransactionRef(generator.generateReference());
-//        userAccount.setBalance(customer.getAccount().getBalance().subtract(request.getAmount()));
-//
-//        userBalance.setUsername(customer.getUsername());
-//        userBalance.setBalance(customer.getAccount().getBalance().subtract(request.getAmount()));
-//
-//        accountRepository.save(userAccount);
-//        accountRepository.save(targetAccount);
-//        userRepository.save(customer);
-//        userRepository.save(targetCustomer);
-//        transactionRepository.save(transaction);
-//
-//        res.setStatusCode(200);
-//        res.setStatusMessage("Transfer Successful");
-//
-//        return res;
-//    }
-//
-//
 }

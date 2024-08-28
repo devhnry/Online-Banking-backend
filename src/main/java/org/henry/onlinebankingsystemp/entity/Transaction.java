@@ -43,7 +43,7 @@ public class Transaction {
     private LocalDateTime transactionDate;
 
     @Column(nullable = false)
-    private BigDecimal runningBalance;
+    private BigDecimal balanceBeforeTransaction;
 
     @Column(nullable = false)
     private BigDecimal balanceAfterTransaction;

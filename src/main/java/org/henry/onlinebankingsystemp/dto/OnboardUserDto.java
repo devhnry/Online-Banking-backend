@@ -27,8 +27,7 @@ public record OnboardUserDto(
         String password,
 
         @NotNull(message = "Hashed Pin is required")
-        @NotBlank(message = "Hashed Pin cannot be empty")
-        String hashedPin,
+        Long hashedPin,
 
         @NotNull(message = "Phone is required")
         @NotBlank(message = "Phone number cannot be empty")
