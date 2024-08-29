@@ -126,10 +126,9 @@ public class AccountServiceImpl implements AccountService {
                     apiResponse.setStatusMessage("Customer Balance");
 
                     // Prepare balance data
-                    String lastUpdatedAt = LocalDateTime.now().toString().replace("T", " ").substring(0, 16);
                     ViewBalanceDto balance = new ViewBalanceDto(
                             existingCustomer.getEmail(), existingAccount.getAccountNumber(),
-                            existingAccount.getAccountBalance(), lastUpdatedAt
+                            existingAccount.getAccountBalance(), getLastUpdatedAt()
                     );
                     apiResponse.setData(balance);
 
@@ -142,6 +141,7 @@ public class AccountServiceImpl implements AccountService {
             }
         } catch (RuntimeException e) {
             log.error("An Error occurred while trying to fetch balance: {}", e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
         return apiResponse;
     }
@@ -158,10 +158,10 @@ public class AccountServiceImpl implements AccountService {
     public DefaultApiResponse<ViewBalanceDto> depositMoney(DepositDto requestBody){
         Account account = new Account();
 
+        // Data initialization
         verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
         DefaultApiResponse<ViewBalanceDto> response = new DefaultApiResponse<>();
         String userEmail = jwtService.extractUsername(CUSTOMER_ACCESS_TOKEN());
-        Customer customer = userRepository.findCustomerByEmail(userEmail);
 
         try {
             log.info("Checking if Amount is Valid");
@@ -171,12 +171,14 @@ public class AccountServiceImpl implements AccountService {
                 return response;
             }
 
+            log.info("Performing Deposit into Account");
             Optional<Account> customerAccount = accountRepository.findAccountByCustomer_Email(userEmail);
             if(customerAccount.isPresent()){
                 account = customerAccount.get();
                 account.setAccountBalance(account.getAccountBalance().add(requestBody.amountToDeposit()));
                 account.setLastTransactionDate(LocalDateTime.now());
                 accountRepository.save(account);
+                log.info("Account has been successfully credited");
             }
 
             Transaction newTransaction = getTransaction(account, requestBody.amountToDeposit(), TransactionCategory.CREDIT, TransactionType.DEPOSIT);
@@ -197,6 +199,7 @@ public class AccountServiceImpl implements AccountService {
             return response;
 
         } catch (Exception e) {
+            log.error("An Error occurred while trying to CREDIT balance: {}", e.getMessage());
             response.setStatusCode(TRANSACTION_FAILED);
             response.setStatusMessage(e.getMessage());
         }
@@ -206,6 +209,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public DefaultApiResponse<BalanceDto> makeWithdrawal(WithdrawDto requestBody) {
+        // Data initialization
         Account account = new Account();
         verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
         DefaultApiResponse<BalanceDto> response = new DefaultApiResponse<>();
@@ -213,6 +217,7 @@ public class AccountServiceImpl implements AccountService {
         Customer customer = userRepository.findCustomerByEmail(userEmail);
 
         try {
+            log.info("Performing Withdrawal from Account");
             Optional<Account> customerAccount = accountRepository.findAccountByCustomer_Email(userEmail);
             if(customerAccount.isPresent()){
                 account = customerAccount.get();
@@ -222,16 +227,20 @@ public class AccountServiceImpl implements AccountService {
                 accountRepository.save(account);
             }
 
+            log.info("Validating Transaction pin");
             if(!encoder.passwordEncoder().matches(String.valueOf(requestBody.hashedPin()), account.getHashedPin())){
                 response.setStatusCode(TRANSACTION_FAILED);
                 response.setStatusMessage("Invalid Account Pin");
+                log.info("Invalid Account Pin to perform transaction");
                 return response;
             }
 
+            log.info("Performing Check for Transaction Limit for Account");
             BigDecimal totalTransactionAmount = getTotalTransactionAmountForToday(customer.getCustomerId());
-            if(totalTransactionAmount.compareTo(account.getTransactionLimit()) > 0){
+            if(totalTransactionAmount.add(requestBody.amountToWithdraw()).compareTo(account.getTransactionLimit()) > 0){
                 response.setStatusCode(TRANSACTION_LIMIT_EXCEEDED);
                 response.setStatusMessage("Transaction Limit Exceeded");
+                log.info("Transaction Limit Exceeded to perform transaction");
                 return response;
             }
 
@@ -274,11 +283,13 @@ public class AccountServiceImpl implements AccountService {
         Customer customer = userRepository.findCustomerByEmail(userEmail);
 
         try {
+            log.info("Retrieving Sender and Receiver Account");
             // Step 1: Retrieve Sender Account
             Optional<Account> senderAccount = accountRepository.findAccountByCustomer_Email(userEmail);
             if (senderAccount.isPresent()) {
                existingSenderaccount = senderAccount.get();
             }else{
+                log.error("Sender Account not found");
                 throw new ResourceNotFoundException("Customer Account Not Found");
             }
 
@@ -287,25 +298,32 @@ public class AccountServiceImpl implements AccountService {
             if (receiverAccount.isPresent()) {
                 existingReceiveraccount = receiverAccount.get();
             }else{
+                log.error("Receiver Account not found");
                 response.setStatusCode(TRANSACTION_INVALID_ACCOUNT);
                 response.setStatusMessage("Receiver Account Not Found");
                 return response;
             }
 
             // Validate that both Account are of the same currency
+            log.info("Checking if both Accounts are under the same Currency");
             if(!existingReceiveraccount.getCurrencyType().equals(existingSenderaccount.getCurrencyType())){
+                log.info("Accounts are of different Currencies: ({} and {})", existingSenderaccount, existingReceiveraccount);
                 response.setStatusCode(TRANSACTION_FAILED);
                 response.setStatusMessage(String.format("Accounts are of different Currencies: (%s and %s)", existingSenderaccount, existingReceiveraccount));
                 return response;
             }
 
+
             // Step 3: Validate Amount & Description
+            log.info("Validating Amount");
             if (requestBody.amount().compareTo(BigDecimal.valueOf(50)) <= 0) {
+                log.info("Invalid Amount passed in PayLoad");
                 response.setStatusCode(TRANSACTION_FAILED);
                 response.setStatusMessage("Invalid Transfer amount: Must be above 50");
                 return response;
             }
 
+            log.info("Validating Descriptions");
             if (requestBody.description() == null || requestBody.description().trim().isEmpty()) {
                 response.setStatusCode(TRANSACTION_FAILED);
                 response.setStatusMessage("Description cannot be empty");
@@ -316,6 +334,7 @@ public class AccountServiceImpl implements AccountService {
             if(validateHashedPin(existingSenderaccount, String.valueOf(requestBody.hashedPin()))) {
 
                 // Step 5: Check for Insufficient Balance
+                log.info("Checking if Account has Sufficient Balance to make transactions.");
                 if(requestBody.amount().compareTo(existingSenderaccount.getAccountBalance()) > 0){
                     response.setStatusCode(TRANSACTION_INSUFFICIENT_FUNDS);
                     response.setStatusMessage("Insufficient Funds to make transfer");
@@ -326,6 +345,7 @@ public class AccountServiceImpl implements AccountService {
                 performTransfer(existingReceiveraccount, existingSenderaccount, requestBody.amount());
 
             }else {
+                log.info("Incorrect Pin to perform transfer operation");
                 response.setStatusCode(TRANSACTION_FAILED);
                 response.setStatusMessage("Incorrect Pin to perform transfer operation");
 
@@ -348,12 +368,17 @@ public class AccountServiceImpl implements AccountService {
         } catch (ResourceNotFoundException e){
             throw new ResourceNotFoundException(e.getMessage());
         }catch (RuntimeException e) {
+            log.error("Unexpected Error Occurred while Making Transfer: {}", e.getMessage());
             response.setStatusCode(GENERIC_ERROR);
             response.setStatusMessage("Unexpected Error Occurred: " + e.getMessage());
         }
         return response;
     }
 
+    /**
+         Method to get Transfer Summary
+         Would be sent to the Frontend for a Modal, User can view charges being added
+     * */
     @Override
     public DefaultApiResponse<TransactionSummaryDto> displayTransferSummary(TransferDto requestBody) {
         verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
@@ -362,6 +387,7 @@ public class AccountServiceImpl implements AccountService {
         String userEmail = jwtService.extractUsername(CUSTOMER_ACCESS_TOKEN());
 
         try {
+            log.info("Retrieving Sender Account...");
             // Step 1: Retrieve Sender Account
             Optional<Account> senderAccount = accountRepository.findAccountByCustomer_Email(userEmail);
             if (senderAccount.isPresent()) {
@@ -376,8 +402,9 @@ public class AccountServiceImpl implements AccountService {
             BigDecimal totalAmount = transferAmount.add(charges);
 
             // Step 3: Transfer Summary DTO to display Data.
+            log.info("Populating Summary Data for Transaction");
             TransactionSummaryDto summary = new TransactionSummaryDto(
-                    transferAmount, 
+                    transferAmount,
                     charges.setScale(2, RoundingMode.CEILING),
                     totalAmount.setScale(2, RoundingMode.CEILING)
             );
@@ -385,16 +412,22 @@ public class AccountServiceImpl implements AccountService {
             response.setStatusCode(SUCCESS);
             response.setStatusMessage("Transfer summary calculated successfully");
             response.setData(summary);
-
+            log.info("Summary Data for Transaction Sent Successfully");
         } catch (RuntimeException e) {
+            log.error("Unexpected Error Occurred while fetching Transfer Summary: {}", e.getMessage());
             response.setStatusCode(GENERIC_ERROR);
             response.setStatusMessage("Unexpected Error Occurred: " + e.getMessage());
         }
         return response;
     }
 
+    /**
+        Method to get Account Holder Name
+        Would be sent to the Frontend for Customer to validate Account.
+    * */
     @Override
     public String getAccountHolderName(String accountNumber){
+        log.info("Getting Account Holder Name for Account Number: {}", accountNumber);
         Account existingAccount = new Account();
         Optional<Account> account = accountRepository.findByAccountNumber(accountNumber);
         if(account.isPresent()){
@@ -403,7 +436,9 @@ public class AccountServiceImpl implements AccountService {
         return existingAccount.getAccountHolderName();
     }
 
+    /** Method to update Balance and Transaction Data for each Account belonging to the customer */
     private void performTransfer(Account existingSenderaccount, Account existingReceiveraccount, BigDecimal amount) {
+        log.info("Performing Transfer Transactions");
         BigDecimal totalAmount = calculateCharges(amount, existingSenderaccount);
         existingSenderaccount.setAccountBalance(existingSenderaccount.getAccountBalance().subtract(totalAmount));
         existingReceiveraccount.setAccountBalance(existingReceiveraccount.getAccountBalance().add(amount));
@@ -414,6 +449,7 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.save(existingSenderaccount);
         accountRepository.save(existingReceiveraccount);
 
+        // Generates transaction Data for Sender and Receiver and saves it
         Transaction senderTransaction = getTransaction(existingSenderaccount, amount, TransactionCategory.DEBIT, TransactionType.TRANSFER);
         Transaction receiverTransaction = getTransaction(existingReceiveraccount, amount, TransactionCategory.CREDIT, TransactionType.TRANSFER);
 
@@ -425,10 +461,12 @@ public class AccountServiceImpl implements AccountService {
 
         accountRepository.save(existingReceiveraccount);
         accountRepository.save(existingSenderaccount);
-
+        log.info("Transfer transaction successful");
     }
 
+    // Takes in the Amount, Account, Transaction Category and Type to formulate a Transaction Data
     private Transaction getTransaction(Account account, BigDecimal amount, TransactionCategory category, TransactionType type) {
+        log.info("Populating transaction data for account {}", account.getAccountNumber());
         BigDecimal value;
         if(category == TransactionCategory.CREDIT){
             value = account.getAccountBalance().subtract(amount);
@@ -450,42 +488,48 @@ public class AccountServiceImpl implements AccountService {
                 .build();
     }
 
+    // Gets the Date and Time of that Day and return it as a string
     private String getLastUpdatedAt(){
         return LocalDateTime.now().toString().replace("T", " ").substring(0, 16);
     }
 
     // Some Mock Data for Bank Charges
     private BigDecimal calculateCharges(BigDecimal amount, Account account) {
+        log.info("Calculating charges for account {}", account.getAccountNumber());
         String currencyType = String.valueOf(account.getCurrencyType());
         switch (currencyType) {
+            // Bank Charges for USD Currency
             case "USD":
+                amount = amount.multiply(BigDecimal.valueOf(0.1));
+                if(amount.compareTo(BigDecimal.valueOf(100_000)) < 0){
+                    amount = amount.multiply(BigDecimal.valueOf(0.3));
+                }
+            // Bank Charges for NGN Currency
+            case "NGN":
                 amount = amount.multiply(BigDecimal.valueOf(0.2));
                 if(amount.compareTo(BigDecimal.valueOf(100_000)) < 0){
-                    amount = amount.multiply(BigDecimal.valueOf(0.6));
+                    amount = amount.multiply(BigDecimal.valueOf(0.4));
                 }
-            case "NGN":
-                amount = amount.multiply(BigDecimal.valueOf(0.5));
-                if(amount.compareTo(BigDecimal.valueOf(100_000)) < 0){
-                    amount = amount.multiply(BigDecimal.valueOf(1.5));
-                }
+            // Bank Charges for EUR Currency
             case "EUR":
-                amount = amount.multiply(BigDecimal.valueOf(0.35));
+                amount = amount.multiply(BigDecimal.valueOf(0.25));
                 if(amount.compareTo(BigDecimal.valueOf(100_000)) < 0){
-                    amount = amount.multiply(BigDecimal.valueOf(0.9));
+                    amount = amount.multiply(BigDecimal.valueOf(0.45));
                 }
         }
         return amount;
     }
 
 
-    /* Validate Account Hashed Pin*/
+    /** Validate Account Hashed Pin */
     private boolean validateHashedPin(Account account, String hashedPin) {
-        log.info(String.valueOf(encoder.passwordEncoder().matches(hashedPin, account.getHashedPin())));
+        log.info("Validating hashed pin for account {}", account.getAccountNumber());
         return encoder.passwordEncoder().matches(hashedPin, account.getHashedPin());
     }
 
-    /* Generates Transaction Reference for Customer */
+    /** Generates Transaction Reference for Customer */
     private String generateTransactionRef() {
+        log.info("Generating transaction ref for transactions");
         String transactionReference;
         do{
             transactionReference = UUID.randomUUID().toString().substring(0,12).replace("-","");
@@ -493,8 +537,11 @@ public class AccountServiceImpl implements AccountService {
         return transactionReference;
     }
 
+
+    /* Fetch Transactions of the User for that particular Day and Sums it up*/
     private BigDecimal getTotalTransactionAmountForToday(String id) {
-        List<Transaction> transactions = transactionRepository.findAllByCustomer_CustomerId(id);
+        log.info("Calculating Total Transaction Amount of {} for Customer with id: {}", LocalDateTime.now() , id);
+        List<Transaction> transactions = transactionRepository.findAllByCustomer_CustomerIdAndTransactionDateContains(id, LocalDateTime.now());
         BigDecimal totalAmount = BigDecimal.valueOf(0.0);
         for(Transaction transaction : transactions){
             if(transaction.getTransactionType().equals(TransactionType.DEPOSIT)){

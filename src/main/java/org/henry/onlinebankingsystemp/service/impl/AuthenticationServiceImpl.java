@@ -160,7 +160,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             generateAccessTokenAndRefreshToken result = getGenerateAccessTokenAndRefreshToken(customer);
 
             AuthorisationResponseDto authorisationResponseDto = new AuthorisationResponseDto(
-                    result.accessToken(), result.refreshToken(), Instant.now(), "24hrs");
+                    result.accessToken(), result.refreshToken(), getLastUpdatedAt() , "24hrs");
 
             // Authenticate the user with the provided credentials
             authenticationManager.authenticate(
@@ -215,7 +215,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     response.setStatusCode(REFRESH_TOKEN_SUCCESS);
                     response.setStatusMessage("Successfully Refreshed AuthToken");
                     AuthorisationResponseDto responseDto = new AuthorisationResponseDto(
-                            newAccessToken, newRefreshToken, Instant.now(), "24hrs");
+                            newAccessToken, newRefreshToken, getLastUpdatedAt() , "24hrs");
                     response.setData(responseDto);
                 } else {
                     log.warn("Invalid Token signature for user {}.", userEmail);
@@ -349,7 +349,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 generateAccessTokenAndRefreshToken result = getGenerateAccessTokenAndRefreshToken(customer);
 
                 AuthorisationResponseDto responseDto = new AuthorisationResponseDto(
-                       result.accessToken, result.refreshToken,  Instant.now(), "24hrs"
+                       result.accessToken, result.refreshToken,  getLastUpdatedAt(), "24hrs"
                 );
 
                 // Authenticate the user with the provided credentials
@@ -379,6 +379,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.error("Error occurred while trying to verify OTP: {}", e.getMessage());
             throw e;
         }
+    }
+
+    private String getLastUpdatedAt(){
+        return LocalDateTime.now().toString().replace("T", " ").substring(0, 16);
     }
 
     // Sends SUCCESS Response for OTP validation Method
