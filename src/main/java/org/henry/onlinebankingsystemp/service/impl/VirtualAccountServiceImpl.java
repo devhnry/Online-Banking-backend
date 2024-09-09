@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service @Slf4j
 @RequiredArgsConstructor
 public class VirtualAccountServiceImpl implements VirtualAccountService {
-    //    private final AccountNumberGenerator accountNumberGenerator;
+    //    private final OneTimePasswordUtil accountNumberGenerator;
 //    private final AccountRepository accountRepository;
 //    private final VirtualAccountRepo virtualAccountRepo;
 //    private final UserRepository userRepository;

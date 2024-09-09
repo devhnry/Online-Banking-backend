@@ -13,14 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    @Query("""
-            select t from Transaction t inner join Customer u on t.account.customer.customerId = u.customerId
-            where u.customerId = :customerId
-        """
-    )
-    List<Transaction> findTransactionByCustomer(Long customerId);
-    List<Transaction> findAllByCustomer_CustomerId(String customerId);
     @NotNull Optional<Transaction> findById(@NotNull Long id);
     boolean existsByTransactionRef(String transactionReference);
-    List<Transaction> findAllByCustomer_CustomerIdAndTransactionDateContains(String customerId, LocalDateTime transactionDate);
+    List<Transaction> findAllByCustomer_CustomerIdAndTransactionDateContains(String customer_customerId, String transactionDate);
 }

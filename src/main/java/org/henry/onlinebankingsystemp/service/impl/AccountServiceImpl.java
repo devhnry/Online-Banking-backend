@@ -18,10 +18,12 @@ import org.henry.onlinebankingsystemp.repository.TransactionRepository;
 import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.henry.onlinebankingsystemp.service.AccountService;
 import org.henry.onlinebankingsystemp.service.JWTService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -189,7 +191,7 @@ public class AccountServiceImpl implements AccountService {
 
             ViewBalanceDto data = new ViewBalanceDto(
                     userEmail, account.getAccountNumber(),
-                    account.getAccountBalance(), account.getLastTransactionDate().toString());
+                    account.getAccountBalance().setScale(2, RoundingMode.CEILING), account.getLastTransactionDate().toString());
 
             log.info("Account Deposit Was Successful");
             response.setStatusCode(TRANSACTION_SUCCESS);
@@ -236,8 +238,8 @@ public class AccountServiceImpl implements AccountService {
             }
 
             log.info("Performing Check for Transaction Limit for Account");
-            BigDecimal totalTransactionAmount = getTotalTransactionAmountForToday(customer.getCustomerId());
-            if(totalTransactionAmount.add(requestBody.amountToWithdraw()).compareTo(account.getTransactionLimit()) > 0){
+            BigDecimal totalTransactionAmount = getTotalTransactionAmountForToday(customer.getCustomerId()).add(requestBody.amountToWithdraw());
+            if(totalTransactionAmount.compareTo(account.getTransactionLimit()) > 0){
                 response.setStatusCode(TRANSACTION_LIMIT_EXCEEDED);
                 response.setStatusMessage("Transaction Limit Exceeded");
                 log.info("Transaction Limit Exceeded to perform transaction");
@@ -253,7 +255,7 @@ public class AccountServiceImpl implements AccountService {
             BalanceDto data = BalanceDto.builder()
                     .email(customer.getEmail())
                     .accountNumber(account.getAccountNumber())
-                    .balance(account.getAccountBalance())
+                    .balance(account.getAccountBalance().setScale(2, RoundingMode.CEILING))
                     .requestType(TransactionCategory.DEBIT.toString())
                     .lastUpdatedAt(getLastUpdatedAt())
                     .build();
@@ -301,6 +303,13 @@ public class AccountServiceImpl implements AccountService {
                 log.error("Receiver Account not found");
                 response.setStatusCode(TRANSACTION_INVALID_ACCOUNT);
                 response.setStatusMessage("Receiver Account Not Found");
+                return response;
+            }
+
+            // Ensures that eh user does not make transfer to themselves
+            if(existingReceiveraccount.getAccountNumber().equals(existingSenderaccount.getAccountNumber())){
+                response.setStatusCode(TRANSACTION_INVALID_ACCOUNT);
+                response.setStatusMessage("Account Number belongs to Customer: Request Invalid");
                 return response;
             }
 
@@ -427,6 +436,15 @@ public class AccountServiceImpl implements AccountService {
     * */
     @Override
     public String getAccountHolderName(String accountNumber){
+        String userEmail = jwtService.extractUsername(CUSTOMER_ACCESS_TOKEN());
+        Optional<Account> senderAccount = accountRepository.findAccountByCustomer_Email(userEmail);
+        if(senderAccount.isPresent()){
+            Account account = senderAccount.get();
+            if(account.getAccountNumber().equals(accountNumber)){
+                return "Bad Request";
+            }
+        }
+
         log.info("Getting Account Holder Name for Account Number: {}", accountNumber);
         Account existingAccount = new Account();
         Optional<Account> account = accountRepository.findByAccountNumber(accountNumber);
@@ -481,7 +499,7 @@ public class AccountServiceImpl implements AccountService {
                 .transactionType(type)
                 .transactionCategory(category)
                 .amount(amount)
-                .transactionDate(LocalDateTime.now())
+                .transactionDate(getLastUpdatedAt())
                 .balanceBeforeTransaction(value)
                 .balanceAfterTransaction(account.getAccountBalance())
                 .targetAccountNumber(account.getAccountNumber())
@@ -522,7 +540,7 @@ public class AccountServiceImpl implements AccountService {
 
 
     /** Validate Account Hashed Pin */
-    private boolean validateHashedPin(Account account, String hashedPin) {
+    private boolean validateHashedPin(@NotNull Account account, String hashedPin) {
         log.info("Validating hashed pin for account {}", account.getAccountNumber());
         return encoder.passwordEncoder().matches(hashedPin, account.getHashedPin());
     }
@@ -541,13 +559,15 @@ public class AccountServiceImpl implements AccountService {
     /* Fetch Transactions of the User for that particular Day and Sums it up*/
     private BigDecimal getTotalTransactionAmountForToday(String id) {
         log.info("Calculating Total Transaction Amount of {} for Customer with id: {}", LocalDateTime.now() , id);
-        List<Transaction> transactions = transactionRepository.findAllByCustomer_CustomerIdAndTransactionDateContains(id, LocalDateTime.now());
+        String TODAY = LocalDate.now().toString();
+        List<Transaction> transactions = transactionRepository.findAllByCustomer_CustomerIdAndTransactionDateContains(id, TODAY);
         BigDecimal totalAmount = BigDecimal.valueOf(0.0);
         for(Transaction transaction : transactions){
             if(transaction.getTransactionType().equals(TransactionType.DEPOSIT)){
                 continue;
             }
             totalAmount = totalAmount.add(transaction.getAmount());
+            log.info("Total Amount: {}" ,totalAmount);
         }
         return totalAmount;
     }

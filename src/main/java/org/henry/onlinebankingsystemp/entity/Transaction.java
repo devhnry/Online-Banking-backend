@@ -40,7 +40,7 @@ public class Transaction {
     private BigDecimal amount;
 
     @Column(nullable = false)
-    private LocalDateTime transactionDate;
+    private String transactionDate;
 
     @Column(nullable = false)
     private BigDecimal balanceBeforeTransaction;

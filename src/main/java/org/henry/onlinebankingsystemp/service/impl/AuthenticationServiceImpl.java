@@ -9,7 +9,9 @@ import org.henry.onlinebankingsystemp.entity.AuthToken;
 import org.henry.onlinebankingsystemp.entity.Customer;
 import org.henry.onlinebankingsystemp.entity.OneTimePassword;
 import org.henry.onlinebankingsystemp.enums.AccountType;
+import org.henry.onlinebankingsystemp.enums.ContextType;
 import org.henry.onlinebankingsystemp.enums.CurrencyType;
+import org.henry.onlinebankingsystemp.enums.VerifyOtpResponse;
 import org.henry.onlinebankingsystemp.exceptions.ResourceNotFoundException;
 import org.henry.onlinebankingsystemp.repository.AccountRepository;
 import org.henry.onlinebankingsystemp.repository.OtpRepository;
@@ -18,6 +20,7 @@ import org.henry.onlinebankingsystemp.repository.UserRepository;
 import org.henry.onlinebankingsystemp.service.AuthenticationService;
 import org.henry.onlinebankingsystemp.service.EmailService;
 import org.henry.onlinebankingsystemp.service.JWTService;
+import org.henry.onlinebankingsystemp.utils.OneTimePasswordUtil;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -48,6 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
+    private final OneTimePasswordUtil oneTimePasswordUtil;
 
     private final static BigDecimal DEFAULT_TRANSACTION_LIMIT = BigDecimal.valueOf(200_000.00);
     private final static BigDecimal DEFAULT_INTEREST_RATE = BigDecimal.valueOf(4);
@@ -229,156 +233,47 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public DefaultApiResponse<OneTimePasswordDto> sendOtp(String customerEmail) {
-        DefaultApiResponse<OneTimePasswordDto> response = new DefaultApiResponse<>();
-        Customer customer;
-        OneTimePassword oneTimePassword;
-
-        try {
-            // Fetch customer details from the database
-            customer = userRepository.findByEmail(customerEmail).orElseThrow(
-                    () -> {
-                        log.error("Customer with email {} does not exist", customerEmail);
-                        return new ResourceNotFoundException(String.format("Customer with email %s does not exist", customerEmail));
-                    });
-
-            // Generates OTP Code and sets Time for Validity
-            String otpCode = RandomStringUtils.random(6 , "0123456789");
-            long expirationTime = 15;
-
-            log.info("Generating OTP for user {}.", customerEmail);
-            oneTimePassword = OneTimePassword.builder()
-                    .otpCode(otpCode)
-                    .generatedTime(Instant.now())
-                    .expirationTime(Instant.now().plus(expirationTime, ChronoUnit.MINUTES))
-                    .expiresDuration(String.format("%d Minutes", expirationTime))
-                    .customer(customer)
-                    .build();
-            otpRepository.save(oneTimePassword);
-
-
-            CustomerDto customerData = CustomerDto.builder()
-                    .customerId(customer.getCustomerId())
-                    .fullName(String.format("%s %s", customer.getFirstName(), customer.getLastName()))
-                    .phoneNumber(customer.getPhoneNumber())
-                    .email(customerEmail)
-                    .build();
-
-            OneTimePasswordDto oneTimePasswordDto = new OneTimePasswordDto();
-            oneTimePasswordDto.setOtpCode(otpCode);
-            oneTimePasswordDto.setExpirationDuration(oneTimePasswordDto.getExpirationDuration());
-            oneTimePasswordDto.setCustomer(customerData);
-
-            response.setStatusCode(OTP_SENT_SUCCESS);
-            response.setStatusMessage("Successfully Generated OTP and Sent Email for user " + customerEmail);
-            response.setData(oneTimePasswordDto);
-
-            log.info("OTP generated for user {}.", customerEmail);
-
-        } catch (ResourceNotFoundException e) {
-            log.error("Customer with email {} does not exist on the DB", customerEmail);
-            throw new ResourceNotFoundException("Customer with email " + customerEmail + " does not exist");
-        } catch (RuntimeException e){
-            throw new RuntimeException(e.getMessage());
-        }
-
-        log.info("Sending OTP to customer via Email: {}", customerEmail);
-
-        try{
-            Context emailContext = generateEmailContextForOTPValidation( customer, oneTimePassword);
-            emailService.sendEmail(customer.getEmail().trim(), "Onboarding Process: Verify OTP", emailContext, "verifyOtpTemplate");
-        }catch (RuntimeException e){
-            log.error("Error Occurred in sending OTP verification email after Three tries");
-        }
-
-        log.info("OTP for email {} has been sent successfully.", customerEmail);
-
-        return response;
+        return oneTimePasswordUtil.sendOtp(customerEmail, ContextType.ONBOARDING);
     }
 
     @Override
     public DefaultApiResponse<AuthorisationResponseDto> verifyOtp(VerifyOtpRequest requestBody) {
         DefaultApiResponse<AuthorisationResponseDto> response = new DefaultApiResponse<>();
+        VerifyOtpResponse verifyOtp = oneTimePasswordUtil.verifyOtp(requestBody.otpCode(), requestBody.email());
 
-        try {
-            // Checks for the existing OTP on the DB
-            Optional<OneTimePassword> existingOtpOpt = otpRepository.findByOtpCode(requestBody.otpCode());
-
-            log.info("Checking if One Time Password Exists");
-            if (existingOtpOpt.isEmpty()) {
-                // If OTP is not found
-                log.info("OTP does not exist on the DB");
-                response.setStatusCode(DATABASE_ERROR);
-                response.setStatusMessage("Onboarding Verification Failed: Couldn't find one-time password");
-                return response;
-            }
-
-            // Checks if OTP has not reached his expiration time
-            log.info("Checking if OTP has reached expiration Time");
-            OneTimePassword oneTimePassword = existingOtpOpt.get();
-            if (Instant.now().isAfter(oneTimePassword.getExpirationTime())) {
-                log.info("OTP has expired");
-                response.setStatusCode(OTP_EXPIRED);
-                response.setStatusMessage("Onboarding Verification Failed: Invalid OTP");
-                return response;
-            }
-
-            log.info("Comparing OTP for Customer and User sending the Request");
-            // Gets the Customer related to the OTP and Compare to the One making the request.
-            Customer customer = oneTimePassword.getCustomer();
-            Customer existingCustomer = userRepository.findByEmail(requestBody.email())
-                    .orElseThrow(() -> {
-                        log.error("Customer with email {} cannot be found", requestBody.email());
-                        return new ResourceNotFoundException(String.format("Customer with email %s does not exist", requestBody.email()));
-                    });
-
-            if (customer.getCustomerId().equals(existingCustomer.getCustomerId())) {
-                existingCustomer.setIsEnabled(true);
-
-                if(oneTimePassword.getVerified()){
-                    response.setStatusCode(OTP_EXPIRED);
-                    response.setStatusMessage("OTP has been verified already, Log In");
-                    return response;
-                }
-
-                oneTimePassword.setVerified(true);
-                otpRepository.save(oneTimePassword);
-                userRepository.save(existingCustomer);
-                log.info("OTP verified");
-
-                // Generate access and refresh tokens for the authenticated customer
-                generateAccessTokenAndRefreshToken result = getGenerateAccessTokenAndRefreshToken(customer);
-
-                AuthorisationResponseDto responseDto = new AuthorisationResponseDto(
-                       result.accessToken, result.refreshToken,  getLastUpdatedAt(), "24hrs"
-                );
-
-                // Authenticate the user with the provided credentials
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(requestBody.email(), requestBody.password()));
-
-                try{
-                    Context emailContext = getEmailContext(customer);
-                    emailService.sendEmail(customer.getEmail().trim(), "Welcome to EasyBanking", emailContext, "onboardTemplate");
-                }catch (RuntimeException e){
-                    log.error("Error Occurred in sending Onboarding email after Three tries");
-                }
-
-                return createSuccessResponse(response, requestBody.email(), responseDto);
-
-            } else {
-                log.info("Customer provided Invalid OTP");
-                response.setStatusCode(OTP_INVALID);
-                response.setStatusMessage("Onboarding Verification Failed: Invalid OTP");
-                return response;
-            }
-
-        } catch (ResourceNotFoundException e) {
-            log.error("Resource Not Found Exception: {}", e.getMessage());
-            throw e;
-        } catch (RuntimeException e) {
-            log.error("Error occurred while trying to verify OTP: {}", e.getMessage());
-            throw e;
+        if(!verifyOtp.equals(VerifyOtpResponse.VERIFIED)){
+            response.setStatusCode(OTP_INVALID);
+            response.setStatusMessage("Invalid OTP: Resend OTP");
+            return response;
         }
+
+        OneTimePassword oneTimePassword = new OneTimePassword();
+        Optional<OneTimePassword> existingOtpOpt = otpRepository.findByOtpCode(requestBody.otpCode());
+        if(existingOtpOpt.isPresent()){
+            oneTimePassword = existingOtpOpt.get();
+        }
+
+        // Generate access and refresh tokens for the authenticated customer
+        Customer customer = oneTimePassword.getCustomer();
+        customer.setIsEnabled(true);
+        userRepository.save(customer);
+        generateAccessTokenAndRefreshToken result = getGenerateAccessTokenAndRefreshToken(customer);
+        AuthorisationResponseDto responseDto = new AuthorisationResponseDto(
+                result.accessToken, result.refreshToken,  getLastUpdatedAt(), "24hrs"
+        );
+
+        // Authenticate the user with the provided credentials
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(requestBody.email(), requestBody.password()));
+
+        // Sends Email after Successful Onboarding Process
+        try{
+            Context emailContext = getEmailContext(customer);
+            emailService.sendEmail(customer.getEmail().trim(), "Welcome to EasyBanking", emailContext, "onboardTemplate");
+        }catch (RuntimeException e){
+            log.error("Error Occurred in sending Onboarding email after Three tries");
+        }
+        return createSuccessResponse(response, requestBody.email(), responseDto);
     }
 
     private String getLastUpdatedAt(){
