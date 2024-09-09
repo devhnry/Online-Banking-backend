@@ -1,10 +1,14 @@
 spring:
   application:
     name: OnlineBankingSystemP
+  h2:
+    console:
+      enabled: true
   datasource:
-    url: jdbc:mysql://localhost:3306/onlinebanking
-    username: "root"
-    password: "rootroot"
+    url: jdbc:h2:mem:onlinebank
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,9 +18,9 @@ spring:
         show_sql: true
   mail:
     host: smtp.default.com
-    password: "ahmb glvq xnag dpic"
-    username: "devwhenry@gmail.com"
-    port: 587
+    password:
+    username: devwhenry@gmail.com
+    port: 546
     properties:
       mail:
         transport:
