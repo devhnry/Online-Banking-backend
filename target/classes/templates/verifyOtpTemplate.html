@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 20px;
+        }
+        .content h2 {
+            color: #4CAF50;
+            font-size: 20px;
+        }
+        .content p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .content .otp-code {
+            font-size: 24px;
+            color: #333;
+            font-weight: bold;
+            background-color: #f4f4f4;
+            padding: 10px;
+            text-align: center;
+            margin: 20px 0;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        .content a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .footer {
+            background-color: #f4f4f4;
+            color: #666666;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+        }
+        .footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Verify Your Email</h1>
+    </div>
+
+    <div class="content">
+        <h2>Welcome to EasyBanking,<span th:text="${name}"></span>!</h2>
+        <p>Thank you for joining us. To complete your onboarding process, we need to verify your email address.</p>
+        <p>Please use the OTP code below to verify your email and activate your account:</p>
+
+        <div class="otp-code"><span th:text="${otpCode}"></span></div>
+
+        <p>This code is valid for the next <span th:text="${duration}"></span>. Please enter it on the verification page to confirm your email address.</p>
+
+        <p>If you did not sign up for a EasyBanking account, please disregard this email or contact our support team immediately.</p>
+
+        <p>We’re excited to have you with us and look forward to serving your banking needs.</p>
+
+        <p>Best regards,<br>The EasyBanking Support Team</p>
+    </div>
+
+    <div class="footer">
+        <p>EasyBanking Limited | +234-913-043-0072</p>
+        <p>&copy; 2024 EasyBanking Ltd. All rights reserved.</p>
+    </div>
+</div>
+
+</body>
+</html>
