@@ -1,0 +1,43 @@
+spring:
+  config:
+    activate:
+      on-profile: "qa"
+  datasource:
+#    url: jdbc:mysql://onlinebankingdb:3307/onlinebanking
+    url: jdbc:mysql://onlinebankingapp-online-banking-application.j.aivencloud.com:14641/defaultdb
+    username: ${CLOUD_DB_USERNAME}
+    password: ${CLOUD_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        show_sql: true
+  mail:
+    host: ${EMAIL_HOST}
+    password: ${EMAIL_PASSWORD}
+    username: ${EMAIL_SENDER}
+    port: ${EMAIL_PORT}
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+logging:
+  file:
+    name: log/onlinebanking-qa.log
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+server:
+  port: 6010
+  error:
+    include-message: always

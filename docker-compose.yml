@@ -1,12 +1,35 @@
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: onlinebanking-db
+  onlinebankingdb:
+    image: mysql
+    healthcheck:
+      test: [ "CMD","mysqladmin","ping","-h","localhost" ]
+      timeout: 10s
+      retries: 10
+      interval: 10s
+      start_period: 10s
     environment:
       MYSQL_DATABASE: onlinebanking
       MYSQL_ROOT_PASSWORD: rootroot
-      MYSQL_PASSWORD: rootroot
+    container_name: onlinebankingdb
     ports:
-      - "3307:3307"
-    volumes:
-      - ./mysql_data:/var/lib/mysql
+      - 3307:3307
+    networks:
+      - devhnry
+
+  onlinebanking:
+    image: "devhnry/onlinebanking:v2"
+    container_name: onlinebanking-ml
+    ports:
+      - "8080:8080"
+    depends_on:
+      onlinebankingdb:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "onlinebanking"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://onlinebankingdb:3307/onlinebanking"
+    networks:
+      - devhnry
+
+networks:
+  devhnry:
+    driver: bridge
