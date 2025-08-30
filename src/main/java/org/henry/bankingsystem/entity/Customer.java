@@ -76,6 +76,6 @@ public class Customer implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return !isSuspended;
+        return this.isEnabled;
     }
 }

@@ -12,6 +12,11 @@ public interface AccountService {
     DefaultApiResponse<TransactionSummaryDto> displayTransferSummary(TransferDto requestBody);
 
     String getAccountHolderName(String accountNumber);
+    
+    DefaultApiResponse<?> getBankStatement();
+    DefaultApiResponse<?> changePassword(PasswordChangeDto passwordChange);
+    DefaultApiResponse<?> updateProfile(UpdateInfoDTO updateInfo);
+    DefaultApiResponse<?> updateTransactionLimit(TransactionLimitDto transactionLimitDto);
 }
 
 

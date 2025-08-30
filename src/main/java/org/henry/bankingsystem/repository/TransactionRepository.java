@@ -13,4 +13,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @NotNull Optional<Transaction> findById(@NotNull Long id);
     boolean existsByTransactionRef(String transactionReference);
     List<Transaction> findAllByCustomer_CustomerIdAndTransactionDateContains(String customer_customerId, String transactionDate);
+    List<Transaction> findAllByCustomer_CustomerIdOrderByTransactionIdDesc(String customer_customerId);
 }

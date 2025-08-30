@@ -15,8 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.util.Arrays;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -36,9 +34,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf(AbstractHttpConfigurer::disable) // Disable CSRF
                 .authorizeHttpRequests(request -> request
-                    .requestMatchers("auth/**", "/error**").permitAll() // Permits all Users to access Authentication Endpoints
+                    .requestMatchers("/auth/**", "/error**").permitAll() // Permits all Users to access Authentication Endpoints
                         // Protects all admin Endpoints unless having an Admin Role
-                    .requestMatchers("api/v1/admin/**").hasAnyAuthority(Arrays.toString(AdminRoles.values()))
+                    .requestMatchers("/api/v1/admin/**").hasAnyRole("IT_SUPPORT", "CUSTOMER_SUPPORT", "BANK_MANAGER", "QA_TEAM")
+                        // Allow customer endpoints for authenticated customers
+                    .requestMatchers("/api/v1/account/**", "/api/v1/kora/**").hasRole("CUSTOMER")
                     .anyRequest().authenticated()) // Every other Request has to be authenticated.
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 /*

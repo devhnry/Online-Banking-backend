@@ -83,7 +83,7 @@ public class AccountServiceImpl implements AccountService {
         // Map customer and account details to CustomerDto
         CustomerDto customerData = CustomerDto.builder()
                 .customerId(customer.getCustomerId())
-                .fullName(String.format("%s %S", customer.getFirstName(), customer.getLastName()))
+                .fullName(String.format("%s %s", customer.getFirstName(), customer.getLastName()))
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())
                 .accountDetails(accountData)
@@ -246,7 +246,7 @@ public class AccountServiceImpl implements AccountService {
                 return response;
             }
 
-            Transaction newTransaction = getTransaction(account, requestBody.amountToWithdraw(), TransactionCategory.CREDIT, TransactionType.WITHDRAWAL);
+            Transaction newTransaction = getTransaction(account, requestBody.amountToWithdraw(), TransactionCategory.DEBIT, TransactionType.WITHDRAWAL);
             transactionRepository.save(newTransaction);
 
             account.getTransactions().add(newTransaction);
@@ -454,6 +454,187 @@ public class AccountServiceImpl implements AccountService {
         return existingAccount.getAccountHolderName();
     }
 
+    @Override
+    public DefaultApiResponse<?> getBankStatement() {
+        verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
+        DefaultApiResponse<List<Transaction>> response = new DefaultApiResponse<>();
+        String userEmail = jwtService.extractUsername(CUSTOMER_ACCESS_TOKEN());
+        
+        try {
+            Customer customer = userRepository.findByEmail(userEmail).orElseThrow(
+                () -> new ResourceNotFoundException("Customer not found"));
+            
+            List<Transaction> transactions = transactionRepository.findAllByCustomer_CustomerIdOrderByTransactionIdDesc(customer.getCustomerId());
+            
+            response.setStatusCode(SUCCESS);
+            response.setStatusMessage("Bank statement retrieved successfully");
+            response.setData(transactions);
+            
+            log.info("Bank statement retrieved for customer: {}", userEmail);
+        } catch (RuntimeException e) {
+            log.error("Error retrieving bank statement: {}", e.getMessage());
+            response.setStatusCode(GENERIC_ERROR);
+            response.setStatusMessage("Error retrieving bank statement: " + e.getMessage());
+        }
+        
+        return response;
+    }
+
+    @Override
+    public DefaultApiResponse<?> changePassword(PasswordChangeDto passwordChange) {
+        verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
+        DefaultApiResponse<String> response = new DefaultApiResponse<>();
+        String userEmail = jwtService.extractUsername(CUSTOMER_ACCESS_TOKEN());
+        
+        try {
+            // Validate input
+            if (!passwordChange.newPassword().equals(passwordChange.confirmPassword())) {
+                response.setStatusCode(TRANSACTION_FAILED);
+                response.setStatusMessage("New password and confirm password do not match");
+                return response;
+            }
+            
+            if (passwordChange.newPassword().length() < 6) {
+                response.setStatusCode(TRANSACTION_FAILED);
+                response.setStatusMessage("New password must be at least 6 characters long");
+                return response;
+            }
+            
+            // Find customer
+            Customer customer = userRepository.findByEmail(userEmail).orElseThrow(
+                () -> new ResourceNotFoundException("Customer not found"));
+            
+            // Validate current password
+            if (!encoder.passwordEncoder().matches(passwordChange.currentPassword(), customer.getPassword())) {
+                response.setStatusCode(TRANSACTION_FAILED);
+                response.setStatusMessage("Current password is incorrect");
+                return response;
+            }
+            
+            // Update password
+            customer.setPassword(encoder.passwordEncoder().encode(passwordChange.newPassword()));
+            userRepository.save(customer);
+            
+            response.setStatusCode(SUCCESS);
+            response.setStatusMessage("Password changed successfully");
+            response.setData("Password updated");
+            
+            log.info("Password changed successfully for customer: {}", userEmail);
+        } catch (RuntimeException e) {
+            log.error("Error changing password: {}", e.getMessage());
+            response.setStatusCode(GENERIC_ERROR);
+            response.setStatusMessage("Error changing password: " + e.getMessage());
+        }
+        
+        return response;
+    }
+
+    @Override
+    public DefaultApiResponse<?> updateProfile(UpdateInfoDTO updateInfo) {
+        verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
+        DefaultApiResponse<String> response = new DefaultApiResponse<>();
+        String userEmail = jwtService.extractUsername(CUSTOMER_ACCESS_TOKEN());
+        
+        try {
+            // Find customer
+            Customer customer = userRepository.findByEmail(userEmail).orElseThrow(
+                () -> new ResourceNotFoundException("Customer not found"));
+            
+            // Validate email format if provided
+            if (updateInfo.email() != null && !updateInfo.email().isEmpty()) {
+                if (!updateInfo.email().matches("^[A-Za-z0-9+_.-]+@([A-Za-z0-9.-]+\\.[A-Za-z]{2,})$")) {
+                    response.setStatusCode(TRANSACTION_FAILED);
+                    response.setStatusMessage("Invalid email format");
+                    return response;
+                }
+                // Check if email already exists
+                if (userRepository.existsByEmail(updateInfo.email()) && !updateInfo.email().equals(customer.getEmail())) {
+                    response.setStatusCode(TRANSACTION_FAILED);
+                    response.setStatusMessage("Email already exists");
+                    return response;
+                }
+                customer.setEmail(updateInfo.email());
+            }
+            
+            // Validate phone number format if provided
+            if (updateInfo.phoneNumber() != null && !updateInfo.phoneNumber().isEmpty()) {
+                if (!updateInfo.phoneNumber().matches("^[+]?[0-9]{10,15}$")) {
+                    response.setStatusCode(TRANSACTION_FAILED);
+                    response.setStatusMessage("Invalid phone number format");
+                    return response;
+                }
+                customer.setPhoneNumber(updateInfo.phoneNumber());
+            }
+            
+            // Save updated customer
+            userRepository.save(customer);
+            
+            response.setStatusCode(SUCCESS);
+            response.setStatusMessage("Profile updated successfully");
+            response.setData("Profile information updated");
+            
+            log.info("Profile updated successfully for customer: {}", userEmail);
+        } catch (RuntimeException e) {
+            log.error("Error updating profile: {}", e.getMessage());
+            response.setStatusCode(GENERIC_ERROR);
+            response.setStatusMessage("Error updating profile: " + e.getMessage());
+        }
+        
+        return response;
+    }
+
+    @Override
+    public DefaultApiResponse<?> updateTransactionLimit(TransactionLimitDto transactionLimitDto) {
+        verifyTokenExpiration(CUSTOMER_ACCESS_TOKEN());
+        DefaultApiResponse<String> response = new DefaultApiResponse<>();
+        String userEmail = jwtService.extractUsername(CUSTOMER_ACCESS_TOKEN());
+        
+        try {
+            // Find customer and account
+            Customer customer = userRepository.findByEmail(userEmail).orElseThrow(
+                () -> new ResourceNotFoundException("Customer not found"));
+            
+            Account account = accountRepository.findAccountByCustomer_Email(userEmail).orElseThrow(
+                () -> new ResourceNotFoundException("Account not found"));
+            
+            // Validate password
+            if (!encoder.passwordEncoder().matches(transactionLimitDto.password(), customer.getPassword())) {
+                response.setStatusCode(TRANSACTION_FAILED);
+                response.setStatusMessage("Password is incorrect");
+                return response;
+            }
+            
+            // Validate transaction limit amount
+            if (transactionLimitDto.amount().compareTo(BigDecimal.valueOf(1000)) < 0) {
+                response.setStatusCode(TRANSACTION_FAILED);
+                response.setStatusMessage("Transaction limit must be at least 1000");
+                return response;
+            }
+            
+            if (transactionLimitDto.amount().compareTo(BigDecimal.valueOf(1000000)) > 0) {
+                response.setStatusCode(TRANSACTION_FAILED);
+                response.setStatusMessage("Transaction limit cannot exceed 1,000,000");
+                return response;
+            }
+            
+            // Update transaction limit
+            account.setTransactionLimit(transactionLimitDto.amount());
+            accountRepository.save(account);
+            
+            response.setStatusCode(SUCCESS);
+            response.setStatusMessage("Transaction limit updated successfully");
+            response.setData("Transaction limit set to: " + transactionLimitDto.amount());
+            
+            log.info("Transaction limit updated successfully for customer: {} to amount: {}", userEmail, transactionLimitDto.amount());
+        } catch (RuntimeException e) {
+            log.error("Error updating transaction limit: {}", e.getMessage());
+            response.setStatusCode(GENERIC_ERROR);
+            response.setStatusMessage("Error updating transaction limit: " + e.getMessage());
+        }
+        
+        return response;
+    }
+
     /** Method to update Balance and Transaction Data for each Account belonging to the customer */
     private void performTransfer(Account existingSenderaccount, Account existingReceiveraccount, BigDecimal amount) {
         log.info("Performing Transfer Transactions");
@@ -522,18 +703,25 @@ public class AccountServiceImpl implements AccountService {
                 if(amount.compareTo(BigDecimal.valueOf(100_000)) < 0){
                     amount = amount.multiply(BigDecimal.valueOf(0.3));
                 }
+                break;
             // Bank Charges for NGN Currency
             case "NGN":
                 amount = amount.multiply(BigDecimal.valueOf(0.2));
                 if(amount.compareTo(BigDecimal.valueOf(100_000)) < 0){
                     amount = amount.multiply(BigDecimal.valueOf(0.4));
                 }
+                break;
             // Bank Charges for EUR Currency
             case "EUR":
                 amount = amount.multiply(BigDecimal.valueOf(0.25));
                 if(amount.compareTo(BigDecimal.valueOf(100_000)) < 0){
                     amount = amount.multiply(BigDecimal.valueOf(0.45));
                 }
+                break;
+            default:
+                // Default charge for unsupported currencies
+                amount = amount.multiply(BigDecimal.valueOf(0.15));
+                break;
         }
         return amount;
     }

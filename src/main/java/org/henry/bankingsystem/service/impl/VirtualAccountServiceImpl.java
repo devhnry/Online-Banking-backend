@@ -14,7 +14,7 @@ public class VirtualAccountServiceImpl implements VirtualAccountService {
 //    private final UserRepository userRepository;
 //
 //    private final RestTemplate restTemplate;
-//    private static String secretKey = "sk_test_cNNwP1m6g3iDBFDjVDFL7xLFTsgL3WZ2HCsn3diK";
+//    private static String secretKey = "";
 //
 //    private String baseUrl = "https://api.korapay.com/merchant/api/v1";
 //    private static String VBA = "/virtual-bank-account";

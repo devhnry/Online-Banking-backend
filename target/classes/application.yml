@@ -2,4 +2,4 @@ spring:
   application:
     name: OnlineBankingSystem
   profiles:
-    active: qa
+    active: dev

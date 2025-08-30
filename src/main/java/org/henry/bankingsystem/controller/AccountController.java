@@ -102,7 +102,7 @@ public class AccountController {
      */
     @GetMapping("/view-bank-statement")
     public ResponseEntity<DefaultApiResponse<?>> getBankStatement(){
-        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+        DefaultApiResponse<?> response = accountService.getBankStatement();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -113,7 +113,7 @@ public class AccountController {
      */
     @PatchMapping("/update-profile")
     public ResponseEntity<DefaultApiResponse<?>> updateInformation(@RequestBody UpdateInfoDTO updateInfo){
-        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+        DefaultApiResponse<?> response = accountService.updateProfile(updateInfo);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -135,7 +135,7 @@ public class AccountController {
      */
     @PutMapping("/change-password")
     public ResponseEntity<DefaultApiResponse<?>> forgotPassword(@RequestBody @Validated PasswordChangeDto passwordChange){
-        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+        DefaultApiResponse<?> response = accountService.changePassword(passwordChange);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -156,7 +156,7 @@ public class AccountController {
      */
     @PutMapping("/update-transaction-limit")
     public ResponseEntity<DefaultApiResponse<?>> updateTransactionLimit(@RequestBody TransactionLimitDto transactionLimitDto) {
-        DefaultApiResponse<?> response = new DefaultApiResponse<>();
+        DefaultApiResponse<?> response = accountService.updateTransactionLimit(transactionLimitDto);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
